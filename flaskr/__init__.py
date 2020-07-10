@@ -6,7 +6,8 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    UPLOAD_FOLDER = '/Users/chhao/flaskTutorial/flaskr/static'
+    #UPLOAD_FOLDER = '/Users/chhao/flaskTutorial/flaskr/static'
+    UPLOAD_FOLDER = '/home/chliu/flask_rephoto/flaskr/static'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     app.config.from_mapping(
