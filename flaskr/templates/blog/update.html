@@ -23,12 +23,7 @@
 
   <hr>
 
-    <h1>Save New Image To Album</h1>
-    <form action="{{ url_for('blog.saveToAlbum', id=post['id']) }}" method="post" enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type="submit" value="Save">
-    </form>
-
+    <a class="action" href="{{ url_for('blog.captureImg', id=post['id']) }}">Image Capture</a>
   <hr>
 
   <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">

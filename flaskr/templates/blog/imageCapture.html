@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Image Capture "{{ post['title'] }}"{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+  <!-- <h1>Save Image Overlay</h1>
+    <form action="{{ url_for('blog.saveOverlay', id=post['id']) }}" method="post" enctype=multipart/form-data>-->
+      <video id="vid"></video>
+      <img id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
+     <!-- <input type="submit" value="Save">
+    </form> -->
+
+  <script src="streamCapture.js"></script>
+{% endblock %}
