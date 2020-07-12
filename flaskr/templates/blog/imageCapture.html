@@ -20,9 +20,11 @@
     <input type="submit" value="Save">h
   </form>
 -->
-  <body>
-      <img src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
+    <body>
+      <video id="vid"></video>
+      <img id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
     </body>
+    <script type="text/javascript" src="streamCapture.js">
 
 
 {% endblock %}
