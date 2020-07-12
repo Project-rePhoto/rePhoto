@@ -23,7 +23,7 @@
 
   <hr>
 
-    <a class="action" href="{{ url_for('blog.imageCapture') }}">Image Capture</a>
+    <a class="action" href="{{ url_for('blog.imageCapture', id=post['id']) }}">Image Capture</a>
   <hr>
 
   <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">

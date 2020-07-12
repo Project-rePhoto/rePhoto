@@ -1,23 +1,22 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>Hello World!</h1>
-  <!--<h1>{% block title %}Image Capture "{{ post['title'] }}"{% endblock %}</h1>-->
+  <h1>{% block title %}Image Capture{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
+  <form method="post" enctype=multipart/form-data>
+    <label for="title">Title</label>
+    <input name="title" id="title" value="{{ request.form['title'] or post['title'] }}" required>
+    <label for="body">Body</label>
+    <textarea name="body" id="body">{{ request.form['body'] or post['body'] }}</textarea>
+    <hr>
 
-  <!-- <h1>Save Image Overlay</h1>
-    <form action="{{ url_for('blog.saveOverlay', id=post['id']) }}" method="post" enctype=multipart/form-data>-->
-      <!--<video id="vid"></video>-->
-      <!--
-      <body>
+    <body>
       <img src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
-  </body>-->
+    </body>
+    
+    <input type="submit" value="Save">
+  </form>
 
-      <!--<img id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">-->
-     <!-- <input type="submit" value="Save">
-    </form> -->
-
- <!-- <script type="text/javascript" src="streamCapture.js"></script> -->
 {% endblock %}
