@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+<!--
   <form method="post" enctype=multipart/form-data>
     <label for="title">Title</label>
     <input name="title" id="title" value="{{ request.form['title'] or post['title'] }}" required>
@@ -15,8 +16,13 @@
     <body>
       <img src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
     </body>
-    
-    <input type="submit" value="Save">
+
+    <input type="submit" value="Save">h
   </form>
+-->
+  <body>
+      <img src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
+    </body>
+
 
 {% endblock %}
