@@ -204,8 +204,8 @@ def delete(id):
 
 
 
-@bp.route('/<int:id>/captureImg', methods=('GET', 'POST'))
+@bp.route('/<int:id>/imageCapture', methods=('GET', 'POST'))
 @login_required
-def captureImg(id):
+def imageCapture(id):
     post = get_post(id)
     return render_template('blog/imageCapture.html', post=post)
