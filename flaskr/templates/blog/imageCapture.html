@@ -73,9 +73,12 @@
         img.onload = function() {
           URL.revokeObjectURL(url);
         };
-        img.src = url;
-        img.style = "position: relative; top: 0; left: 0;";
 
+        img.src = url;
+        img.width = "200";
+        img.height = "200";
+        img.style = "position: absolute; top: 50; left: 50;";
+        
         // Remove vid object and replace overlay with img
         URL.revokeObjectURL(vid.src);
         overlay.parentNode.appendChild(img);
