@@ -6,13 +6,11 @@
 
 {% block content %}
     <!--<video style="position: absolute; top: 50; left: 50;" id="vid" controls autoplay></video>-->
-    <div class="sonA">
+    <div class="father">
       <video id="vid" controls autoplay></video>
+      <img style="opacity: 0.4; position: absolute; top: 0; left: 0;" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
     </div>
-    <div class="sonB">
-      <img style="opacity: 0.4;" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
-    </div>
-    
+
     <button id="takePic">Take Picture</button>
 
     <script type="text/javascript">
