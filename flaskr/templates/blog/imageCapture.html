@@ -78,7 +78,7 @@
         img.src = url;
         */
 
-        overlay.src = url;
+        document.getElementById(overlay).src = url;
         overlay.style = "opacity: 1;";
         URL.revokeObjectURL(url);
 
