@@ -19,8 +19,8 @@
       .then(function(stream){
         //Stream stuff
         vid.onloadedmetadata = function() {
-          this.width = overlay.width = placeholder.width this.videoWidth;
-          this.height = overlay.height = placeholder.width this.videoHeight;
+          this.width = overlay.width = placeholder.width = this.videoWidth;
+          this.height = overlay.height = placeholder.width = this.videoHeight;
         }
         vid.srcObject = stream;
         vid.play();
