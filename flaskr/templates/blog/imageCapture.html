@@ -78,9 +78,9 @@
         img.src = url;
         */
 
-        document.getElementById(overlay).src = url;
+        overlay.src = url;
         overlay.style = "opacity: 1;";
-        URL.revokeObjectURL(url);
+        //URL.revokeObjectURL(url);
 
         URL.revokeObjectURL(vid.src);
         vid.parentNode.removeChild(vid);
