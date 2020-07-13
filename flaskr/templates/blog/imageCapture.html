@@ -66,6 +66,7 @@
         // creates DOMString containing a URL representing the object
         var url = URL.createObjectURL(blob);
         
+        /*
         //Acquire new HTML image instance
         var img = new Image();
 
@@ -75,12 +76,21 @@
         };
 
         img.src = url;
+        */
 
+        URL.revokeObjectURL(url);
+        overlay.src = url;
+
+        URL.revokeObjectURL(vid.src);
+        vid.parentNode.removeChild(vid);
+
+        /*
         // Remove vid object and replace overlay with img
         URL.revokeObjectURL(vid.src);
         overlay.parentNode.appendChild(img);
         vid.parentNode.removeChild(vid);
         overlay.parentNode.removeChild(overlay);
+        */
       }
     </script>
 
