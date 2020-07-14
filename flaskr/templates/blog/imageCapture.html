@@ -90,7 +90,7 @@
         vid.parentNode.removeChild(vid);
 
         //Listener for uploading file
-        document.getElementById('upload').onclick = function() {
+        document.getElementById("upload").onclick = function() {
           var fdata = new FormData();
           fdata.append("file", blob, document.getElementById("picName").value.concat(".png"));
 
