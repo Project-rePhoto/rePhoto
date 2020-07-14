@@ -91,6 +91,7 @@
 
         //Listener for uploading file
         document.getElementById("upload").onclick = function() {
+          document.getElementById("uploadPic").style.display = "none";
           var fdata = new FormData();
           fdata.append("file", blob, document.getElementById("picName").value.concat(".png"));
 
