@@ -208,4 +208,46 @@ def delete(id):
 @login_required
 def imageCapture(id):
     post = get_post(id)
+    
+    if request.method == 'POST':
+        filename = ''
+        error = ''
+
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            error += 'No file part. '
+
+         # proceed if file not empty
+        if not error:
+            file = request.files['file']
+
+            # if user does not select file, browser also
+            # submit an empty part without filename
+            if file.filename == '':
+                error += 'No selected file. '
+
+            # proceed if file is selected
+            if not error:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                else:
+                    error += 'File type is not allowed.'
+
+        # If file is real, upload and save to DB
+        if not error:
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            db = get_db()
+
+            db.execute(
+                'INSERT INTO album (userID, image)'
+                ' VALUES (?, ?)',
+                (id, filename)
+                )
+            db.commit()
+
+            flash('Album Successfully Updated!')
+            return redirect(url_for('blog.index'))
+        else:
+            flash(error)
+
     return render_template('blog/imageCapture.html', post=post)

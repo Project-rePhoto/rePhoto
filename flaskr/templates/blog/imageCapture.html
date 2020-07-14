@@ -8,6 +8,7 @@
 
     <video style="position: absolute; top: 50; left: 50;" id="vid" controls autoplay></video>
     <img style="opacity: 0.4; position: absolute; top: 50; left: 50;" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
+    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
     <br />
     <br />
     <br />
@@ -35,21 +36,35 @@
     <br />
     <br />
     <br />
-    <button id="takePic">Take Picture</button>
+    <div id="take"><button id="takePic">Take Picture</button></div>
+    <div id="uploadPic">
+      <input type="text" placeholder="Picture Title" id="picName">
+      <button id="upload">Upload Picture</button>
+    </div>
 
     <script type="text/javascript">
+      //Temporarily hide upload button
+      document.getElementById("uploadPic").style.display = "none";
+
+      //Access media devices and capture image
       navigator.mediaDevices.getUserMedia({
         video: true
       })
       .then(function(stream){
-        //Stream stuff
+        //Set dimensions
         vid.onloadedmetadata = function() {
           this.width = overlay.width = this.videoWidth;
           this.height = overlay.height = this.videoHeight;
         }
         vid.srcObject = stream;
         vid.play();
-        document.getElementById('takePic').onclick = function() {
+
+        document.getElementById("takePic").onclick = function() {
+          //show upload button and hide take button
+          document.getElementById("uploadPic").style.display = "block";
+          document.getElementById("take").style.display = "none";
+
+          //Create canvas and take picture
           var c = document.createElement('canvas');
           c.width = vid.videoWidth;
           c.height = vid.videoHeight;
@@ -65,33 +80,25 @@
       function capturedImage(blob){
         // creates DOMString containing a URL representing the object
         var url = URL.createObjectURL(blob);
-        
-        /*
-        //Acquire new HTML image instance
-        var img = new Image();
 
-        //onload image, clear object url and set img src
-        img.onload = function() {
-          URL.revokeObjectURL(url);
-        };
-
-        img.src = url;
-        */
-
+        //Change overlay image
         overlay.src = url;
         overlay.style = "opacity: 1; position: absolute; top: 50; left: 50;";
-        //URL.revokeObjectURL(url);
 
+        //Remove video stream
         URL.revokeObjectURL(vid.src);
         vid.parentNode.removeChild(vid);
 
-        /*
-        // Remove vid object and replace overlay with img
-        URL.revokeObjectURL(vid.src);
-        overlay.parentNode.appendChild(img);
-        vid.parentNode.removeChild(vid);
-        overlay.parentNode.removeChild(overlay);
-        */
+        //Listener for uploading file
+        document.getElementById('upload').onclick = function() {
+          var fdata = new FormData();
+          fdata.append("file", blob, document.getElementById("picName").value.concat(".png"));
+
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", document.getElementById("IDPath").value, true);
+          xhr.setRequestHeader("Content-type", "multipart/form-data");
+          xhr.send(fdata);
+        };
       }
     </script>
 
