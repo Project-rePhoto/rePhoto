@@ -8,7 +8,7 @@
 
     <video style="position: absolute; top: 50; left: 50;" id="vid" controls autoplay></video>
     <img style="opacity: 0.4; position: absolute; top: 50; left: 50;" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
-    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
+    <input type="hidden" id="IDPath" name="IDPath" value="https://chliu.pythonanywhere.com{{ url_for('blog.imageCapture', id=post['id']) }}">
     <br />
     <br />
     <br />
@@ -94,10 +94,11 @@
           var fdata = new FormData();
           fdata.append("file", blob, document.getElementById("picName").value.concat(".png"));
           document.getElementById("picName").value = document.getElementById("IDPath").value;
+          /*
           var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);
           xhr.setRequestHeader("Content-type", "multipart/form-data");
-          xhr.send(fdata);
+          xhr.send(fdata);*/
         };
       }
     </script>
