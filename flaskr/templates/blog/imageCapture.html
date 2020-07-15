@@ -92,14 +92,12 @@
         //Listener for uploading file
         document.getElementById("upload").onclick = function() {
           var fdata = new FormData();
-          blob.lastModifiedDate = new Date();
-          blob.name = document.getElementById("picName").value.concat(".png");
           fdata.append("file", blob, document.getElementById("picName").value.concat(".png"));
           document.getElementById("picName").value = document.getElementById("IDPath").value;
 
           var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);
-          xhr.setRequestHeader("Content-type", "multipart/form-data");
+          xhr.setRequestHeader("Content-Type", "multipart/form-data");
           xhr.onload = function() {
             if(xhr.readyState == 4 && xhr.status == 200){
               alert(xhr.responseText);
