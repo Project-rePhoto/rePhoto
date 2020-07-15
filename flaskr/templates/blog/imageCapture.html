@@ -94,7 +94,8 @@
           var fdata = new FormData();
           fdata.append("file", blob, document.getElementById("picName").value.concat(".png"));
           //document.getElementById("picName").value = document.getElementById("picName").value.concat(".png");
-          
+          document.getElementById("picName").value = url;
+
           var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);
           xhr.setRequestHeader("Content-type", "multipart/form-data");
@@ -103,7 +104,7 @@
               alert(xhr.responseText);
             }
           };
-          xhr.send(blob);
+          xhr.send(fdata);
         };
       }
     </script>
