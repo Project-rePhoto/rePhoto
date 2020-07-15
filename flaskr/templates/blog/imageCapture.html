@@ -93,7 +93,7 @@
         document.getElementById("upload").onclick = function() {
           var fdata = new FormData();
           fdata.append("file", blob, document.getElementById("picName").value.concat(".png"));
-          document.getElementById("picName").value = document.getElementById("IDPath").value;
+          //document.getElementById("picName").value = document.getElementById("IDPath").value;
 
           var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);

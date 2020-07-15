@@ -215,7 +215,7 @@ def imageCapture(id):
 
         # check if the post request has the file part
         if 'file' not in request.files:
-            error += 'No file part. '
+            error += 'No file part. Chen Hao Liu'
 
          # proceed if file not empty
         if not error:
