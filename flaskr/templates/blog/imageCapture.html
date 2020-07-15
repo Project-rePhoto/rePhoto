@@ -96,7 +96,6 @@
           blob.name = document.getElementById("picName").value.concat(".png");
           fdata.append("file", blob, document.getElementById("picName").value.concat(".png"));
           document.getElementById("picName").value = document.getElementById("IDPath").value;
-          //document.getElementById("picName").value = url;
 
           var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);
@@ -106,7 +105,7 @@
               alert(xhr.responseText);
             }
           };
-          xhr.send(blob);
+          xhr.send(fdata);
         };
       }
     </script>
