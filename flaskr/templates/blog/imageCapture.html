@@ -96,8 +96,13 @@
           //document.getElementById("picName").value = document.getElementById("picName").value.concat(".png");
           
           var xhr = new XMLHttpRequest();
-          xhr.open("POST", document.getElementById("IDPath").value, false);
+          xhr.open("POST", document.getElementById("IDPath").value, true);
           xhr.setRequestHeader("Content-type", "multipart/form-data");
+          xhr.onload = function() {
+            if(xhr.readyState == 4 && xhr.status == 200){
+              alert(xhr.responseText);
+            }
+          };
           xhr.send(fdata);
         };
       }
