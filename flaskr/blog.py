@@ -209,7 +209,7 @@ def delete(id):
 def imageCapture(id):
     post = get_post(id)
 
-    #if request.method == 'POST':
+    if request.method == 'POST':
         filename = ''
         error = ''
 
