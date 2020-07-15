@@ -98,8 +98,8 @@
           var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);
           xhr.setRequestHeader("Content-Type", "multipart/form-data");
-          xhr.onload = function() {
-            if(xhr.readyState == 4 && xhr.status == 200){
+          xhr.onreadystatechange = function() {
+            if(this.readyState == XMLHttpRequest.DONE && this.status == 200){
               alert(xhr.responseText);
             }
           };
