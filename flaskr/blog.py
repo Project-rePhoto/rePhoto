@@ -211,7 +211,7 @@ def imageCapture(id):
 
     if request.method == 'POST':
         filename = ''
-        error = ''
+        error = request.form['file']
 
         # check if the post request has the file part
         if 'file' not in request.files:
