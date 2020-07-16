@@ -92,6 +92,17 @@
           //document.getElementById("picName").value = document.getElementById("IDPath").value;
 
           var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200){
+              alert(xhr.responseText);
+            }
+          }
+          xhr.open('POST', document.getElementById("IDPath").value, true);
+          xhr.setRequestHeader('content-type', 'multipart/form-data');
+          xhr.send(fdata);
+
+          /*
+          var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);
           xhr.setRequestHeader("Content-Type", "multipart/form-data");
           xhr.onreadystatechange = function() {
@@ -100,6 +111,7 @@
             }
           };
           xhr.send(fdata);
+          */
         };
 
         //Remove video stream
