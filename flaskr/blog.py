@@ -243,12 +243,7 @@ def imageCapture(id):
                 ' WHERE id = ?',
                 (filename, id)
             )
-
-            #db.execute(
-             #   'INSERT INTO album (userID, image)'
-              #  ' VALUES (?, ?)',
-               # (id, filename)
-                #)
+            
             db.commit()
 
             flash('Album Successfully Updated!')
