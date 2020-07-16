@@ -85,10 +85,6 @@
         overlay.src = url;
         overlay.style = "opacity: 1; position: absolute; top: 50; left: 50;";
 
-        //Remove video stream
-        URL.revokeObjectURL(vid.src);
-        vid.parentNode.removeChild(vid);
-
         //Listener for uploading file
         document.getElementById("upload").onclick = function() {
           var fdata = new FormData();
@@ -105,6 +101,10 @@
           };
           xhr.send(fdata);
         };
+
+        //Remove video stream
+        URL.revokeObjectURL(vid.src);
+        vid.parentNode.removeChild(vid);
       }
     </script>
 
