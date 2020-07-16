@@ -98,18 +98,10 @@
             data: fdata,
             processData: false,
             contentType: false,
-            cache: false
-            /*
-            error: function(err){
-              console.error(err);
-            },
-            success: function(data){
-              console.log(data);
-            },
-            complete: function(){
-              console.log("Request finished.");
+            cache: false,
+            success: function(){
+              window.location.href = "https://chliu.pythonanywhere.com/";
             }
-            */
           });
         };
 

@@ -246,7 +246,7 @@ def imageCapture(id):
             db.commit()
 
             flash('Album Successfully Updated!')
-            return redirect(url_for('blog.index'))
+            #return redirect(url_for('blog.index'))
         else:
             flash(error)
 
