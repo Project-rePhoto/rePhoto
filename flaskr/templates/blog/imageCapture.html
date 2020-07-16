@@ -92,7 +92,7 @@
           fdata.append('file', blob, document.getElementById('picName').value.concat('.png'));
           //document.getElementById("picName").value = document.getElementById("IDPath").value;
 
-          
+          /*
           var xhr = new XMLHttpRequest();
           xhr.onreadystatechange = function() {
             if(this.readyState == 4 && this.status == 200){
@@ -103,7 +103,7 @@
           xhr.setRequestHeader("Content-Type", 'multipart/form-data');
           xhr.send(fdata);
 
-          /*
+          
           var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);
           xhr.setRequestHeader("Content-Type", "multipart/form-data");
@@ -114,7 +114,7 @@
           };
           xhr.send(fdata);
           */
-          /*
+          
           $.ajax({
             type: "POST",
             enctype: 'multipart/form-data',
@@ -134,7 +134,6 @@
               console.log("Request finished.");
             }
           });
-          */
         };
 
         //Remove video stream
