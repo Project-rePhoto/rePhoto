@@ -90,30 +90,6 @@
         document.getElementById("upload").onclick = function() {
           var fdata = new FormData();
           fdata.append('file', blob, document.getElementById('picName').value.concat('.png'));
-          //document.getElementById("picName").value = document.getElementById("IDPath").value;
-
-          /*
-          var xhr = new XMLHttpRequest();
-          xhr.onreadystatechange = function() {
-            if(this.readyState == 4 && this.status == 200){
-              alert(xhr.responseText);
-            }
-          }
-          xhr.open('POST', document.getElementById("IDPath").value, true);
-          xhr.setRequestHeader("Content-Type", 'multipart/form-data');
-          xhr.send(fdata);
-
-          
-          var xhr = new XMLHttpRequest();
-          xhr.open("POST", document.getElementById("IDPath").value, true);
-          xhr.setRequestHeader("Content-Type", "multipart/form-data");
-          xhr.onreadystatechange = function() {
-            if(this.readyState == XMLHttpRequest.DONE && this.status == 200){
-              alert(xhr.responseText);
-            }
-          };
-          xhr.send(fdata);
-          */
           
           $.ajax({
             type: "POST",
