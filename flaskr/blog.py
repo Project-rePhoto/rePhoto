@@ -235,7 +235,7 @@ def imageCapture(id):
 
         # If file is real, upload and save to DB
         if not error:
-            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             db = get_db()
 
             db.execute(
