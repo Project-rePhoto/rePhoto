@@ -69,7 +69,7 @@
           c.width = vid.videoWidth;
           c.height = vid.videoHeight;
           c.getContext('2d').drawImage(vid, 0, 0);
-          c.toBlob(capturedImage);
+          c.toBlob(capturedImage, 'image/png');
         };
       })
       .catch(function(err){
