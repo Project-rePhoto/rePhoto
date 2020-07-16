@@ -42,7 +42,7 @@
       <button id="upload">Upload Picture</button>
     </div>
 
-    <script type="text/javascript">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
       //Temporarily hide upload button
       document.getElementById("uploadPic").style.display = "none";
 
@@ -91,6 +91,7 @@
           fdata.append('file', blob, document.getElementById('picName').value.concat('.png'));
           //document.getElementById("picName").value = document.getElementById("IDPath").value;
 
+          /*
           var xhr = new XMLHttpRequest();
           xhr.onreadystatechange = function() {
             if(this.readyState == 4 && this.status == 200){
@@ -101,7 +102,7 @@
           xhr.setRequestHeader("Content-Type", 'multipart/form-data');
           xhr.send(fdata);
 
-          /*
+          
           var xhr = new XMLHttpRequest();
           xhr.open("POST", document.getElementById("IDPath").value, true);
           xhr.setRequestHeader("Content-Type", "multipart/form-data");
@@ -112,6 +113,24 @@
           };
           xhr.send(fdata);
           */
+          $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: document.getElementById("IDPath").value,
+            data: fdata,
+            processData: false,
+            contentType: false,
+            cache: false,
+            error: function(err){
+              console.error(err);
+            },
+            success:function(data){
+              console.log(data);
+            },
+            complete:function(){
+              console.log("Request finished.")
+            }
+          });
         };
 
         //Remove video stream
