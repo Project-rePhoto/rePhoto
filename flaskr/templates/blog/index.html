@@ -2,6 +2,10 @@
 
 {% block header %}
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    .mySlides {display:none;}
+  </style>
+
   <h1>{% block title %}Collections{% endblock %}</h1>
   {% if g.user %}
     <a class="action" href="{{ url_for('blog.create') }}">New</a>
@@ -29,7 +33,7 @@
         <div class="w3-content w3-display-container">
           {% for img in imgs %}
             {% if post['id'] == img['userID'] %}
-              <img style="display:block;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
+              <img class="mySlides" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
             {% endif %}
           {% endfor %}
           <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
