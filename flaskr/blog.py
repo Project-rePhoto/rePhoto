@@ -261,11 +261,11 @@ def imageCapture(id):
 @bp.route('/<int:id>/retrieveImgs', methods=('GET', 'POST'))
 @login_required
 def retrieveImgs(id):
-    db = get_db()
-    imgs = db.execute(
-        'SELECT image'
-        ' FROM album'
-        ' WHERE userID = ?',
-        (id)
-    ).fetchall()
+    #db = get_db()
+    #imgs = db.execute(
+    #    'SELECT image'
+    #    ' FROM album'
+    #    ' WHERE userID = ?',
+    #    (id)
+    #).fetchall()
     return redirect(url_for('blog.index'), imgs=imgs)
