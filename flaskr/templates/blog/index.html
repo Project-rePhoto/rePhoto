@@ -25,16 +25,15 @@
         <img src="/static/{{ post['imgFile'] }}" alt="User Image" width="500" height="500">
 
         <h2 class="w3-center">Album Slideshow</h2>
+
+        <form action="{{ url_for('blog.retrieveImgs', id=post['id']) }}" method="post" id="getAlbum"></form>
         <script type="text/javascript">
-          var myForm = document.createElement("form");
-          myForm.setAttribute('method', "post");
-          myForm.setAttribute('action', "https://chliu.pythonanywhere.com/1/retrieveImgs");
-          myForm.submit();
+          document.getElementById("getAlbum").submit();
         </script>
 
         <div class="w3-content w3-display-container">
           {% for img in imgs %}
-            <img style="display:block;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
+            <img style="display:none;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
           {% endfor %}
           <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
           <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
