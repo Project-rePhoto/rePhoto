@@ -243,12 +243,29 @@ def imageCapture(id):
                 ' WHERE id = ?',
                 (filename, id)
             )
-            
+            db.commit()
+
+            db.execute(
+                'INSERT INTO album (userID, image)'
+                ' VALUES (?, ?)',
+                (id, filename)
+            )
             db.commit()
 
             flash('Album Successfully Updated!')
-            #return redirect(url_for('blog.index'))
         else:
             flash(error)
 
     return render_template('blog/imageCapture.html', post=post)
+
+@bp.route('/<int:id>/retrieveImgs', methods=('GET', 'POST'))
+@login_required
+def retrieveImgs(id):
+    db = get_db()
+    imgs = db.execute(
+        'SELECT image'
+        ' FROM album'
+        ' WHERE userID = ?',
+        (id)
+    ).fetchall()
+    return redirect(url_for('blog.index'), imgs=imgs)
