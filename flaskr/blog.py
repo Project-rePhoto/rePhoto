@@ -258,9 +258,9 @@ def imageCapture(id):
 
     return render_template('blog/imageCapture.html', post=post)
 
-@bp.route('/<int:id>/retrieveImgs', methods=('GET', 'POST'))
-@login_required
-def retrieveImgs(id):
+#@bp.route('/<int:id>/retrieveImgs', methods=('GET', 'POST'))
+#@login_required
+#def retrieveImgs(id):
     #db = get_db()
     #imgs = db.execute(
     #    'SELECT image'
@@ -268,4 +268,10 @@ def retrieveImgs(id):
     #    ' WHERE userID = ?',
     #    (id)
     #).fetchall()
-    return redirect(url_for('blog.index'), imgs=imgs)
+ #   return redirect(url_for('blog.index'), imgs=imgs)
+
+
+@bp.route('/<int:id>/retrieveImgs', methods=('GET', 'POST'))
+@login_required
+def retrieveImgs(id):
+    return redirect(url_for('blog.index'))
