@@ -29,7 +29,7 @@
         <div class="w3-content w3-display-container">
           {% for img in imgs %}
             {% if post['id'] == img['userID'] %}
-              <img style="display:none;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
+              <img style="display:block;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
             {% endif %}
           {% endfor %}
           <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
