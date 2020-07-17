@@ -30,7 +30,12 @@ def index():
         ' ORDER BY created DESC'
     ).fetchall()
 
-    return render_template('blog/index.html', posts=posts)
+    imgs = db.execute(
+        'SELECT image, userID'
+        ' FROM album'
+    ).fetchall()
+
+    return render_template('blog/index.html', posts=posts, imgs=imgs)
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
@@ -257,21 +262,3 @@ def imageCapture(id):
             flash(error)
 
     return render_template('blog/imageCapture.html', post=post)
-
-#@bp.route('/<int:id>/retrieveImgs', methods=('GET', 'POST'))
-#@login_required
-#def retrieveImgs(id):
-    #db = get_db()
-    #imgs = db.execute(
-    #    'SELECT image'
-    #    ' FROM album'
-    #    ' WHERE userID = ?',
-    #    (id)
-    #).fetchall()
- #   return redirect(url_for('blog.index'), imgs=imgs)
-
-
-@bp.route('/<int:id>/retrieveImgs', methods=('GET', 'POST'))
-@login_required
-def retrieveImgs(id):
-    return render_template('blog/index.html')

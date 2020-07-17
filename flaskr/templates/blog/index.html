@@ -26,14 +26,11 @@
 
         <h2 class="w3-center">Album Slideshow</h2>
 
-        <form action="{{ url_for('blog.retrieveImgs', id=post['id']) }}" method="post" id="getAlbum"></form>
-        <script type="text/javascript">
-          document.getElementById("getAlbum").submit();
-        </script>
-<!--
         <div class="w3-content w3-display-container">
           {% for img in imgs %}
-            <img style="display:none;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
+            {% if post['id'] == img['userID'] %}
+              <img style="display:none;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
+            {% endif %}
           {% endfor %}
           <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
           <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
@@ -58,7 +55,6 @@
             x[slideIndex-1].style.display = "block";
           }
         </script>
-      -->
       </body>
     </article>
     {% if not loop.last %}
