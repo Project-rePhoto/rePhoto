@@ -274,4 +274,4 @@ def imageCapture(id):
 @bp.route('/<int:id>/retrieveImgs', methods=('GET', 'POST'))
 @login_required
 def retrieveImgs(id):
-    return redirect(url_for('blog.index'))
+    return render_template('blog/index.html')
