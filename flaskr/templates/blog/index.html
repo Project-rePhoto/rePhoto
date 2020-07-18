@@ -35,16 +35,20 @@
               <img class="{{ post['id'] }}" style="display:none;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
             {% endif %}
           {% endfor %}
-          <button onclick="plusDivs(-1, '{{ post[\'id\'] }}')">&#10094;</button>
-          <button onclick="plusDivs(1, '{{ post[\'id\'] }}')">&#10095;</button>
+          <button id="F{{ post['id'] }}">&#10094;</button>
+          <button id="B{{ post['id'] }}">&#10095;</button>
         </div>
 
         <script type="text/javascript">
           var slideIndex = 1;
           showDivs(slideIndex, "{{ post['id'] }}");
 
-          function plusDivs(n, str) {
-            showDivs((slideIndex += n), str);
+          document.getElementById("F{{ post['id'] }}").onclick = function () {
+            showDivs((slideIndex += -1), "{{ post['id'] }}");
+          }
+
+          document.getElementById("B{{ post['id'] }}").onclick = function () {
+            showDivs((slideIndex += +), "{{ post['id'] }}");
           }
 
           function showDivs(n, str) {
