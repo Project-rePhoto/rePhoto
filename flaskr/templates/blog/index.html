@@ -35,21 +35,21 @@
               <img class="{{ post['id'] }}" style="display:none;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
             {% endif %}
           {% endfor %}
-          <button onclick="plusDivs(-1)">&#10094;</button>
-          <button onclick="plusDivs(1)">&#10095;</button>
+          <button onclick="plusDivs(-1, '{{ post[\'id\'] }}')">&#10094;</button>
+          <button onclick="plusDivs(1, '{{ post[\'id\'] }}')">&#10095;</button>
         </div>
 
         <script type="text/javascript">
           var slideIndex = 1;
           showDivs(slideIndex);
 
-          function plusDivs(n) {
-            showDivs(slideIndex += n);
+          function plusDivs(n, str) {
+            showDivs((slideIndex += n), str);
           }
 
-          function showDivs(n) {
+          function showDivs(n, str) {
             var i;
-            var x = document.getElementsByClassName("{{ post['id'] }}");
+            var x = document.getElementsByClassName(str);
             if (n > x.length) {slideIndex = 1}
             if (n < 1) {slideIndex = x.length}
             for (i=0; i < x.length; i++){
