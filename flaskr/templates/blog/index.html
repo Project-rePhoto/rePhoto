@@ -48,7 +48,7 @@
           }
 
           document.getElementById("B{{ post['id'] }}").onclick = function () {
-            showDivs((slideIndex += +), "{{ post['id'] }}");
+            showDivs((slideIndex += 1), "{{ post['id'] }}");
           }
 
           function showDivs(n, str) {
