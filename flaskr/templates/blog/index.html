@@ -32,7 +32,7 @@
         <div>
           {% for img in imgs %}
             {% if post['id'] == img['userID'] %}
-              <img class="mySlides" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
+              <img class="{{ post['id'] }}" style="display:none;" src="/static/{{ img['image'] }}" alt="User Image" width="500" height="500">
             {% endif %}
           {% endfor %}
           <button onclick="plusDivs(-1)">&#10094;</button>
@@ -49,7 +49,7 @@
 
           function showDivs(n) {
             var i;
-            var x = document.getElementsByClassName("mySlides");
+            var x = document.getElementsByClassName("{{ post['id'] }}");
             if (n > x.length) {slideIndex = 1}
             if (n < 1) {slideIndex = x.length}
             for (i=0; i < x.length; i++){
