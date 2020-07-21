@@ -6,7 +6,8 @@
 
 {% block content %}
 
-    <video style="position: absolute; top: 50; left: 50;" id="vid" controls autoplay></video>
+    <!--<video style="position: absolute; top: 50; left: 50;" id="vid" controls autoplay></video>-->
+    <video style="position: absolute; top: 50; left: 50;" id="vid" autoplay playsinline></video>
     <img style="opacity: 0.4; position: absolute; top: 50; left: 50;" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
     <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
     <br />
@@ -57,8 +58,9 @@
           this.width = overlay.width = this.videoWidth;
           this.height = overlay.height = this.videoHeight;
         }
+        window.stream = stream;
         vid.srcObject = stream;
-        vid.play();
+        //vid.play();
 
         document.getElementById("takePic").onclick = function() {
           //show upload button and hide take button

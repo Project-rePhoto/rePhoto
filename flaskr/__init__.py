@@ -1,10 +1,21 @@
 import os
 
 from flask import Flask
+#Google Maps API
+from flask_googlemaps import GoogleMaps, Map
+#import Geocoder
+from flask_simple_geoip import SimpleGeoIP
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    #Google Maps API KEY
+    api_key = 'something'
+    #Initialize Google Maps extension
+    GoogleMaps(app, key=api_key)
+
+    app.config["GEOIPIFY_API_KEY"] = "your_api_key"
 
     #UPLOAD_FOLDER = '/Users/chhao/flaskTutorial/flaskr/static'
     UPLOAD_FOLDER = '/home/chliu/flask_rephoto/flaskr/static'

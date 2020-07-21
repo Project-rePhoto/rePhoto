@@ -1,25 +1,58 @@
 import os
 
 from flask import (
-    Flask, Blueprint, flash, g, redirect, render_template, request, url_for
+    Flask, Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
 )
 from flask import current_app as app
-
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
-
 from flaskr.auth import login_required
 from flaskr.db import get_db
 from flask import send_from_directory
+#Google Maps API
+from flask_googlemaps import GoogleMaps, Map
+#import Geocoder
+from flask_simple_geoip import SimpleGeoIP
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
+#Intialize GeoIP extension
+simple_geoip = SimpleGeoIP(app)
 
 bp = Blueprint('blog', __name__)
 
 def allowed_file(filename):
     return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def getGeoIP():
+    #retrieve geoip data for the given requester
+    geoip_data = simple_geopip.get_geoip_data()
+    return jsonify(geoip_data)
+
+@bp.route('/setMap', methods=('GET', 'POST'))
+@login_required
+def setMap():
+    #retrieve the location
+    mapJson = getGeoIP()
+    user_location = (mapJson['location']['lat'], mapJson['location']['lon'])
+
+    mymap = Map(
+        identifier = "view-side",
+        lat = user_location[0],
+        lon = user_location[1],
+        zoom = 15,
+        markers=[
+            {
+                'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                'lat': user_location[0],
+                'lon': user_location[1],
+                'infobox': "<b>My Position</b>"
+            }
+        ]    
+    )
+    
+    return render_template('blog/gmap.html', mymap=mymap)
 
 @bp.route('/')
 def index():
