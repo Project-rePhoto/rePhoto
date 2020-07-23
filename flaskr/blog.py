@@ -277,7 +277,7 @@ def imageCapture(id):
             db.execute(
                 'UPDATE post SET imgFile = ?, wd = ?, ht = ?'
                 ' WHERE id = ?',
-                (filename, '200', '200', id)
+                (filename, request.json['width'], '200', id)
             )
             db.commit()
 

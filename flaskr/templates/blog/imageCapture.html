@@ -114,8 +114,8 @@
         document.getElementById("upload").onclick = function() {
           var fdata = new FormData();
           fdata.append('file', blob, document.getElementById('picName').value.concat('.png'));
-          fdata.append('width', width);
-          fdata.append('length', height);
+          fdata.append('width', JSON.stringify(width));
+          fdata.append('length', JSON.stringify(height));
 
           $.ajax({
             type: "POST",
