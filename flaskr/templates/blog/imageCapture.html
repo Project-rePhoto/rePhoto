@@ -111,8 +111,8 @@
         document.getElementById("upload").onclick = function() {
           var fdata = new FormData();
           fdata.append('file', blob, document.getElementById('picName').value.concat('.png'));
-          fdata.append('width', '200');
-          fdata.append('length', '200');
+          fdata.append('width', vid.videoWidth);
+          fdata.append('length', vid.videoHeight);
 
           $.ajax({
             type: "POST",
@@ -123,14 +123,13 @@
             contentType: false,
             cache: false,
             success: function(){
+              //Remove video stream
+              URL.revokeObjectURL(vid.src);
+              vid.parentNode.removeChild(vid);
               window.location.href = "https://chliu.pythonanywhere.com/";
             }
           });
         };
-
-        //Remove video stream
-        URL.revokeObjectURL(vid.src);
-        vid.parentNode.removeChild(vid);
       }
     </script>
 
