@@ -12,7 +12,7 @@
 -->
   <ul style="position:relative;">
     <li style="position:absolute; top:0; left:0;"><video style="position: relative; top: 0px; left: 100px;" id="vid" autoplay playsinline></video></li>
-    <li style="position:absolute; top:0; left:0;"><img style="opacity: 0.4; position: relative; top: 0px; left: 100px;" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200"></li>
+    <li style="position:absolute; top:0; left:0;"><img style="opacity: 0.4; position: relative; top: 0px; left: 100px;" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}"></li>
   </ul>
 
   <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
@@ -80,7 +80,6 @@
         }
         window.stream = stream;
         vid.srcObject = stream;
-        //vid.play();
 
         document.getElementById("takePic").onclick = function() {
           //show upload button and hide take button
@@ -112,6 +111,8 @@
         document.getElementById("upload").onclick = function() {
           var fdata = new FormData();
           fdata.append('file', blob, document.getElementById('picName').value.concat('.png'));
+          fdata.append('width', vid.videoWidth)
+          fdata.append('length', vid.videoLength)
 
           $.ajax({
             type: "POST",

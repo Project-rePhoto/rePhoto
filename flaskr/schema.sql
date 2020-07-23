@@ -21,6 +21,8 @@ CREATE TABLE post (
 CREATE TABLE album (
   userID INTEGER NOT NULL,
   image TEXT NOT NULL,
+  width TEXT NOT NULL,
+  height TEXT NOT NULL,
   FOREIGN KEY (userID) REFERENCES user (id),
   PRIMARY KEY (userID, image)
 );
