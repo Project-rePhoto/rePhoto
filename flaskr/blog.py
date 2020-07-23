@@ -277,14 +277,14 @@ def imageCapture(id):
             db.execute(
                 'UPDATE post SET imgFile = ?, wd = ?, ht = ?'
                 ' WHERE id = ?',
-                (filename, request.files['width'], request.files['height'], id)
+                (filename, request.json['width'], request.json['height'], id)
             )
             db.commit()
 
             db.execute(
                 'INSERT INTO album (userID, image, width, height)'
                 ' VALUES (?, ?, ?, ?)',
-                (id, filename, request.files['width'], request.files['height'])
+                (id, filename, request.json['width'], request.json['height'])
             )
             db.commit()
 
