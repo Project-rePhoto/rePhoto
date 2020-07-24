@@ -107,11 +107,6 @@
         overlay.style = "opacity: 1; position: absolute; top: 50; left: 50;";
 
         //Save dimensions of video
-        /*
-        document.getElementById("width").value = vid.videoWidth;
-        document.getElementById("length").value = vid.videoHeight;
-        document.getElementById("name").value = document.getElementById('picName').value.concat('.png');
-*/
         var width = vid.videoWidth;
         var height = vid.videoHeight;
 
@@ -132,7 +127,6 @@
             cache: false,
             success: function(){
               window.location.href = "https://chliu.pythonanywhere.com/";
-              //document.getElementById("dimensions").submit();
             }
           });
         };
