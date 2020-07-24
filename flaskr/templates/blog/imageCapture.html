@@ -22,6 +22,7 @@
     <img style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translate(-50%, -50%);" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">
 
   <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
+  <!--
     <br />
     <br />
     <br />
@@ -63,13 +64,14 @@
     <br />
     <br />
     <br />
+  -->
     <div id="take"><button id="takePic">Take Picture</button></div>
     <div id="uploadPic">
       <input type="text" placeholder="Picture Title" id="picName">
       <button id="upload">Upload Picture</button>
     </div>
     </div>
-    
+
     <script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.min.js') }}"></script>
     <script>
       //Temporarily hide upload button
