@@ -16,10 +16,12 @@
     <li style="position:absolute; top:0; left:0;"><img style="opacity: 0.4; position: relative; left: 50%; transform: translateX(-50%);" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}"></li>
   </ul>
 -->
+<div style="position: relative; display: flex;">
   <div style="position:relative; align-items: center; display: flex; justify-content: center; margin: auto;">
     <video style="position: absolute; top: 0; left: 0; transform: translate(-50%, -50%);" id="vid" autoplay playsinline></video>
     <img style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translate(-50%, -50%);" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">
   </div>
+</div>
 
   <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
     <br />
