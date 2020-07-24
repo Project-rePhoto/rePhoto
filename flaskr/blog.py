@@ -277,14 +277,14 @@ def imageCapture(id):
             db.execute(
                 'UPDATE post SET imgFile = ?, wd = ?, ht = ?'
                 ' WHERE id = ?',
-                (filename, request.json['width'], '200', id)
+                (filename, request.form['width'], request.form['height'], id)
             )
             db.commit()
 
             db.execute(
                 'INSERT INTO album (userID, image, width, height)'
                 ' VALUES (?, ?, ?, ?)',
-                (id, filename, '200', '200')
+                (id, filename, request.form['width'], request.form['height'])
             )
             db.commit()
 
@@ -293,3 +293,41 @@ def imageCapture(id):
             flash(error)
 
     return render_template('blog/imageCapture.html', post=post)
+
+#@bp.route('/<int:id>/saveDim', methods=('GET', 'POST'))
+#@login_required
+#def saveDim(id):
+#    post = get_post(id)
+
+#    if request.method == 'POST':
+        # If file is real, upload and save to DB
+#        db = get_db()
+#            db.execute(
+#            	'UPDATE post SET wd = ?, ht = ?'
+#                ' WHERE id = ? AND imgFile = ?',
+#                (request.form['width'], request.form['height'], id, secure_filename(request.form['name']))
+#            )
+#            db.commit()
+
+#        if not error:
+#            db = get_db()
+
+#            db.execute(
+#                'UPDATE post SET imgFile = ?, wd = ?, ht = ?'
+#                ' WHERE id = ?',
+#                (filename, '200', '200', id)
+#            )
+#            db.commit()
+
+#            db.execute(
+#                'INSERT INTO album (userID, image, width, height)'
+#                ' VALUES (?, ?, ?, ?)',
+#                (id, filename, '200', '200')
+#            )
+#            db.commit()
+
+#            flash('Album Successfully Updated!')
+#        else:
+#            flash(error)
+
+#    return render_template('blog/imageCapture.html', post=post)
