@@ -107,6 +107,8 @@
         //Change overlay image
         overlay.src = url;
         overlay.style = "opacity: 1; position: absolute; top: 50; left: 50;";
+        overlay.width = vid.videoWidth;
+        overlay.height = vid.videoHeight;
 
         //Save dimensions of video
         var width = vid.videoWidth;
