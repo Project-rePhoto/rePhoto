@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<ul>
+<div>
   <form method="post" enctype=multipart/form-data>
     <label for="title">Title</label>
     <input name="title" id="title" value="{{ request.form['title'] or post['title'] }}" required>
@@ -14,14 +14,14 @@
     <hr>
 
     <body>
-      <img src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
+      <img src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">
     </body>
 
     <h1>Change Cover Image</h1>
     <input type=file name=file>
 
-    <input type="hidden" name="width" id="width" value="200">
-    <input type="hidden" name="height" id="height" value="200">
+    <input type="hidden" name="width" id="width" value="{{ post['wd'] }}">
+    <input type="hidden" name="height" id="height" value="{{ post['ht'] }}">
     <input type="submit" value="Save">
   </form>
 
@@ -32,5 +32,5 @@
   <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
   </form>
-</ul>
+</div>
 {% endblock %}
