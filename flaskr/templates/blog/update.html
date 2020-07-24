@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+<div style="position:relative; align-items: center; display: flex; justify-content: center; margin: auto;">
   <form method="post" enctype=multipart/form-data>
     <label for="title">Title</label>
     <input name="title" id="title" value="{{ request.form['title'] or post['title'] }}" required>
@@ -25,11 +26,11 @@
   </form>
 
   <hr>
-
     <a class="action" href="{{ url_for('blog.imageCapture', id=post['id']) }}">Image Capture</a>
   <hr>
 
   <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
   </form>
+</div>
 {% endblock %}
