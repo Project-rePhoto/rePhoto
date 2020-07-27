@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, jsonify
 #Google Maps API
 from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
