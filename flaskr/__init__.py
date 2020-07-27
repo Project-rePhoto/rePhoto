@@ -4,7 +4,7 @@ from flask import Flask
 #Google Maps API
 from flask_googlemaps import GoogleMaps, Map
 #import Geocoder
-from flask_simple_geoip import SimpleGeoIP
+#from flask_simple_geoip import SimpleGeoIP
 
 def create_app(test_config=None):
     # create and configure the app
