@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 #Google Maps API
-from flask_googlemaps import GoogleMaps
+#from flask_googlemaps import GoogleMaps, Maps
 #import Geocoder
 from flask_simple_geoip import SimpleGeoIP
 
