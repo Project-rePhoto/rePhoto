@@ -12,13 +12,16 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
     #Google Maps API KEY
-    #api_key = 'something'
+    map_key = 'your_key'
     #Initialize Google Maps extension
-    #GoogleMaps(app, key=api_key)
+    GoogleMaps(app, key=map_key)
 
-    #app.config["GEOIPIFY_API_KEY"] = "your_api_key"
+    #geoip API key
+    geo_key = 'your_key'
+    #Initialize SimpleGeoIP extension
+    app.config["GEOIPIFY_API_KEY"] = geo_key
 
-    #UPLOAD_FOLDER = '/Users/chhao/flaskTutorial/flaskr/static'
+    #Configure upload folder path
     UPLOAD_FOLDER = '/home/chliu/flask_rephoto/flaskr/static'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 

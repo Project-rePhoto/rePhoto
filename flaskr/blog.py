@@ -10,14 +10,14 @@ from flaskr.auth import login_required
 from flaskr.db import get_db
 from flask import send_from_directory
 #Google Maps API
-#from flask_googlemaps import GoogleMaps, Map
+from flask_googlemaps import GoogleMaps, Map
 #import Geocoder
-#from flask_simple_geoip import SimpleGeoIP
+from flask_simple_geoip import SimpleGeoIP
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 #Intialize GeoIP extension
-#simple_geoip = SimpleGeoIP(app)
+simple_geoip = SimpleGeoIP(app)
 
 bp = Blueprint('blog', __name__)
 
@@ -25,10 +25,10 @@ def allowed_file(filename):
     return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-#def getGeoIP():
+def getGeoIP():
     #retrieve geoip data for the given requester
-#    geoip_data = simple_geopip.get_geoip_data()
-#    return jsonify(geoip_data)
+    geoip_data = simple_geopip.get_geoip_data()
+    return jsonify(geoip_data)
 
 #@bp.route('/setMap', methods=('GET', 'POST'))
 #@login_required
