@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Project Location{% endblock %}</h1>
+  <style>#mymap { height: 100%; width: 100%; }</style>
+{% endblock %}
+
+{% block content %}
+  <body>
+    {{mymap.html}}{{mymap.js}}
+  </body>
+{% endblock %}

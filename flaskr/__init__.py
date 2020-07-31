@@ -7,6 +7,8 @@ from flask_googlemaps import Map
 #import Geocoder
 from flask_simple_geoip import SimpleGeoIP
 
+simple_geoip = '';
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
@@ -20,6 +22,9 @@ def create_app(test_config=None):
     geo_key = 'your_key'
     #Initialize SimpleGeoIP extension
     app.config["GEOIPIFY_API_KEY"] = geo_key
+
+    global simple_geoip
+    simple_geoip = SimpleGeoIP(app)
 
     #Configure upload folder path
     UPLOAD_FOLDER = '/home/chliu/flask_rephoto/flaskr/static'

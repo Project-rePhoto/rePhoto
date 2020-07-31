@@ -13,11 +13,10 @@ from flask import send_from_directory
 from flask_googlemaps import GoogleMaps, Map
 #import Geocoder
 from flask_simple_geoip import SimpleGeoIP
+from flaskr import simple_geoip
+import json
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-#Intialize GeoIP extension
-simple_geoip = SimpleGeoIP(app)
 
 bp = Blueprint('blog', __name__)
 
@@ -27,32 +26,32 @@ def allowed_file(filename):
 
 def getGeoIP():
     #retrieve geoip data for the given requester
-    geoip_data = simple_geopip.get_geoip_data()
-    return jsonify(geoip_data)
+    geoip_data = simple_geoip.get_geoip_data()
+    #return jsonify(geoip_data)
+    return geoip_data
 
-#@bp.route('/setMap', methods=('GET', 'POST'))
-#@login_required
-#def setMap():
+@bp.route('/setMap', methods=('GET', 'POST'))
+@login_required
+def setMap():
     #retrieve the location
-#    mapJson = getGeoIP()
-#    user_location = (mapJson['location']['lat'], mapJson['location']['lon'])
+    mapJson = getGeoIP()
 
-#    mymap = Map(
-#        identifier = "view-side",
-#        lat = user_location[0],
-#        lon = user_location[1],
-#        zoom = 15,
-#        markers=[
-#            {
-#                'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-#                'lat': user_location[0],
-#                'lon': user_location[1],
-#                'infobox': "<b>My Position</b>"
-#            }
-#        ]    
-#    )
-    
-#    return render_template('blog/gmap.html', mymap=mymap)
+    mymap = Map(
+        identifier = "view-side",
+        lat = mapJson['location']['lat'],
+        lng = mapJson['location']['lng'],
+        zoom = 15,
+        markers=[
+            {
+                'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+                'lat': mapJson['location']['lat'],
+                'lng': mapJson['location']['lng'],
+                'infobox': "<b>My Position</b>"
+            }
+        ]
+    )
+
+    return render_template('blog/mymap.html', mymap=mymap)
 
 @bp.route('/')
 def index():
@@ -93,7 +92,7 @@ def create():
                 error += 'No selected file. '
 
             # proceed if file is selected
-            if not error:    
+            if not error:
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                 else:
@@ -116,7 +115,7 @@ def create():
                 )
             db.commit()
             return redirect(url_for('blog.index'))
-		
+
     return render_template('blog/create.html')
 
 def get_post(id, check_author=True):
