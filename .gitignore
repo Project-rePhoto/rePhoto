@@ -1,0 +1,9 @@
+#Ignore database instance
+/instance/flaskr.sqlite
+
+#Ignore everything in myImgs except README
+/flaskr/static/myImgs/*
+!/flaskr/static/myImgs/README.txt
+
+#Exclude pycache
+/flaskr/__pycache__/*
