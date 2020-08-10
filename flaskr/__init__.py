@@ -6,6 +6,7 @@ from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 #import Geocoder
 from flask_simple_geoip import SimpleGeoIP
+from .config import map_key, geo_key
 
 simple_geoip = '';
 
@@ -13,13 +14,9 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    #Google Maps API KEY
-    map_key = 'your_key'
     #Initialize Google Maps extension
     GoogleMaps(app, key=map_key)
 
-    #geoip API key
-    geo_key = 'your_key'
     #Initialize SimpleGeoIP extension
     app.config["GEOIPIFY_API_KEY"] = geo_key
 
