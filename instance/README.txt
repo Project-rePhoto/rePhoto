@@ -1,1 +1,1 @@
-Database instance will be created in this folder
+Database instance will be created in this folder. This is a placeholder.
