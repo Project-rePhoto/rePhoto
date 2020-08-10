@@ -14,12 +14,12 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
     #Google Maps API KEY
-    map_key = 'AIzaSyD9Fjwz6Qp1UzoKbPfjz1Q1lumfGUA1kyo'
+    map_key = 'your_key'
     #Initialize Google Maps extension
     GoogleMaps(app, key=map_key)
 
     #geoip API key
-    geo_key = 'at_ZWBYLzwBQx7uClQFX6IOlqLPPbsDm'
+    geo_key = 'your_key'
     #Initialize SimpleGeoIP extension
     app.config["GEOIPIFY_API_KEY"] = geo_key
 
