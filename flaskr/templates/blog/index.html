@@ -6,28 +6,33 @@
   </style>
 
   <h1>{% block title %}Collections{% endblock %}</h1>
-  {% if g.user %}
-    <a class="action" href="{{ url_for('blog.create') }}">New</a>
-  {% endif %}
 {% endblock %}
 
+{% set pic = 'imgs/slideImg.jpg' %}
+
 {% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
   {% for post in posts %}
     <article class="post">
       <header>
-        <div>
-          <h1>{{ post['title'] }}</h1>
-          <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
-        </div>
-        {% if g.user['id'] == post['author_id'] %}
-          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
-        {% endif %}
-      </header>
-      <p class="body">{{ post['body'] }}</p>
-      <body>
-        <img src="/static/{{ post['imgFile'] }}" alt="User Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">
+        <div class="post-preview">
+          <h2 class="post-title">{{ post['title'] }}</h2>
 
-        <h2>Album Slideshow</h2>
+          {% if g.user['id'] == post['author_id'] %}
+            <p class="post-meta" style="display:inline;">
+                Posted by <a href="#">{{ post['username'] }}</a> on {{ post['created'].strftime('%Y-%m-%d') }}
+            </p>
+            <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+          {% else %}
+            <p class="post-meta">Posted by <a href="#">{{ post['username'] }}</a> on {{ post['created'].strftime('%Y-%m-%d') }}</p>
+          {% endif %}
+        </div>
+      </header>
+      <!--<p class="body">{{ post['body'] }}</p>-->
+      <body>
+        <!--<img src="/static/{{ post['imgFile'] }}" alt="User Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">-->
 
         <div>
           {% for img in imgs %}
@@ -68,4 +73,7 @@
       <hr>
     {% endif %}
   {% endfor %}
+      </div>
+    </div>
+  </div>
 {% endblock %}

@@ -17,6 +17,8 @@ CREATE TABLE post (
   imgFile TEXT NOT NULL,
   wd TEXT NOT NULL,
   ht TEXT NOT NULL,
+  lat DOUBLE,
+  lng DOUBLE,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
@@ -25,6 +27,6 @@ CREATE TABLE album (
   image TEXT NOT NULL,
   width TEXT NOT NULL,
   height TEXT NOT NULL,
-  FOREIGN KEY (userID) REFERENCES user (id),
+  FOREIGN KEY (userID) REFERENCES post (id),
   PRIMARY KEY (userID, image)
 );

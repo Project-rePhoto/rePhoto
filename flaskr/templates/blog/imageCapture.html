@@ -4,77 +4,54 @@
   <h1>{% block title %}Image Capture{% endblock %}</h1>
 {% endblock %}
 
-{% block content %}
-<!--
-    <video style="position: absolute; top: 50; left: 50;" id="vid" autoplay playsinline></video>
-    <img style="opacity: 0.4; position: absolute; top: 50; left: 50;" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="200" height="200">
-    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
--->
-<!--
-  <ul style="position:relative;">
-    <li style="position:absolute; top:0; left:0;"><video style="position: relative; left: 50%; transform: translateX(-50%);" id="vid" autoplay playsinline></video></li>
-    <li style="position:absolute; top:0; left:0;"><img style="opacity: 0.4; position: relative; left: 50%; transform: translateX(-50%);" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}"></li>
-  </ul>
--->
+{% if post != 0 %}
+  {% set pic = post['imgFile'] %}
+{% else %}
+  {% set pic = 'imgs/slideImg.jpg' %}
+{% endif %}
 
-  <div style="position:relative; align-items: center; display: flex; justify-content: center; margin: auto;">
-    <video style="position: absolute; top: 0; left: 0; transform: translate(-50%, -50%);" id="vid" autoplay playsinline></video>
-    <img style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translate(-50%, -50%);" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">
+{% block content %}
+<article>
+ <div class="container">
+  <div class="row">
+   <div class="col-lg-8 col-md-10 mx-auto" style="position: relative; display: flex; flex-direction: column;">
+
+  <div id="parent" style="position:relative; align-items: center; justify-content: center; margin: auto; height:700px;">
+    <video class="children" style="position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="vid" autoplay playsinline></video>
+    {% if post != 0 %}
+      <img class="children" style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="overlay" src="/static/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">
+    {% else %}
+      <img class="children" style="display:none;" id="overlay" src="/static/imgs/default.png" alt="Cover Image" width="200" height="200">
+    {% endif %}
   </div>
 
-  <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
+  {% if post != 0 %}
+    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
+    <input type="hidden" id="redirect" name="redirect" value="{{ post['id'] }}">
+  {% else %}
+    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=0) }}">
+    <input type="hidden" id="redirect" name="redirect" value="0">
+  {% endif %}
 
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
   <div>
-    <div id="take"><button id="takePic">Take Picture</button></div>
-    <div id="uploadPic">
+    <div id="take" style="text-align:center;"><button id="takePic">Take Picture</button></div>
+    <div id="uploadPic" style="text-align:center;">
       <input type="text" placeholder="Picture Title" id="picName">
       <button id="upload">Upload Picture</button>
     </div>
   </div>
+
+    </div>
+   </div>
+ </div>
+</article>
+
     <script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.min.js') }}"></script>
     <script>
       //Temporarily hide upload button
       document.getElementById("uploadPic").style.display = "none";
+      //overlay styling
+      var oStyle = "";
 
       //Access media devices and capture image
       navigator.mediaDevices.getUserMedia({
@@ -87,6 +64,17 @@
           //this.height = overlay.height = this.videoHeight;
           this.width = this.videoWidth;
           this.height = this.videoHeight;
+
+          var parent = document.getElementById('parent');
+          var v = document.getElementById('vid');
+          var o = document.getElementById('overlay');
+          var pheight = parent.clientHeight;
+          var vtrans = pheight * 50/100 - this.height/2;
+          var otrans = pheight * 50/100 - o.height/2;
+          v.style.transform = "translate(-50%, " + String(vtrans) + "px)";
+          o.style.transform = "translate(-50%, " + String(otrans) + "px)";
+          //Save style to be updated later with overlay
+          oStyle = "opacity: 1; position: absolute; top: 0; left: 0; transform: translate(-50%, " + String(vtrans) + "px);";
         }
         window.stream = stream;
         vid.srcObject = stream;
@@ -115,7 +103,7 @@
 
         //Change overlay image
         overlay.src = url;
-        overlay.style = "opacity: 1; position: absolute; top: 50; left: 50;";
+        overlay.style = oStyle;
         overlay.width = vid.videoWidth;
         overlay.height = vid.videoHeight;
 
@@ -139,7 +127,11 @@
             contentType: false,
             cache: false,
             success: function(){
-              window.location.href = "https://chliu.pythonanywhere.com/";
+              if (document.getElementById('redirect').value != 0){
+                window.location.href = "https://chliu.pythonanywhere.com/" + document.getElementById('redirect').value + "/update";
+              }else{
+                window.location.href = "https://chliu.pythonanywhere.com/create";
+              }
             }
           });
         };
@@ -149,6 +141,4 @@
         vid.parentNode.removeChild(vid);
       }
     </script>
-
-
 {% endblock %}

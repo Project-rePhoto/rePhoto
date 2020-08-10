@@ -5,8 +5,10 @@
   <style>#mymap { height: 100%; width: 100%; }</style>
 {% endblock %}
 
+{% set pic = 'imgs/slideImg.jpg' %}
+
 {% block content %}
-  <body>
+  <div style="height:700px;">
     {{mymap.html}}{{mymap.js}}
-  </body>
+  </div>
 {% endblock %}
