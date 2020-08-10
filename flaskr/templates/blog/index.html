@@ -32,12 +32,12 @@
       </header>
       <!--<p class="body">{{ post['body'] }}</p>-->
       <body>
-        <!--<img src="/static/{{ post['imgFile'] }}" alt="User Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">-->
+        <!--<img src="/static/myImgs/{{ post['imgFile'] }}" alt="User Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">-->
 
         <div>
           {% for img in imgs %}
             {% if post['id'] == img['userID'] %}
-              <img class="{{ post['id'] }}" style="display:none;" src="/static/{{ img['image'] }}" alt="User Image" width="{{ img['width'] }}" height="{{ img['height'] }}">
+              <img class="{{ post['id'] }}" style="display:none;" src="/static/myImgs/{{ img['image'] }}" alt="User Image" width="{{ img['width'] }}" height="{{ img['height'] }}">
             {% endif %}
           {% endfor %}
           <button id="F{{ post['id'] }}">&#10094;</button>

@@ -21,7 +21,7 @@
         <textarea class="form-control" style="height: 200px;" name="body" id="body">{{ request.form['body'] }}</textarea>
         <hr>
 
-        <img id="myPic" src="/static/{{ post['image'] }}" alt="Cover Image" width="{{ post['width'] }}" height="{{ post['height'] }}">
+        <img id="myPic" src="/static/myImgs/{{ post['image'] }}" alt="Cover Image" width="{{ post['width'] }}" height="{{ post['height'] }}">
         <input type="hidden" name="lat" id="lat" value="none">
         <input type="hidden" name="lng" id="lng" value="none">
         <input type="hidden" name="width" id="width" value="{{ post['width'] }}">

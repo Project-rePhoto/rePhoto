@@ -24,7 +24,7 @@ def create_app(test_config=None):
     simple_geoip = SimpleGeoIP(app)
 
     #Configure upload folder path
-    UPLOAD_FOLDER = '/home/chliu/flask_rephoto/flaskr/static'
+    UPLOAD_FOLDER = '/home/chliu/flask_rephoto/flaskr/static/myImgs'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     app.config.from_mapping(

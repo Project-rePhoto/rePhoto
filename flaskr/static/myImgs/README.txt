@@ -1,0 +1,1 @@
+Pictures stored in this directory.

@@ -52,7 +52,7 @@ def setMap(id):
             marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                       'lat': row[4],
                       'lng': row[5],
-                      'infobox': "<img src='/static/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"</b>"}
+                      'infobox': "<img src='/static/myImgs/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"</b>"}
             mapList.append(marker)
         # Assign blue marker indicating position of current project
         else:
