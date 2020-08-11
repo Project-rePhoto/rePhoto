@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}About{% endblock %}</h1>
+{% endblock %}
+
+{% set pic = 'imgs/slideImg.jpg' %}
+
+{% block content %}
+<article>
+ <div class="container">
+  <div class="row">
+   <div class="col-lg-8 col-md-10 mx-auto">
+       <h1>Research</h1>
+      <p>rePhoto is part of the ImageQuest project, dedicated to developing and distributing tools to support Citizen Science projects that require high quality more quantitative measurements. If you are interested in how rePhoto might benefit your research, or want to get a rePhoto project set up, please contact us at projectrePhoto@cse.wustl.edu. We will get you, your team and our growing army of Citizen Scientists working on your project right away.</p>
+
+      <h1>Project Leadership</h1>
+      <li>Jarlath O'Neil-Dunne (Forestry, Remote Sensing, and Urban Tree Canopy Assessments)</li>
+      <li>Robert Pless (Computer Vision, Sensor Calibration)</li>
+      <li>Ruth West (Visualization, Interaction Design, MobileAR)</li>
+      <li>Abby Stylianou (Computer Vision, Development, Project Coordination)</li>
+      <p>App development has been done, in various stages and across various platforms, by Patrick McBryde, Jim Tucek, Daniel Gordon, Chris Hawley, Brandon Kerr, Jamie Spacco, Shane Carr and William Forrester.</p>
+      <h1>FAQs</h1>
+
+      <h4>I'm having a hard time lining the picture up exactly, what gives?</h4>
+
+          <p>Lining up a picture exactly takes a steady hand and patience - there are <a href="https://en.wikipedia.org/wiki/Six_degrees_of_freedom">6 degrees of freedom</a> that you need to simultaneously adjust for while trying to take the picture. Also, the original photo may have been taken with a camera with a different focal length or aspect ratio, eg with a fish-eye lens or a telephoto lens. In these cases, it may be impossible to line everything up perfectly, though some post-processing with you favorite image editing software may help.</p>
+
+
+      <h4>The app isn't finding any projects, is it broken?</h4>
+
+          <p>Our initial set of projects is limited as we are still in the early phases of the project. In the meantime, you are still welcome to use the Personal rePhoto feature on images in your own photo album.</p>
+
+
+      <h4>What sort of rights do I have with regards to the pictures that are submitted to Project rePhoto?</h4>
+
+          <p>All submissions to Project RePhoto are granted a <a href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons, Attribution Noncommercial license</a>.</p>
+          <p>Participation in Project RePhoto is entirely voluntary, and the Personal RePhoto features require no data transmission or participation.</p>
+
+
+      <h4>I'm a scientist too, how can I get involved?</h4>
+
+          <p>If you are a scientist who could make use of data captured through Project rePhoto, please e-mail us at: projectRePhoto@cse.wustl.edu</p>
+
+    </div>
+   </div>
+ </div>
+</article>
+{% endblock %}

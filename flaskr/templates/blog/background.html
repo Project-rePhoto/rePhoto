@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Background Information{% endblock %}</h1>
+{% endblock %}
+
+{% set pic = 'imgs/slideImg.jpg' %}
+
+{% block content %}
+<article>
+ <div class="container">
+  <div class="row">
+   <div class="col-lg-8 col-md-10 mx-auto">
+       <h1>What is rePhoto?</h1>
+      <p>Taking a picture that exactly aligns with a previous photo.</p>
+      <p>rePhoto is a website that makes this easier, so you (or a group!) can align and take many pictures of a place or an object. These pictures are a visual record of change -- pictures of trees or streams or beaches over time are useful to measure the effects of erosion and climate change; pictures of home improvement projects (or even yourself) can serve as a visual timeline of events.</p>
+      <br/>
+      <h1>How can I get involved?</h1>
+      <p>Use rePhoto today to create your projects or find nearby projects and contribute! Help rePhoto make a public source of imagery that more accurately contributes to tasks such as measuring tree growth, snow depth, or stream erosion. We are excited, and funded, to support the use of rePhoto in any scientific discipline and welcome inquiries about setting up a project or integrating rePhoto within existing Citizen Science initiatives.</p>
+    </div>
+   </div>
+ </div>
+</article>
+{% endblock %}

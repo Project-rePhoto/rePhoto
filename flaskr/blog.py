@@ -147,57 +147,6 @@ def create():
 
             return redirect(url_for('blog.index'))
 
-        """
-         # check if the post request has the file part
-        if 'file' not in request.files:
-            error += 'No file part. '
-
-         # proceed if file not empty
-        if not error:
-            file = request.files['file']
-
-            # if user does not select file, browser also
-            # submit an empty part without filename
-            if file.filename == '':
-                error += 'No selected file. '
-
-            # proceed if file is selected
-            if not error:
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                else:
-                	error += 'File type is not allowed. '
-
-        if not title:
-            error += 'Title is required.'
-
-        if error:
-            flash(error)
-        else:
-            # save file
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-            # save project location
-            # mapJson = getGeoIP()
-            # mapJson['location']['lat']
-            # mapJson['location']['lng']
-
-            db = get_db()
-            if request.form['lat'] != 'none':
-                db.execute(
-                    'INSERT INTO post (title, body, author_id, imgFile, wd, ht, lat, lng)'
-                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                    (title, body, g.user['id'], filename, request.form['width'], request.form['height'], request.form['lat'], request.form['lng'])
-                    )
-            else:
-                db.execute(
-                    'INSERT INTO post (title, body, author_id, imgFile, wd, ht)'
-                    ' VALUES (?, ?, ?, ?, ?, ?)',
-                    (title, body, g.user['id'], filename, request.form['width'], request.form['height'])
-                    )
-            db.commit()
-            return redirect(url_for('blog.index'))
-        """
     return render_template('blog/create.html', post=post)
 
 def get_post(id, check_author=True):
@@ -267,56 +216,16 @@ def update(id):
 
     return render_template('blog/update.html', post=post)
 
-@bp.route('/<int:id>/saveToAlbum', methods=('GET', 'POST'))
-@login_required
-def saveToAlbum(id):
-    if request.method == 'POST':
-        filename = ''
-        error = ''
-
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            error += 'No file part. '
-
-         # proceed if file not empty
-        if not error:
-            file = request.files['file']
-
-            # if user does not select file, browser also
-            # submit an empty part without filename
-            if file.filename == '':
-                error += 'No selected file. '
-
-            # proceed if file is selected
-            if not error:
-                if file and allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                else:
-                    error += 'File type is not allowed.'
-
-        # If file is real, upload and save to DB
-        if not error:
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            db = get_db()
-
-            db.execute(
-                'INSERT INTO album (userID, image)'
-                ' VALUES (?, ?)',
-                (id, filename)
-                )
-            db.commit()
-
-            flash('Album Successfully Updated!')
-        else:
-            flash(error)
-
-    return redirect(url_for('blog.update', id=id))
-
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
     get_post(id)
+    # Acquire database
     db = get_db()
+    # Delete all instances from the album
+    db.execute('DELETE FROM album WHERE userID = ?', (id,))
+    db.commit()
+    # Delete post itself
     db.execute('DELETE FROM post WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('blog.index'))
@@ -385,3 +294,11 @@ def imageCapture(id):
             flash(error)
 
     return render_template('blog/imageCapture.html', post=post)
+
+@bp.route('/background')
+def background():
+    return render_template('blog/background.html')
+
+@bp.route('/about')
+def about():
+    return render_template('blog/about.html')
