@@ -97,8 +97,7 @@ def create():
     post = get_db().execute(
         'SELECT image, width, height'
         ' FROM album'
-        ' WHERE userID = ?',
-        (0,)
+        ' WHERE userID = 0'
     ).fetchone()
 
     if request.method == 'POST':
@@ -133,16 +132,12 @@ def create():
             #Acquire latest insert id
             insertID = db.execute('SELECT last_insert_rowid()').fetchone()
 
-            #Delete temporary tuple from album table
-            db.execute('DELETE FROM album WHERE userID = 0')
-            db.commit()
-
-            #Insert new album with set ID
+            #Update new userID in position 0
             db.execute(
-                'INSERT INTO album (userID, image, width, height)'
-                ' VALUES (?, ?, ?, ?)',
-                (insertID[0], filename, request.form['width'], request.form['height'])
-                )
+                'UPDATE album SET userID = ?'
+                ' WHERE userID = 0',
+                (insertID[0],)
+            )
             db.commit()
 
             return redirect(url_for('blog.index'))
@@ -268,6 +263,7 @@ def imageCapture(id):
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             db = get_db()
 
+            # If not new project, update existing project
             if id != 0:
                 db.execute(
                     'UPDATE post SET imgFile = ?, wd = ?, ht = ?'
@@ -282,7 +278,12 @@ def imageCapture(id):
                     (id, filename, request.form['width'], request.form['height'])
                 )
                 db.commit()
+            # If new project, temporarily store picture with id 0
             else:
+                #Clear previous just in case
+                db.execute('DELETE FROM album WHERE userID = ?', (0,))
+                db.commit()
+                #Temporarily store picture in album userID position 0
                 db.execute(
                     'INSERT INTO album (userID, image, width, height)'
                     ' VALUES (?, ?, ?, ?)',

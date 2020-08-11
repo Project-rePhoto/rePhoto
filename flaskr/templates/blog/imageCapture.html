@@ -35,6 +35,7 @@
 
   <div>
     <div id="take" style="text-align:center;"><button id="takePic">Take Picture</button></div>
+    <div id="flip" style="text-align:center;"><button id="flipCam">Change Camera</button></div>
     <div id="uploadPic" style="text-align:center;">
       <input type="text" placeholder="Picture Title" id="picName">
       <button id="upload">Upload Picture</button>
@@ -50,52 +51,78 @@
     <script>
       //Temporarily hide upload button
       document.getElementById("uploadPic").style.display = "none";
-      //overlay styling
+
+      //Flip camera
+      let flipBtn = document.querySelector('#flipCam');
+
+      //Initialize stream variables
       var oStyle = "";
+      let _stream = null;
+      let shouldFaceUser = true;
+      let defaults = { audio: false, video: true };
 
-      //Access media devices and capture image
-      navigator.mediaDevices.getUserMedia({
-        video: true
-      })
-      .then(function(stream){
-        //Set dimensions
-        vid.onloadedmetadata = function() {
-          //this.width = overlay.width = this.videoWidth;
-          //this.height = overlay.height = this.videoHeight;
-          this.width = this.videoWidth;
-          this.height = this.videoHeight;
+      function capture(){
+          defaults.video = { facingMode: shouldFaceUser ? 'user' : 'environment' }
+          //Access media devices and capture image
+          // {video:true}
+          navigator.mediaDevices.getUserMedia(defaults)
+          .then(function(stream){
+            _stream = stream;
+            //Set dimensions
+            vid.onloadedmetadata = function() {
+              //this.width = overlay.width = this.videoWidth;
+              //this.height = overlay.height = this.videoHeight;
+              this.width = this.videoWidth;
+              this.height = this.videoHeight;
 
-          var parent = document.getElementById('parent');
-          var v = document.getElementById('vid');
-          var o = document.getElementById('overlay');
-          var pheight = parent.clientHeight;
-          var vtrans = pheight * 50/100 - this.height/2;
-          var otrans = pheight * 50/100 - o.height/2;
-          v.style.transform = "translate(-50%, " + String(vtrans) + "px)";
-          o.style.transform = "translate(-50%, " + String(otrans) + "px)";
-          //Save style to be updated later with overlay
-          oStyle = "opacity: 1; position: absolute; top: 0; left: 0; transform: translate(-50%, " + String(vtrans) + "px);";
-        }
-        window.stream = stream;
-        vid.srcObject = stream;
+              var parent = document.getElementById('parent');
+              var v = document.getElementById('vid');
+              var o = document.getElementById('overlay');
+              var pheight = parent.clientHeight;
+              var vtrans = pheight * 50/100 - this.height/2;
+              var otrans = pheight * 50/100 - o.height/2;
+              v.style.transform = "translate(-50%, " + String(vtrans) + "px)";
+              o.style.transform = "translate(-50%, " + String(otrans) + "px)";
+              //Save style to be updated later with overlay
+              oStyle = "opacity: 1; position: absolute; top: 0; left: 0; transform: translate(-50%, " + String(vtrans) + "px);";
+            }
+            window.stream = stream;
+            vid.srcObject = stream;
 
-        document.getElementById("takePic").onclick = function() {
-          //show upload button and hide take button
-          document.getElementById("uploadPic").style.display = "block";
-          document.getElementById("take").style.display = "none";
+            document.getElementById("takePic").onclick = function() {
+              //show upload button and hide take button
+              document.getElementById("uploadPic").style.display = "block";
+              document.getElementById("take").style.display = "none";
+              document.getElementById("flip").style.display = "none";
 
-          //Create canvas and take picture
-          var c = document.createElement('canvas');
-          c.width = vid.videoWidth;
-          c.height = vid.videoHeight;
-          c.getContext('2d').drawImage(vid, 0, 0);
-          c.toBlob(capturedImage, 'image/png');
-        };
-      })
-      .catch(function(err){
-        // Handle the error
-        console.error(err);
-      });
+              //Create canvas and take picture
+              var c = document.createElement('canvas');
+              c.width = vid.videoWidth;
+              c.height = vid.videoHeight;
+              c.getContext('2d').drawImage(vid, 0, 0);
+              c.toBlob(capturedImage, 'image/png');
+            };
+          })
+          .catch(function(err){
+            // Handle the error
+            console.error(err);
+          });
+      }
+
+      // Change camera view
+      flipBtn.addEventListener('click', function(){
+          if( _stream == null ) return
+          // we need to flip, stop everything
+          stream.getTracks().forEach(t => {
+            t.stop();
+          });
+          // toggle / flip
+          shouldFaceUser = !shouldFaceUser;
+          capture();
+        })
+
+      // enable video stream + overlay.
+      capture();
 
       function capturedImage(blob){
         // creates DOMString containing a URL representing the object
