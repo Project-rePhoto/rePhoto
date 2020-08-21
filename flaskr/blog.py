@@ -14,6 +14,7 @@ from flask_googlemaps import GoogleMaps, Map
 #import Geocoder
 from flask_simple_geoip import SimpleGeoIP
 from flaskr import simple_geoip
+from datetime import datetime
 import json
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -30,7 +31,6 @@ def getGeoIP():
     return geoip_data
 
 @bp.route('/<int:id>/setMap', methods=('GET', 'POST'))
-@login_required
 def setMap(id):
     mapList = []
     latitude = 0
@@ -38,12 +38,15 @@ def setMap(id):
 
     # Acquire database
     db = get_db()
-    posts = db.execute(
+
+    curs = db.cursor()
+    curs.execute(
         'SELECT p.id, username, title, imgFile, lat, lng'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE lat IS NOT NULL AND lng IS NOT NULL'
         ' ORDER BY created DESC'
-    ).fetchall()
+    )
+    posts = curs.fetchall()
 
     # Parse query returns
     for row in posts:
@@ -78,27 +81,34 @@ def setMap(id):
 @bp.route('/')
 def index():
     db = get_db()
-    posts = db.execute(
+    curs = db.cursor()
+    curs.execute(
         'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht'
         ' FROM post p JOIN user u ON p.author_id = u.id'
+        ' WHERE p.id != 1'
         ' ORDER BY created DESC'
-    ).fetchall()
+    )
+    posts = curs.fetchall()
 
-    imgs = db.execute(
+    curs.execute(
         'SELECT image, userID, width, height'
         ' FROM album'
-    ).fetchall()
+    )
+    imgs = curs.fetchall()
 
     return render_template('blog/index.html', posts=posts, imgs=imgs)
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
-    post = get_db().execute(
+    db = get_db()
+    curs = db.cursor()
+    curs.execute(
         'SELECT image, width, height'
         ' FROM album'
-        ' WHERE userID = 0'
-    ).fetchone()
+        ' WHERE userID = 1'
+    )
+    post = curs.fetchone()
 
     if request.method == 'POST':
         title = request.form['title']
@@ -116,26 +126,27 @@ def create():
             #File is already saved. Add tuple to database
             db = get_db()
             if request.form['lat'] != 'none':
-                db.execute(
+                curs.execute(
                     'INSERT INTO post (title, body, author_id, imgFile, wd, ht, lat, lng)'
-                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                    (title, body, g.user['id'], filename, request.form['width'], request.form['height'], request.form['lat'], request.form['lng'])
+                    ' VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                    (title, body, g.user[0], filename, request.form['width'], request.form['height'], request.form['lat'], request.form['lng'])
                     )
             else:
-                db.execute(
+                curs.execute(
                     'INSERT INTO post (title, body, author_id, imgFile, wd, ht)'
-                    ' VALUES (?, ?, ?, ?, ?, ?)',
-                    (title, body, g.user['id'], filename, request.form['width'], request.form['height'])
+                    ' VALUES (%s, %s, %s, %s, %s, %s)',
+                    (title, body, g.user[0], filename, request.form['width'], request.form['height'])
                     )
             db.commit()
 
             #Acquire latest insert id
-            insertID = db.execute('SELECT last_insert_rowid()').fetchone()
+            curs.execute('SELECT LAST_INSERT_ID()')
+            insertID = curs.fetchone()
 
             #Update new userID in position 0
-            db.execute(
-                'UPDATE album SET userID = ?'
-                ' WHERE userID = 0',
+            curs.execute(
+                'UPDATE album SET userID = %s'
+                ' WHERE userID = 1',
                 (insertID[0],)
             )
             db.commit()
@@ -145,17 +156,20 @@ def create():
     return render_template('blog/create.html', post=post)
 
 def get_post(id, check_author=True):
-    post = get_db().execute(
+    db = get_db()
+    curs = db.cursor()
+    curs.execute(
         'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht'
         ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id = ?',
+        ' WHERE p.id = %s',
         (id,)
-    ).fetchone()
+    )
+    post = curs.fetchone()
 
     if post is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
 
-    if check_author and post['author_id'] != g.user['id']:
+    if check_author and post[4] != g.user[0]:
         abort(403)
 
     return post
@@ -190,19 +204,20 @@ def update(id):
             flash(error)
         else:
             db = get_db()
+            curs = db.cursor()
 
             # If file is real, upload and save to DB
             if changeFile:
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                db.execute(
-                    'UPDATE post SET title = ?, body = ?, imgFile = ?, wd = ?, ht = ?'
-                    ' WHERE id = ?',
+                curs.execute(
+                    'UPDATE post SET title = %s, body = %s, imgFile = %s, wd = %s, ht = %s'
+                    ' WHERE id = %s',
                     (title, body, filename, request.form['width'], request.form['height'], id)
                 )
             else:
-                db.execute(
-                    'UPDATE post SET title = ?, body = ?'
-                    ' WHERE id = ?',
+                curs.execute(
+                    'UPDATE post SET title = %s, body = %s'
+                    ' WHERE id = %s',
                     (title, body, id)
                 )
 
@@ -217,11 +232,12 @@ def delete(id):
     get_post(id)
     # Acquire database
     db = get_db()
+    curs = db.cursor()
     # Delete all instances from the album
-    db.execute('DELETE FROM album WHERE userID = ?', (id,))
+    curs.execute('DELETE FROM album WHERE userID = %s', (id,))
     db.commit()
     # Delete post itself
-    db.execute('DELETE FROM post WHERE id = ?', (id,))
+    curs.execute('DELETE FROM post WHERE id = %s', (id,))
     db.commit()
     return redirect(url_for('blog.index'))
 
@@ -229,9 +245,9 @@ def delete(id):
 @login_required
 def imageCapture(id):
     # Create New Post temp ID
-    post = 0
+    post = 1
     # If updating a post
-    if id != 0:
+    if id != 1:
         post = get_post(id)
 
     if request.method == 'POST':
@@ -262,32 +278,33 @@ def imageCapture(id):
         if not error:
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             db = get_db()
+            curs = db.cursor()
 
             # If not new project, update existing project
-            if id != 0:
-                db.execute(
-                    'UPDATE post SET imgFile = ?, wd = ?, ht = ?'
-                    ' WHERE id = ?',
+            if id != 1:
+                curs.execute(
+                    'UPDATE post SET imgFile = %s, wd = %s, ht = %s'
+                    ' WHERE id = %s',
                     (filename, request.form['width'], request.form['height'], id)
                 )
                 db.commit()
 
-                db.execute(
-                    'INSERT INTO album (userID, image, width, height)'
-                    ' VALUES (?, ?, ?, ?)',
-                    (id, filename, request.form['width'], request.form['height'])
+                curs.execute(
+                    'INSERT INTO album (userID, image, width, height, timedate)'
+                    ' VALUES (%s, %s, %s, %s, %s)',
+                    (id, filename, request.form['width'], request.form['height'], datetime.now())
                 )
                 db.commit()
             # If new project, temporarily store picture with id 0
             else:
                 #Clear previous just in case
-                db.execute('DELETE FROM album WHERE userID = ?', (0,))
+                curs.execute('DELETE FROM album WHERE userID = 1')
                 db.commit()
-                #Temporarily store picture in album userID position 0
-                db.execute(
-                    'INSERT INTO album (userID, image, width, height)'
-                    ' VALUES (?, ?, ?, ?)',
-                    (id, filename, request.form['width'], request.form['height'])
+                #Temporarily store picture in album userID position 1
+                curs.execute(
+                    'INSERT INTO album (userID, image, width, height, timedate)'
+                    ' VALUES (%s, %s, %s, %s, %s)',
+                    (id, filename, request.form['width'], request.form['height'], datetime.now())
                 )
                 db.commit()
             flash('Album Successfully Updated!')
@@ -303,3 +320,21 @@ def background():
 @bp.route('/about')
 def about():
     return render_template('blog/about.html')
+
+@bp.route('/<int:id>/detail', methods=('GET', 'POST'))
+def detail(id):
+    # Get post data
+    post = get_post(id, False)
+
+    # Get imgs from album based on project id
+    db = get_db()
+    curs = db.cursor()
+    curs.execute(
+        'SELECT image, userID, width, height'
+        ' FROM album'
+        ' WHERE userID = %s',
+        (id,)
+    )
+    imgs = curs.fetchall()
+
+    return render_template('blog/detail.html', post=post, imgs=imgs)

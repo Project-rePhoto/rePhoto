@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{ post[1] }}{% endblock %}</h1>
+  <style>
+    img.center {
+        display: block;
+        margin: 0 auto;
+    }
+    button.display-left{
+        position:absolute;
+        top:50%;
+        left:0%;
+        transform:translate(0%,-50%);
+        -ms-transform:translate(-0%,-50%)}
+    button.display-right{
+        position:absolute;
+        top:50%;
+        right:0%;
+        transform:translate(0%,-50%);
+        -ms-transform:translate(0%,-50%)}
+    div.display-container{
+        position:relative;
+    }
+    button.custom{
+        border:none;
+        display:inline-block;
+        padding:8px 16px;
+        vertical-align:middle;
+        overflow:hidden;
+        text-decoration:none;
+        color:inherit;
+        background-color:inherit;
+        text-align:center;
+        cursor:pointer;
+        white-space:nowrap}
+    button.black:hover{
+        color:#fff;
+        background-color:#000}
+  </style>
+{% endblock %}
+
+{% set pic = 'myImgs/'+post[6] %}
+
+{% block content %}
+<article>
+ <div class="container">
+  <div class="row">
+   <div class="col-lg-8 col-md-10 mx-auto">
+        <h1 style="text-align:center;">Cover Photo</h1>
+
+        <div class="display-container">
+          <img style="display:block; margin:0 auto;" src="/static/myImgs/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+        </div>
+        <hr>
+        <div class="display-container">
+          {% for img in imgs %}
+            <img class="center" style="display:none;" src="/static/myImgs/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+          {% endfor %}
+          <button class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
+          <button class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
+        </div>
+        <hr>
+        <h3 style="text-align:center;">Body</h1>
+        <p>{{ post[2] }}</p>
+        <hr>
+        <script type="text/javascript">
+          var slideIndex = 1;
+          showDivs(slideIndex);
+
+          function plusDivs(n) {
+            showDivs(slideIndex += n);
+          }
+
+          function showDivs(n) {
+            var i;
+            var x = document.getElementsByClassName("center");
+            if (n > x.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = x.length}
+            for (i=0; i < x.length; i++){
+              x[i].style.display = "none";
+            }
+            x[slideIndex-1].style.display = "block";
+          }
+        </script>
+
+      <form style="display: inline;" action="{{ url_for('blog.setMap', id=post[0]) }}" method="post">
+        <div style="text-align:center;">
+          <input type="submit" value="View Map">
+        </div>
+      </form>
+
+    </div>
+   </div>
+ </div>
+</article>
+{% endblock %}

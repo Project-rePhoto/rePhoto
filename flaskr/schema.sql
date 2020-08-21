@@ -1,3 +1,4 @@
+/*
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS album;
@@ -19,6 +20,7 @@ CREATE TABLE post (
   ht TEXT NOT NULL,
   lat DOUBLE,
   lng DOUBLE,
+  tag varchar(255) DEFAULT 'General',
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
@@ -27,6 +29,56 @@ CREATE TABLE album (
   image TEXT NOT NULL,
   width TEXT NOT NULL,
   height TEXT NOT NULL,
+  takerID TEXT NOT NULL,
+  timedate DATETIME NOT NULL,
+  make varchar(255) DEFAULT '',
+  model varchar(255) DEFAULT '',
   FOREIGN KEY (userID) REFERENCES post (id),
   PRIMARY KEY (userID, image)
 );
+*/
+
+DROP TABLE IF EXISTS album;
+DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE user (
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(255) UNIQUE NOT NULL,
+  password TEXT NOT NULL
+);
+
+ALTER TABLE user AUTO_INCREMENT=2;
+
+CREATE TABLE post (
+  id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  author_id INTEGER NOT NULL,
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  title TEXT,
+  body TEXT,
+  imgFile TEXT,
+  wd TEXT,
+  ht TEXT,
+  lat DOUBLE,
+  lng DOUBLE,
+  tag varchar(255) DEFAULT 'General',
+  FOREIGN KEY (author_id) REFERENCES user (id)
+);
+
+ALTER TABLE post AUTO_INCREMENT=2;
+
+CREATE TABLE album (
+  userID INTEGER NOT NULL,
+  image VARCHAR(255) NOT NULL,
+  width TEXT NOT NULL,
+  height TEXT NOT NULL,
+  takerID TEXT NOT NULL,
+  timedate DATETIME NOT NULL,
+  make VARCHAR(255) DEFAULT '',
+  model VARCHAR(255) DEFAULT '',
+  FOREIGN KEY (userID) REFERENCES post (id),
+  PRIMARY KEY (userID, image)
+);
+
+INSERT INTO user (id, username, password) VALUES (1, 'admin', 'admin');
+INSERT INTO post (id, author_id) VALUES (1, 1);

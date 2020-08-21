@@ -6,7 +6,9 @@ from flask_googlemaps import GoogleMaps
 from flask_googlemaps import Map
 #import Geocoder
 from flask_simple_geoip import SimpleGeoIP
-from .config import map_key, geo_key
+from .config import map_key, geo_key, username, password, database, host
+#Import MySQL database
+from flaskext.mysql import MySQL
 
 simple_geoip = '';
 
@@ -27,9 +29,14 @@ def create_app(test_config=None):
     UPLOAD_FOLDER = '/home/chliu/flask_rephoto/flaskr/static/myImgs'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+    #MySQL connection
+    app.config['MYSQL_DATABASE_USER'] = username
+    app.config['MYSQL_DATABASE_PASSWORD'] = password
+    app.config['MYSQL_DATABASE_DB'] = database
+    app.config['MYSQL_DATABASE_HOST'] = host
+
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
 
     if test_config is None:

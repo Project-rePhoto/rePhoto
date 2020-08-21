@@ -4,8 +4,8 @@
   <h1>{% block title %}Image Capture{% endblock %}</h1>
 {% endblock %}
 
-{% if post != 0 %}
-  {% set pic = 'myImgs/' + post['imgFile'] %}
+{% if post != 1 %}
+  {% set pic = 'myImgs/' + post[6] %}
 {% else %}
   {% set pic = 'imgs/slideImg.jpg' %}
 {% endif %}
@@ -18,19 +18,19 @@
 
   <div id="parent" style="position:relative; align-items: center; justify-content: center; margin: auto; height:700px;">
     <video class="children" style="position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="vid" autoplay playsinline></video>
-    {% if post != 0 %}
-      <img class="children" style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="overlay" src="/static/myImgs/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">
+    {% if post != 1 %}
+      <img class="children" style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="overlay" src="/static/myImgs/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
     {% else %}
       <img class="children" style="display:none;" id="overlay" src="/static/imgs/default.png" alt="Cover Image" width="200" height="200">
     {% endif %}
   </div>
 
-  {% if post != 0 %}
-    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post['id']) }}">
-    <input type="hidden" id="redirect" name="redirect" value="{{ post['id'] }}">
+  {% if post != 1 %}
+    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post[0]) }}">
+    <input type="hidden" id="redirect" name="redirect" value="{{ post[0] }}">
   {% else %}
-    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=0) }}">
-    <input type="hidden" id="redirect" name="redirect" value="0">
+    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=1) }}">
+    <input type="hidden" id="redirect" name="redirect" value="1">
   {% endif %}
 
   <div>
@@ -64,17 +64,16 @@
       function capture(){
           defaults.video = { facingMode: shouldFaceUser ? 'user' : 'environment' }
           //Access media devices and capture image
-          // {video:true}
           navigator.mediaDevices.getUserMedia(defaults)
           .then(function(stream){
             _stream = stream;
             //Set dimensions
             vid.onloadedmetadata = function() {
-              //this.width = overlay.width = this.videoWidth;
-              //this.height = overlay.height = this.videoHeight;
+              //Acquire dimensions
               this.width = this.videoWidth;
               this.height = this.videoHeight;
 
+              //Adjust dimensions and center overlay on top of videostream
               var parent = document.getElementById('parent');
               var v = document.getElementById('vid');
               var o = document.getElementById('overlay');
@@ -83,6 +82,7 @@
               var otrans = pheight * 50/100 - o.height/2;
               v.style.transform = "translate(-50%, " + String(vtrans) + "px)";
               o.style.transform = "translate(-50%, " + String(otrans) + "px)";
+
               //Save style to be updated later with overlay
               oStyle = "opacity: 1; position: absolute; top: 0; left: 0; transform: translate(-50%, " + String(vtrans) + "px);";
             }
@@ -109,7 +109,7 @@
           });
       }
 
-      // Change camera view
+      // Toggle camera view
       flipBtn.addEventListener('click', function(){
           if( _stream == null ) return
           // we need to flip, stop everything
@@ -154,7 +154,7 @@
             contentType: false,
             cache: false,
             success: function(){
-              if (document.getElementById('redirect').value != 0){
+              if (document.getElementById('redirect').value != 1){
                 window.location.href = "https://chliu.pythonanywhere.com/" + document.getElementById('redirect').value + "/update";
               }else{
                 window.location.href = "https://chliu.pythonanywhere.com/create";

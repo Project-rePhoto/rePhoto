@@ -3,6 +3,40 @@
 {% block header %}
   <style>
     .mySlides {display:none;}
+    img.center {
+        display: block;
+        margin: 0 auto;
+    }
+    button.display-left{
+        position:absolute;
+        top:50%;
+        left:0%;
+        transform:translate(0%,-50%);
+        -ms-transform:translate(-0%,-50%)}
+    button.display-right{
+        position:absolute;
+        top:50%;
+        right:0%;
+        transform:translate(0%,-50%);
+        -ms-transform:translate(0%,-50%)}
+    div.display-container{
+        position:relative;
+    }
+    button.custom{
+        border:none;
+        display:inline-block;
+        padding:8px 16px;
+        vertical-align:middle;
+        overflow:hidden;
+        text-decoration:none;
+        color:inherit;
+        background-color:inherit;
+        text-align:center;
+        cursor:pointer;
+        white-space:nowrap}
+    button.black:hover{
+        color:#fff;
+        background-color:#000}
   </style>
 
   <h1>{% block title %}Collections{% endblock %}</h1>
@@ -18,42 +52,38 @@
     <article class="post">
       <header>
         <div class="post-preview">
-          <h2 class="post-title">{{ post['title'] }}</h2>
-
-          {% if g.user['id'] == post['author_id'] %}
+          <h2 class="post-title">{{ post[1] }}</h2>
             <p class="post-meta" style="display:inline;">
-                Posted by <a href="#">{{ post['username'] }}</a> on {{ post['created'].strftime('%Y-%m-%d') }}
+                Posted by <a href="#">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
             </p>
-            <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
-          {% else %}
-            <p class="post-meta">Posted by <a href="#">{{ post['username'] }}</a> on {{ post['created'].strftime('%Y-%m-%d') }}</p>
+          {% if g.user[0] == post[4] and post[4] != 1 %}
+            <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post[0]) }}">/Edit</a>
           {% endif %}
+          <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
         </div>
       </header>
-      <!--<p class="body">{{ post['body'] }}</p>-->
-      <body>
-        <!--<img src="/static/myImgs/{{ post['imgFile'] }}" alt="User Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">-->
 
-        <div>
+      <body>
+        <div class="display-container">
           {% for img in imgs %}
-            {% if post['id'] == img['userID'] %}
-              <img class="{{ post['id'] }}" style="display:none;" src="/static/myImgs/{{ img['image'] }}" alt="User Image" width="{{ img['width'] }}" height="{{ img['height'] }}">
+            {% if post[0] == img[1] %}
+              <img style="display:block; margin:0 auto;" class="{{ post[0] }}" style="display:none;" src="/static/myImgs/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
             {% endif %}
           {% endfor %}
-          <button id="F{{ post['id'] }}">&#10094;</button>
-          <button id="B{{ post['id'] }}">&#10095;</button>
+          <button class="custom black display-left" id="F{{ post[0] }}">&#10094;</button>
+          <button class="custom black display-right" id="B{{ post[0] }}">&#10095;</button>
         </div>
 
         <script type="text/javascript">
           var slideIndex = 1;
-          showDivs(slideIndex, "{{ post['id'] }}");
+          showDivs(slideIndex, "{{ post[0] }}");
 
-          document.getElementById("F{{ post['id'] }}").onclick = function () {
-            showDivs((slideIndex += -1), "{{ post['id'] }}");
+          document.getElementById("F{{ post[0] }}").onclick = function () {
+            showDivs((slideIndex += -1), "{{ post[0] }}");
           }
 
-          document.getElementById("B{{ post['id'] }}").onclick = function () {
-            showDivs((slideIndex += 1), "{{ post['id'] }}");
+          document.getElementById("B{{ post[0] }}").onclick = function () {
+            showDivs((slideIndex += 1), "{{ post[0] }}");
           }
 
           function showDivs(n, str) {

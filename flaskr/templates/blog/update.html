@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Edit "{{ post['title'] }}"{% endblock %}</h1>
+  <h1>{% block title %}Edit "{{ post[1] }}"{% endblock %}</h1>
 {% endblock %}
 
-{% set pic = 'myImgs/'+post['imgFile'] %}
+{% set pic = 'myImgs/'+post[6] %}
 
 {% block content %}
 <article>
@@ -14,34 +14,34 @@
       <form method="post" enctype=multipart/form-data>
         <label for="title">Title</label>
         <br/>
-        <input class="form-control" name="title" id="title" value="{{ request.form['title'] or post['title'] }}" required>
+        <input class="form-control" name="title" id="title" value="{{ request.form['title'] or post[1] }}" required>
         <br/>
         <label for="body">Body</label>
         <br/>
-        <textarea class="form-control" style="height: 200px;" name="body" id="body">{{ request.form['body'] or post['body'] }}</textarea>
+        <textarea class="form-control" style="height: 200px;" name="body" id="body">{{ request.form['body'] or post[2] }}</textarea>
         <hr>
 
         <body>
-          <img src="/static/myImgs/{{ post['imgFile'] }}" alt="Cover Image" width="{{ post['wd'] }}" height="{{ post['ht'] }}">
+          <img src="/static/myImgs/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
         </body>
 
         <h3>Change Cover Image</h3>
         <input type=file name=file>
 
-        <input type="hidden" name="width" id="width" value="{{ post['wd'] }}">
-        <input type="hidden" name="height" id="height" value="{{ post['ht'] }}">
+        <input type="hidden" name="width" id="width" value="{{ post[7] }}">
+        <input type="hidden" name="height" id="height" value="{{ post[8] }}">
         <input style="float: right;" type="submit" value="Save">
       </form>
 
       <hr>
-        <a class="action" href="{{ url_for('blog.imageCapture', id=post['id']) }}">Image Capture</a>
+        <a class="action" href="{{ url_for('blog.imageCapture', id=post[0]) }}">Image Capture</a>
       <hr>
 
-      <form style="display: inline;" action="{{ url_for('blog.setMap', id=post['id']) }}" method="post">
+      <form style="display: inline;" action="{{ url_for('blog.setMap', id=post[0]) }}" method="post">
         <input type="submit" value="View Map">
       </form>
 
-      <form style="display: inline; float: right;" action="{{ url_for('blog.delete', id=post['id']) }}" method="post">
+      <form style="display: inline; float: right;" action="{{ url_for('blog.delete', id=post[0]) }}" method="post">
         <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
       </form>
     </div>
