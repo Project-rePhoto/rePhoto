@@ -21,16 +21,37 @@
         <textarea class="form-control" style="height: 200px;" name="body" id="body">{{ request.form['body'] or post[2] }}</textarea>
         <hr>
 
-        <body>
-          <img src="/static/myImgs/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
-        </body>
+        <h3>Cover Photo</h3>
+        <div class="display-container">
+          <img style="display:block; margin:0 auto;" src="/static/myImgs/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+        </div>
 
-        <h3>Change Cover Image</h3>
+        <hr>
+        <h3>Album</h3>
+        <div class="display-container">
+          {% for img in imgs %}
+            <img class="center" id="curImg" style="display:none;" src="/static/myImgs/{{ img[0] }}" alt="{{ img[0] }}" width="{{ img[2] }}" height="{{ img[3] }}">
+          {% endfor %}
+          <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
+          <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
+        </div>
+
+        <br/>
+        <div style="text-align:center;">
+        <input class="danger" type="submit" form="deleteThis" value="Delete Picture" onclick="return confirm('Are you sure?');">
+        </div>
+
+        <hr>
+        <h3>Change Cover Photo</h3>
         <input type=file name=file>
 
         <input type="hidden" name="width" id="width" value="{{ post[7] }}">
         <input type="hidden" name="height" id="height" value="{{ post[8] }}">
         <input style="float: right;" type="submit" value="Save">
+      </form>
+
+      <form id="deleteThis" action="{{ url_for('blog.deletePic', id=post[0]) }}" method="post">
+        <input type="hidden" name="picName" id="picName" value="">
       </form>
 
       <hr>
@@ -44,6 +65,28 @@
       <form style="display: inline; float: right;" action="{{ url_for('blog.delete', id=post[0]) }}" method="post">
         <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
       </form>
+
+    <script type="text/javascript">
+      var slideIndex = 1;
+      showDivs(slideIndex);
+
+      function plusDivs(n) {
+        showDivs(slideIndex += n);
+      }
+
+      function showDivs(n) {
+        var i;
+        var x = document.getElementsByClassName("center");
+        if (n > x.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = x.length}
+        for (i=0; i < x.length; i++){
+          x[i].style.display = "none";
+        }
+        x[slideIndex-1].style.display = "block";
+        document.getElementById("picName").value = x[slideIndex-1].alt;
+      }
+    </script>
+
     </div>
    </div>
  </div>

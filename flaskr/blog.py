@@ -41,7 +41,7 @@ def setMap(id):
 
     curs = db.cursor()
     curs.execute(
-        'SELECT p.id, username, title, imgFile, lat, lng'
+        'SELECT p.id, username, title, imgFile, lat, lng, author_id'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE lat IS NOT NULL AND lng IS NOT NULL'
         ' ORDER BY created DESC'
@@ -52,17 +52,27 @@ def setMap(id):
     for row in posts:
         # Assign green markers for nearby projects
         if row[0] != id:
+            info = "<img src='/static/myImgs/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
+            if g.user is not None:
+                if g.user[0] == row[6]:
+                    info = "<img src='/static/myImgs/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
+
             marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                       'lat': row[4],
                       'lng': row[5],
-                      'infobox': "<img src='/static/myImgs/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"</b>"}
+                      'infobox': info}
             mapList.append(marker)
         # Assign blue marker indicating position of current project
         else:
+            info = "<b>Current Project(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
+            if g.user is not None:
+                if g.user[0] == row[6]:
+                    info = "<b>Current Project(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
+
             marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
                       'lat': row[4],
                       'lng': row[5],
-                      'infobox': "<b>Current Project</b>"}
+                      'infobox': info}
             latitude = row[4]
             longitude = row[5]
             mapList.append(marker)
@@ -179,6 +189,17 @@ def get_post(id, check_author=True):
 def update(id):
     post = get_post(id)
 
+    # Get imgs from album based on project id
+    db = get_db()
+    curs = db.cursor()
+    curs.execute(
+        'SELECT image, userID, width, height'
+        ' FROM album'
+        ' WHERE userID = %s',
+        (id,)
+    )
+    imgs = curs.fetchall()
+
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
@@ -203,9 +224,6 @@ def update(id):
         if error:
             flash(error)
         else:
-            db = get_db()
-            curs = db.cursor()
-
             # If file is real, upload and save to DB
             if changeFile:
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -224,7 +242,7 @@ def update(id):
             db.commit()
             return redirect(url_for('blog.index'))
 
-    return render_template('blog/update.html', post=post)
+    return render_template('blog/update.html', post=post, imgs=imgs)
 
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
@@ -338,3 +356,28 @@ def detail(id):
     imgs = curs.fetchall()
 
     return render_template('blog/detail.html', post=post, imgs=imgs)
+
+@bp.route('/<int:id>/deletePic', methods=('POST',))
+@login_required
+def deletePic(id):
+    # Acquire database
+    db = get_db()
+    curs = db.cursor()
+
+    # Delete picture from album
+    curs.execute('DELETE FROM album WHERE userID = %s and image = %s', (id, request.form['picName']))
+    db.commit()
+
+    # If album is empty afterwards, delete post
+    curs.execute('Select * FROM album WHERE userID = %s', (id,))
+    rows = curs.fetchall()
+    count = 0
+    for row in rows:
+        count+=1
+    if count == 0:
+        # Delete post itself
+        curs.execute('DELETE FROM post WHERE id = %s', (id,))
+        db.commit()
+        return redirect(url_for('blog.index'))
+
+    return redirect(url_for('blog.update', id=id))

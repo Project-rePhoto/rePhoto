@@ -1,44 +1,6 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <style>
-    .mySlides {display:none;}
-    img.center {
-        display: block;
-        margin: 0 auto;
-    }
-    button.display-left{
-        position:absolute;
-        top:50%;
-        left:0%;
-        transform:translate(0%,-50%);
-        -ms-transform:translate(-0%,-50%)}
-    button.display-right{
-        position:absolute;
-        top:50%;
-        right:0%;
-        transform:translate(0%,-50%);
-        -ms-transform:translate(0%,-50%)}
-    div.display-container{
-        position:relative;
-    }
-    button.custom{
-        border:none;
-        display:inline-block;
-        padding:8px 16px;
-        vertical-align:middle;
-        overflow:hidden;
-        text-decoration:none;
-        color:inherit;
-        background-color:inherit;
-        text-align:center;
-        cursor:pointer;
-        white-space:nowrap}
-    button.black:hover{
-        color:#fff;
-        background-color:#000}
-  </style>
-
   <h1>{% block title %}Collections{% endblock %}</h1>
 {% endblock %}
 
@@ -70,8 +32,8 @@
               <img style="display:block; margin:0 auto;" class="{{ post[0] }}" style="display:none;" src="/static/myImgs/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
             {% endif %}
           {% endfor %}
-          <button class="custom black display-left" id="F{{ post[0] }}">&#10094;</button>
-          <button class="custom black display-right" id="B{{ post[0] }}">&#10095;</button>
+          <button type="button" class="custom black display-left" id="F{{ post[0] }}">&#10094;</button>
+          <button type="button" class="custom black display-right" id="B{{ post[0] }}">&#10095;</button>
         </div>
 
         <script type="text/javascript">
