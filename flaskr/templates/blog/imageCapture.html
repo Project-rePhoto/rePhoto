@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% if post != 1 %}
-  {% set pic = 'myImgs/' + post[6] %}
+  {% set pic = 'myImgs/'+ post[0] | string() +'/'+ post[6] %}
 {% else %}
   {% set pic = 'imgs/slideImg.jpg' %}
 {% endif %}
@@ -19,9 +19,9 @@
   <div id="parent" style="position:relative; align-items: center; justify-content: center; margin: auto; height:700px;">
     <video class="children" style="position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="vid" autoplay playsinline></video>
     {% if post != 1 %}
-      <img class="children" style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="overlay" src="/static/myImgs/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+      <img class="children" style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="overlay" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
     {% else %}
-      <img class="children" style="display:none;" id="overlay" src="/static/imgs/default.png" alt="Cover Image" width="200" height="200">
+      <img class="children" style="display:none;" id="overlay" src="/static/imgs/{{ post[0] }}/default.png" alt="Cover Image" width="200" height="200">
     {% endif %}
   </div>
 

@@ -15,6 +15,7 @@ from flask_googlemaps import GoogleMaps, Map
 from flask_simple_geoip import SimpleGeoIP
 from flaskr import simple_geoip
 from datetime import datetime
+import shutil
 import json
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -52,10 +53,10 @@ def setMap(id):
     for row in posts:
         # Assign green markers for nearby projects
         if row[0] != id:
-            info = "<img src='/static/myImgs/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
+            info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
             if g.user is not None:
                 if g.user[0] == row[6]:
-                    info = "<img src='/static/myImgs/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
+                    info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
 
             marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                       'lat': row[4],
@@ -101,7 +102,7 @@ def index():
     posts = curs.fetchall()
 
     curs.execute(
-        'SELECT image, userID, width, height'
+        'SELECT image, postID, width, height'
         ' FROM album'
     )
     imgs = curs.fetchall()
@@ -116,7 +117,7 @@ def create():
     curs.execute(
         'SELECT image, width, height'
         ' FROM album'
-        ' WHERE userID = 1'
+        ' WHERE postID = 1'
     )
     post = curs.fetchone()
 
@@ -153,13 +154,21 @@ def create():
             curs.execute('SELECT LAST_INSERT_ID()')
             insertID = curs.fetchone()
 
-            #Update new userID in position 0
+            #Update new postID in position 0
             curs.execute(
-                'UPDATE album SET userID = %s'
-                ' WHERE userID = 1',
+                'UPDATE album SET postID = %s'
+                ' WHERE postID = 1',
                 (insertID[0],)
             )
             db.commit()
+
+            #Create new directory for photos
+            try:
+                os.makedirs('flask_rephoto/flaskr/static/myImgs/'+str(insertID[0]))
+            except OSError:
+                pass
+
+            shutil.move('flask_rephoto/flaskr/static/myImgs/'+filename, 'flask_rephoto/flaskr/static/myImgs/'+str(insertID[0]))
 
             return redirect(url_for('blog.index'))
 
@@ -193,9 +202,9 @@ def update(id):
     db = get_db()
     curs = db.cursor()
     curs.execute(
-        'SELECT image, userID, width, height'
+        'SELECT image, postID, width, height'
         ' FROM album'
-        ' WHERE userID = %s',
+        ' WHERE postID = %s',
         (id,)
     )
     imgs = curs.fetchall()
@@ -252,7 +261,7 @@ def delete(id):
     db = get_db()
     curs = db.cursor()
     # Delete all instances from the album
-    curs.execute('DELETE FROM album WHERE userID = %s', (id,))
+    curs.execute('DELETE FROM album WHERE postID = %s', (id,))
     db.commit()
     # Delete post itself
     curs.execute('DELETE FROM post WHERE id = %s', (id,))
@@ -294,12 +303,16 @@ def imageCapture(id):
 
         # If file is real, upload and save to DB
         if not error:
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             db = get_db()
             curs = db.cursor()
 
             # If not new project, update existing project
             if id != 1:
+                #save file
+                file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
+
+                #save to tables
                 curs.execute(
                     'UPDATE post SET imgFile = %s, wd = %s, ht = %s'
                     ' WHERE id = %s',
@@ -308,19 +321,22 @@ def imageCapture(id):
                 db.commit()
 
                 curs.execute(
-                    'INSERT INTO album (userID, image, width, height, timedate)'
+                    'INSERT INTO album (postID, image, width, height, timedate)'
                     ' VALUES (%s, %s, %s, %s, %s)',
                     (id, filename, request.form['width'], request.form['height'], datetime.now())
                 )
                 db.commit()
             # If new project, temporarily store picture with id 0
             else:
+                #save file
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
                 #Clear previous just in case
-                curs.execute('DELETE FROM album WHERE userID = 1')
+                curs.execute('DELETE FROM album WHERE postID = 1')
                 db.commit()
-                #Temporarily store picture in album userID position 1
+                #Temporarily store picture in album postID position 1
                 curs.execute(
-                    'INSERT INTO album (userID, image, width, height, timedate)'
+                    'INSERT INTO album (postID, image, width, height, timedate)'
                     ' VALUES (%s, %s, %s, %s, %s)',
                     (id, filename, request.form['width'], request.form['height'], datetime.now())
                 )
@@ -348,9 +364,9 @@ def detail(id):
     db = get_db()
     curs = db.cursor()
     curs.execute(
-        'SELECT image, userID, width, height'
+        'SELECT image, postID, width, height'
         ' FROM album'
-        ' WHERE userID = %s',
+        ' WHERE postID = %s',
         (id,)
     )
     imgs = curs.fetchall()
@@ -365,11 +381,11 @@ def deletePic(id):
     curs = db.cursor()
 
     # Delete picture from album
-    curs.execute('DELETE FROM album WHERE userID = %s and image = %s', (id, request.form['picName']))
+    curs.execute('DELETE FROM album WHERE postID = %s and image = %s', (id, request.form['picName']))
     db.commit()
 
     # If album is empty afterwards, delete post
-    curs.execute('Select * FROM album WHERE userID = %s', (id,))
+    curs.execute('Select * FROM album WHERE postID = %s', (id,))
     rows = curs.fetchall()
     count = 0
     for row in rows:

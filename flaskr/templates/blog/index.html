@@ -29,7 +29,7 @@
         <div class="display-container">
           {% for img in imgs %}
             {% if post[0] == img[1] %}
-              <img style="display:block; margin:0 auto;" class="{{ post[0] }}" style="display:none;" src="/static/myImgs/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+              <img style="display:block; margin:0 auto;" class="{{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
             {% endif %}
           {% endfor %}
           <button type="button" class="custom black display-left" id="F{{ post[0] }}">&#10094;</button>

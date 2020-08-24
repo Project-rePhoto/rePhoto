@@ -4,7 +4,7 @@
   <h1>{% block title %}Edit "{{ post[1] }}"{% endblock %}</h1>
 {% endblock %}
 
-{% set pic = 'myImgs/'+post[6] %}
+{% set pic = 'myImgs/'+ post[0] | string() +'/'+post[6] %}
 
 {% block content %}
 <article>
@@ -23,14 +23,14 @@
 
         <h3>Cover Photo</h3>
         <div class="display-container">
-          <img style="display:block; margin:0 auto;" src="/static/myImgs/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+          <img style="display:block; margin:0 auto;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
         </div>
 
         <hr>
         <h3>Album</h3>
         <div class="display-container">
           {% for img in imgs %}
-            <img class="center" id="curImg" style="display:none;" src="/static/myImgs/{{ img[0] }}" alt="{{ img[0] }}" width="{{ img[2] }}" height="{{ img[3] }}">
+            <img class="center" id="curImg" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="{{ img[0] }}" width="{{ img[2] }}" height="{{ img[3] }}">
           {% endfor %}
           <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
           <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>

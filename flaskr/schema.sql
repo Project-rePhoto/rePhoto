@@ -68,7 +68,7 @@ CREATE TABLE post (
 ALTER TABLE post AUTO_INCREMENT=2;
 
 CREATE TABLE album (
-  userID INTEGER NOT NULL,
+  postID INTEGER NOT NULL,
   image VARCHAR(255) NOT NULL,
   width TEXT NOT NULL,
   height TEXT NOT NULL,
@@ -76,9 +76,9 @@ CREATE TABLE album (
   timedate DATETIME NOT NULL,
   make VARCHAR(255) DEFAULT '',
   model VARCHAR(255) DEFAULT '',
-  FOREIGN KEY (userID) REFERENCES post (id),
-  PRIMARY KEY (userID, image)
+  FOREIGN KEY (postID) REFERENCES post (id),
+  PRIMARY KEY (postID, image)
 );
 
-INSERT INTO user (id, username, password) VALUES (1, 'admin', 'admin');
+INSERT INTO user (id, username, password) VALUES (1, 'admin', 'pbkdf2:sha256:150000$VaXDLBDs$52c82196f76d259e4f3b65170584941f9013863be1d714a532d903cf3ae02329');
 INSERT INTO post (id, author_id) VALUES (1, 1);
