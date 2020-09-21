@@ -4,14 +4,14 @@
   <h1>{% block title %}Collections{% endblock %}</h1>
 {% endblock %}
 
-{% set pic = 'imgs/slideImg.jpg' %}
+{% set background = '../static/imgs/slideImg.jpg' %}
 
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-md-10 mx-auto">
+  <!--<div class="container">-->
+    <!--<div class="row">-->
+      <!--<div class="col-lg-8 col-md-10 mx-auto">-->
   {% for post in posts %}
-    <article class="post">
+    <article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
       <header>
         <div class="post-preview">
           <h2 class="post-title">{{ post[1] }}</h2>
@@ -25,11 +25,15 @@
         </div>
       </header>
 
-      <body>
+      <!--<body>-->
         <div class="display-container">
           {% for img in imgs %}
             {% if post[0] == img[1] %}
-              <img style="display:block; margin:0 auto;" class="{{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+              {% if post[9] == 1 %}
+                 <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="{{ post[0] }}" style="display:none;" src="{{ img[0] }}" alt="User Image">
+              {% else %}
+                <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="{{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+              {% endif %}
             {% endif %}
           {% endfor %}
           <button type="button" class="custom black display-left" id="F{{ post[0] }}">&#10094;</button>
@@ -59,13 +63,20 @@
             x[slideIndex-1].style.display = "block";
           }
         </script>
-      </body>
+      <!--</body>-->
+      {% if not loop.last %}
+        <hr>
+      {% else %}
+        <!--<a class="post-meta" style="text-align:center;" href="{{ url_for('blog.index', count=count+10) }}">Older Posts</a>-->
+        <hr>
+        <div style="text-align:center;">
+          <input form="oldPosts" type="submit" value="Older Posts">
+        </div>
+        <form id="oldPosts" action="{{ url_for('blog.index', count=count+10) }}" method="post"></form>
+      {% endif %}
     </article>
-    {% if not loop.last %}
-      <hr>
-    {% endif %}
   {% endfor %}
-      </div>
-    </div>
-  </div>
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
 {% endblock %}

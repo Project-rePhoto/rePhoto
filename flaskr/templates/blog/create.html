@@ -4,10 +4,10 @@
   <h1>{% block title %}New Post{% endblock %}</h1>
 {% endblock %}
 
-{% set pic = 'imgs/slideImg.jpg' %}
+{% set background = '../static/imgs/slideImg.jpg' %}
 
 {% block content %}
-<article>
+<article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
  <div class="container">
   <div class="row">
    <div class="col-lg-8 col-md-10 mx-auto">

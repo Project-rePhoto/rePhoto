@@ -4,22 +4,55 @@
   <h1>{% block title %}{{ post[1] }}{% endblock %}</h1>
 {% endblock %}
 
-{% set pic = 'myImgs/'+ post[0] | string() +'/'+post[6] %}
+
+{% set background = '../static/myImgs/'+ post[0] | string() +'/'+post[6] %}
+{% if post[9] == 1 %}
+  {% if post[6]|length > 10 %}
+    {% if post[6][0:10] == '/baseImage' %}
+      {% set background = 'http://projectrephoto.com' + post[6] %}
+    {% else %}
+      {% set background = post[6] %}
+    {% endif %}
+  {% else %}
+    {% set background = post[6] %}
+  {% endif %}
+{% endif %}
+
 
 {% block content %}
-<article>
+<article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
+<!--
  <div class="container">
   <div class="row">
    <div class="col-lg-8 col-md-10 mx-auto">
+-->
         <h1 style="text-align:center;">Cover Photo</h1>
 
+        {% if post[9] == 1 %}
         <div class="display-container">
-          <img style="display:block; margin:0 auto;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+          {% if post[6]|length > 10 %}
+            {% if post[6][0:10] == '/baseImage' %}
+              <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="http://projectrephoto.com{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+            {% else %}
+              <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+            {% endif %}
+          {% else %}
+            <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+          {% endif %}
         </div>
+        {% else %}
+        <div class="display-container">
+          <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+        </div>
+        {% endif %}
         <hr>
         <div class="display-container">
           {% for img in imgs %}
-            <img class="center" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+            {% if post[9] == 1 %}
+              <img class="center" style="display:none; max-width:100%; max-height:100%;" src="{{ img[0] }}" alt="User Image">
+            {% else %}
+              <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+            {% endif %}
           {% endfor %}
           <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
           <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
@@ -53,9 +86,10 @@
           <input type="submit" value="View Map">
         </div>
       </form>
-
+<!--
     </div>
    </div>
  </div>
+-->
 </article>
 {% endblock %}

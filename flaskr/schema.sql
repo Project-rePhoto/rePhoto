@@ -1,4 +1,4 @@
-/*
+/* SQLITE Schema
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS album;
@@ -38,6 +38,19 @@ CREATE TABLE album (
 );
 */
 
+-- Queries for importing archive of intact previous rephoto projects
+-- source flask_rephoto/flaskr/schema.sql;
+-- source flask_rephoto/flaskr/core_subject.sql;
+-- UPDATE core_subject SET id=id+1 ORDER BY id DESC;
+-- source flask_rephoto/flaskr/core_entry.sql;
+-- UPDATE core_entry SET subject_id=subject_id+1 ORDER BY subject_id DESC;
+-- INSERT INTO post(id, title, imgFile, lat, lng) Select c.id, c.name, c.overlay_url, c.lat, c.lng FROM core_subject c;
+-- INSERT IGNORE INTO album(postID, image, timedate, make, model) Select c.subject_id, c.image_url, c.timestamp, c.make, c.model FROM core_entry c, post p WHERE c.subject_id = p.id;
+-- DELETE FROM post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 0 AND post.id != 1;
+-- DELETE FROM album WHERE postID IN (SELECT p_id FROM (SELECT id as p_id from post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 1) as p);
+-- DELETE FROM post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 0 AND post.id != 1;
+
+-- MySQL
 DROP TABLE IF EXISTS album;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS user;
@@ -52,7 +65,7 @@ ALTER TABLE user AUTO_INCREMENT=2;
 
 CREATE TABLE post (
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
-  author_id INTEGER NOT NULL,
+  author_id INTEGER NOT NULL DEFAULT 1,
   created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   title TEXT,
   body TEXT,
@@ -62,6 +75,7 @@ CREATE TABLE post (
   lat DOUBLE,
   lng DOUBLE,
   tag varchar(255) DEFAULT 'General',
+  archive tinyint(1) DEFAULT 1,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 

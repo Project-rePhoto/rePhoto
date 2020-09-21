@@ -5,13 +5,16 @@
 {% endblock %}
 
 {% if post != 1 %}
-  {% set pic = 'myImgs/'+ post[0] | string() +'/'+ post[6] %}
+    {% set background = '../static/myImgs/'+ post[0] | string() +'/'+post[6] %}
+    {% if post[9] == 1 %}
+      {% set background = post[6] %}
+    {% endif %}
 {% else %}
-  {% set pic = 'imgs/slideImg.jpg' %}
+    {% set background = '../static/imgs/slideImg.jpg' %}
 {% endif %}
 
 {% block content %}
-<article>
+<article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
  <div class="container">
   <div class="row">
    <div class="col-lg-8 col-md-10 mx-auto" style="position: relative; display: flex; flex-direction: column;">
@@ -34,6 +37,7 @@
   {% endif %}
 
   <div>
+    <div id="toggleScreen" style="text-align:center;"><button id="toggle">Toggle Fullscreen</button></div>
     <div id="take" style="text-align:center;"><button id="takePic">Take Picture</button></div>
     <div id="flip" style="text-align:center;"><button id="flipCam">Change Camera</button></div>
     <div id="uploadPic" style="text-align:center;">
@@ -45,6 +49,7 @@
     </div>
    </div>
  </div>
+
 </article>
 
     <script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.min.js') }}"></script>
@@ -60,6 +65,31 @@
       let _stream = null;
       let shouldFaceUser = true;
       let defaults = { audio: false, video: true };
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+
+        var elem = document.getElementById("vid");
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+          elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+          elem.msRequestFullscreen();
+        }
+
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    document.getElementById("toggle").onclick = function(){
+        toggleFullScreen();
+    }
 
       function capture(){
           defaults.video = { facingMode: shouldFaceUser ? 'user' : 'environment' }

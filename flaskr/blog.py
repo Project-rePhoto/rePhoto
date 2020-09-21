@@ -42,7 +42,7 @@ def setMap(id):
 
     curs = db.cursor()
     curs.execute(
-        'SELECT p.id, username, title, imgFile, lat, lng, author_id'
+        'SELECT p.id, username, title, imgFile, lat, lng, author_id, archive'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE lat IS NOT NULL AND lng IS NOT NULL'
         ' ORDER BY created DESC'
@@ -57,7 +57,11 @@ def setMap(id):
             if g.user is not None:
                 if g.user[0] == row[6]:
                     info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
-
+            if row[7] == 1:
+                info = "<img src='"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
+                if len(row[3]) > 10:
+                    if row[3][0:10] == '/baseImage':
+                        info = "<img src='http://projectrephoto.com"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
             marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                       'lat': row[4],
                       'lng': row[5],
@@ -69,6 +73,11 @@ def setMap(id):
             if g.user is not None:
                 if g.user[0] == row[6]:
                     info = "<b>Current Project(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
+            if row[7] == 1:
+                info = "<img src='"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
+                if len(row[3]) > 10:
+                    if row[3][0:10] == '/baseImage':
+                        info = "<img src='http://projectrephoto.com"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
 
             marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
                       'lat': row[4],
@@ -90,14 +99,20 @@ def setMap(id):
     return render_template('blog/mymap.html', mymap=mymap)
 
 @bp.route('/')
-def index():
+def redirectIndex():
+    return redirect(url_for('blog.index', count=0))
+
+@bp.route('/<int:count>/index', methods=('GET','POST'))
+def index(count):
     db = get_db()
     curs = db.cursor()
     curs.execute(
-        'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht'
+        'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE p.id != 1'
         ' ORDER BY created DESC'
+        ' LIMIT 10 OFFSET %s',
+        (count)
     )
     posts = curs.fetchall()
 
@@ -107,7 +122,7 @@ def index():
     )
     imgs = curs.fetchall()
 
-    return render_template('blog/index.html', posts=posts, imgs=imgs)
+    return render_template('blog/index.html', posts=posts, imgs=imgs, count=count)
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
@@ -138,15 +153,15 @@ def create():
             db = get_db()
             if request.form['lat'] != 'none':
                 curs.execute(
-                    'INSERT INTO post (title, body, author_id, imgFile, wd, ht, lat, lng)'
-                    ' VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
-                    (title, body, g.user[0], filename, request.form['width'], request.form['height'], request.form['lat'], request.form['lng'])
+                    'INSERT INTO post (title, body, author_id, imgFile, wd, ht, lat, lng, archive)'
+                    ' VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+                    (title, body, g.user[0], filename, request.form['width'], request.form['height'], request.form['lat'], request.form['lng'], 2)
                     )
             else:
                 curs.execute(
-                    'INSERT INTO post (title, body, author_id, imgFile, wd, ht)'
+                    'INSERT INTO post (title, body, author_id, imgFile, wd, ht, archive)'
                     ' VALUES (%s, %s, %s, %s, %s, %s)',
-                    (title, body, g.user[0], filename, request.form['width'], request.form['height'])
+                    (title, body, g.user[0], filename, request.form['width'], request.form['height'], 2)
                     )
             db.commit()
 
@@ -170,7 +185,7 @@ def create():
 
             shutil.move('flask_rephoto/flaskr/static/myImgs/'+filename, 'flask_rephoto/flaskr/static/myImgs/'+str(insertID[0]))
 
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('blog.index', count=0))
 
     return render_template('blog/create.html', post=post)
 
@@ -178,7 +193,7 @@ def get_post(id, check_author=True):
     db = get_db()
     curs = db.cursor()
     curs.execute(
-        'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht'
+        'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE p.id = %s',
         (id,)
@@ -249,7 +264,7 @@ def update(id):
                 )
 
             db.commit()
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('blog.index', count=0))
 
     return render_template('blog/update.html', post=post, imgs=imgs)
 
@@ -266,7 +281,7 @@ def delete(id):
     # Delete post itself
     curs.execute('DELETE FROM post WHERE id = %s', (id,))
     db.commit()
-    return redirect(url_for('blog.index'))
+    return redirect(url_for('blog.index', count=0))
 
 @bp.route('/<int:id>/imageCapture', methods=('GET', 'POST'))
 @login_required
@@ -394,6 +409,6 @@ def deletePic(id):
         # Delete post itself
         curs.execute('DELETE FROM post WHERE id = %s', (id,))
         db.commit()
-        return redirect(url_for('blog.index'))
+        return redirect(url_for('blog.index', count=0))
 
     return redirect(url_for('blog.update', id=id))
