@@ -1,8 +1,9 @@
 import os
-
+import sys
 from flask import (
     Flask, Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
 )
+from flask import send_file
 from flask import current_app as app
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
@@ -412,3 +413,54 @@ def deletePic(id):
         return redirect(url_for('blog.index', count=0))
 
     return redirect(url_for('blog.update', id=id))
+
+
+
+
+
+@bp.route('/createFile', methods=('GET', 'POST'))
+@login_required
+def createFile():
+    path = "static/myImgs/photolinks.txt"
+    homepath = "/home/chliu/flask_rephoto/flaskr/static/myImgs/photolinks.txt"
+
+    if os.path.isfile(homepath):
+        return send_file(path, as_attachment=True)
+
+    db = get_db()
+    curs = db.cursor()
+
+    curs.execute(
+        'SELECT id, imgFile'
+        ' FROM post'
+        ' WHERE author_id = 1'
+    )
+    posts = curs.fetchall()
+
+    for row in posts:
+        rowID = row[0]
+        img = row[1]
+        with open("flask_rephoto/flaskr/static/myImgs/photolinks.txt", "a") as fo:
+            fo.write(str(rowID) + "\n")
+            if img is not None:
+                if img[0:10] == "/baseImage":
+                    fo.write("http://projectrephoto.com" + img + "\n")
+                else:
+                    fo.write(img + "\n")
+        curs.execute(
+            'SELECT image'
+            ' FROM album'
+            ' WHERE postID = %s',
+            (rowID,)
+        )
+        albums = curs.fetchall()
+        for pic in albums:
+            with open("flask_rephoto/flaskr/static/myImgs/photolinks.txt", "a") as pc:
+                if pic[0][0:10] == "/baseImage":
+                    pc.write("http://projectrephoto.com" + pic[0] + "\n")
+                else:
+                    pc.write(pic[0] + "\n")
+
+    return send_file(path, as_attachment=True)
+    #return redirect(url_for('blog.index', count=0))
+

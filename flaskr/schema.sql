@@ -46,9 +46,9 @@ CREATE TABLE album (
 -- UPDATE core_entry SET subject_id=subject_id+1 ORDER BY subject_id DESC;
 -- INSERT INTO post(id, title, imgFile, lat, lng) Select c.id, c.name, c.overlay_url, c.lat, c.lng FROM core_subject c;
 -- INSERT IGNORE INTO album(postID, image, timedate, make, model) Select c.subject_id, c.image_url, c.timestamp, c.make, c.model FROM core_entry c, post p WHERE c.subject_id = p.id;
--- DELETE FROM post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 0 AND post.id != 1;
--- DELETE FROM album WHERE postID IN (SELECT p_id FROM (SELECT id as p_id from post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 1) as p);
--- DELETE FROM post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 0 AND post.id != 1;
+-- DELETE FROM post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 0 AND post.id != 1;   // This is to clear the empty projects from the system
+-- DELETE FROM album WHERE postID IN (SELECT p_id FROM (SELECT id as p_id from post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 1) as p);   // This is to delete all the one entry posts
+-- DELETE FROM post WHERE (SELECT COUNT(*) FROM album WHERE postID = post.id) = 0 AND post.id != 1; // This is to delete all the posts of single entries.
 
 -- MySQL
 DROP TABLE IF EXISTS album;

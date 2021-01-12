@@ -17,12 +17,12 @@
 <article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
  <div class="container">
   <div class="row">
-   <div class="col-lg-8 col-md-10 mx-auto" style="position: relative; display: flex; flex-direction: column;">
+   <div id="captureArea" class="col-lg-8 col-md-10 mx-auto" style="position: relative; display: flex; flex-direction: column;">
 
   <div id="parent" style="position:relative; align-items: center; justify-content: center; margin: auto; height:700px;">
-    <video class="children" style="position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="vid" autoplay playsinline></video>
+    <video class="children" style="position: absolute; top: 0; left: 0; transform: translateX(-50%); z-index: -1;" id="vid" autoplay playsinline></video>
     {% if post != 1 %}
-      <img class="children" style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translateX(-50%);" id="overlay" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+      <img class="children" style="opacity: 0.4; position: absolute; top: 0; left: 0; transform: translateX(-50%); z-index: 2147483647;" id="overlay" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
     {% else %}
       <img class="children" style="display:none;" id="overlay" src="/static/imgs/{{ post[0] }}/default.png" alt="Cover Image" width="200" height="200">
     {% endif %}
@@ -66,30 +66,37 @@
       let shouldFaceUser = true;
       let defaults = { audio: false, video: true };
 
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) {
+      function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+          var elem = document.getElementById("captureArea");
 
-        var elem = document.getElementById("vid");
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen();
-        } else if (elem.mozRequestFullScreen) {
-          elem.mozRequestFullScreen();
-        } else if (elem.webkitRequestFullscreen) {
-          elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) {
-          elem.msRequestFullscreen();
-        }
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+          } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+          } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+          } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+          }
 
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
+          document.getElementById("vid").style = "position: fixed; right: 0; bottom: 0; width: 100%; height: 100%; z-index: -1;";
+          //document.getElementById("overlay").style = "position: fixed; right: 0; bottom: 0; width: 100%; height: 100%; opacity: 0.4; z-index:-1;";
+          document.getElementById("overlay").style = "position: fixed; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0.4; z-index:-1;";
+          document.getElementById("flip").style.display = "none";
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+          document.getElementById("vid").style = "position: absolute; top: 0; left: 0; transform: translateX(-50%); z-index: -1;";
+          document.getElementById("overlay").style = "opacity: 0.4; position: absolute; top: 0; left: 0; transform: translateX(-50%); z-index: 2147483647;";
+          document.getElementById("flip").style.display = "block";
         }
       }
-    }
 
-    document.getElementById("toggle").onclick = function(){
-        toggleFullScreen();
-    }
+      document.getElementById("toggle").onclick = function(){
+          toggleFullScreen();
+      }
 
       function capture(){
           defaults.video = { facingMode: shouldFaceUser ? 'user' : 'environment' }
@@ -114,10 +121,14 @@
               o.style.transform = "translate(-50%, " + String(otrans) + "px)";
 
               //Save style to be updated later with overlay
-              oStyle = "opacity: 1; position: absolute; top: 0; left: 0; transform: translate(-50%, " + String(vtrans) + "px);";
+              oStyle = "opacity: 1; position: absolute; top: 0; left: 0; transform: translate(-50%, " + String(vtrans) + "px); z-index: 2147483647;";
             }
             window.stream = stream;
             vid.srcObject = stream;
+
+            // save styling
+            vidStyle = document.getElementById("vid").style;
+            olayStyle = document.getElementById("overlay").style;
 
             document.getElementById("takePic").onclick = function() {
               //show upload button and hide take button
@@ -131,6 +142,13 @@
               c.height = vid.videoHeight;
               c.getContext('2d').drawImage(vid, 0, 0);
               c.toBlob(capturedImage, 'image/png');
+
+              // Exit fullscreen
+              if(document.fullscreenElement){
+                toggleFullScreen();
+              }
+              document.getElementById("toggleScreen").style.display = "none";
+              document.getElementById("flip").style.display = "none";
             };
           })
           .catch(function(err){
