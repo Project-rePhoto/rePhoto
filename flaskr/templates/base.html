@@ -1,9 +1,8 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Project Rephoto</title>
+<title>{% block title %}{% endblock %}</title>
 
 <!-- Bootstrap core CSS -->
 <link rel="stylesheet" href="{{ url_for('static', filename='startbootstrap-clean-blog-gh-pages/vendor/bootstrap/css/bootstrap.min.css') }}">
-
 <link rel="stylesheet" href="{{ url_for('static', filename='startbootstrap-clean-blog-gh-pages/vendor/fontawesome-free/css/all.min.css') }}" type="text/css">
 <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
@@ -24,15 +23,11 @@
             <a href="{{ url_for('auth.logout') }}">Logout</a>
           </li>
           <li class="nav-item">
-            <!--<a class="action" href="{{ url_for('blog.create') }}">New Project</a>-->
             <a class="action" href="{{ url_for('blog.imageCapture', id=1) }}">New Project</a>
           </li>
           {% else %}
           <li class="nav-item">
-            <a href="{{ url_for('auth.login') }}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ url_for('auth.register') }}">Register</a>
+            <a href="{{ url_for('auth.loginOrReg') }}">Sign In</a>
           </li>
           {% endif %}
           <li class="nav-item">
@@ -42,17 +37,17 @@
             <a href="{{ url_for('blog.about') }}">About</a>
           </li>
           <li class="nav-item">
-            <a href="{{ url_for('blog.index', count=0) }}">Home</a>
+            <a href="{{ url_for('blog.projmap') }}">Find Projects</a>
           </li>
           <li class="nav-item">
-            <a href="{{ url_for('blog.createFile') }}">Download</a>
+            <a href="{{ url_for('blog.index', count=0, searchTerm='general') }}">Home</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
    <!-- Page Header -->
-  <header class="masthead" id="mastImg" style="background-image: url('{{ background }}')">
+  <header class="masthead" id="mastImg" style="background-image: url('{{ background }}'); height: 200px">
     <style>
         img.center {
             display: block;
@@ -89,12 +84,13 @@
             color:#fff;
             background-color:#000}
     </style>
+
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="site-heading">
-            <h1>{% block header %}{% endblock %}</h1>
+            <h4>{% block header %}{% endblock %}</h4>
             <span class="subheading">Repeat Photography</span>
             {% for message in get_flashed_messages() %}
                 <div class="flash" style="color:red;">{{ message }}</div>
@@ -115,24 +111,6 @@
   <div class="row">
     <div class="col-lg-8 col-md-10 mx-auto">
       <ul class="list-inline text-center">
-        <!--
-        <li class="list-inline-item">
-          <a href="#">
-            <span class="fa-stack fa-lg">
-              <i class="fas fa-circle fa-stack-2x"></i>
-              <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
-            </span>
-          </a>
-        </li>
-        <li class="list-inline-item">
-          <a href="#">
-            <span class="fa-stack fa-lg">
-              <i class="fas fa-circle fa-stack-2x"></i>
-              <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
-            </span>
-          </a>
-        </li>
-        -->
         <li class="list-inline-item">
           <a href="https://github.com/Chen-Hao-Liu/flask_rephoto">
             <span class="fa-stack fa-lg">
@@ -142,7 +120,6 @@
           </a>
         </li>
       </ul>
-      <p class="copyright text-muted">This is a joint project of Washington University, University of Vermont and the University of California, San Diego, partially supported by the National Science Foundation under a collaborative grant from the NSF-IBIV program ( DEB-1053566, DEB-1053554, DEB-1053559). Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation. ·</p>
     </div>
   </div>
 </div>

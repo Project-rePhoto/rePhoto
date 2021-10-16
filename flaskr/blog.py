@@ -1,7 +1,6 @@
 import os
-import sys
 from flask import (
-    Flask, Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
+    Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
 )
 from flask import send_file
 from flask import current_app as app
@@ -9,15 +8,13 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
 from flaskr.auth import login_required
 from flaskr.db import get_db
-from flask import send_from_directory
 #Google Maps API
-from flask_googlemaps import GoogleMaps, Map
+from flask_googlemaps import Map
 #import Geocoder
-from flask_simple_geoip import SimpleGeoIP
 from flaskr import simple_geoip
 from datetime import datetime
-import shutil
-import json
+#import Cloud Vision API
+from google.cloud import vision
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
@@ -31,6 +28,19 @@ def getGeoIP():
     #retrieve geoip data for the given requester
     geoip_data = simple_geoip.get_geoip_data()
     return geoip_data
+
+def retrieveCVResults(type, image_uri):
+    #retrieve Cloud Vision results for image
+    client = vision.ImageAnnotatorClient()
+    image = vision.Image()
+    image.source.image_uri = image_uri
+
+    if type == 0: # basic label detection
+        return client.label_detection(image=image)
+    elif type == 1: # text detection
+        return client.text_detection(image=image)
+    else: # landmark_detection
+        return client.landmark_detection(image=image)
 
 @bp.route('/<int:id>/setMap', methods=('GET', 'POST'))
 def setMap(id):
@@ -49,6 +59,32 @@ def setMap(id):
         ' ORDER BY created DESC'
     )
     posts = curs.fetchall()
+    posts = list(map(list, posts))
+
+    # convert from archive url to folder location
+    for row in posts:
+        # check that image is part of archives
+        if row[7] == 1:
+            if row[3] is not None:
+                if len(row[3]) > 10:
+                    if row[3][0:10] == "/baseImage":
+                        num = 0
+                        pic = ""
+                        for i in row[3]:
+                            if num == 3:
+                                pic = pic + i
+                            if i == '/':
+                                num+=1
+                        row[3] = pic
+                    elif row[3][0:4] == "http":
+                        num = 0
+                        pic = ""
+                        for i in row[3]:
+                            if num == 5:
+                                pic = pic + i
+                            if i == '/':
+                                num+=1
+                        row[3] = pic
 
     # Parse query returns
     for row in posts:
@@ -59,10 +95,7 @@ def setMap(id):
                 if g.user[0] == row[6]:
                     info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
             if row[7] == 1:
-                info = "<img src='"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-                if len(row[3]) > 10:
-                    if row[3][0:10] == '/baseImage':
-                        info = "<img src='http://projectrephoto.com"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
+                info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
             marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                       'lat': row[4],
                       'lng': row[5],
@@ -75,11 +108,7 @@ def setMap(id):
                 if g.user[0] == row[6]:
                     info = "<b>Current Project(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
             if row[7] == 1:
-                info = "<img src='"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-                if len(row[3]) > 10:
-                    if row[3][0:10] == '/baseImage':
-                        info = "<img src='http://projectrephoto.com"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-
+                info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
             marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
                       'lat': row[4],
                       'lng': row[5],
@@ -99,48 +128,152 @@ def setMap(id):
 
     return render_template('blog/mymap.html', mymap=mymap)
 
-@bp.route('/')
-def redirectIndex():
-    return redirect(url_for('blog.index', count=0))
-
-@bp.route('/<int:count>/index', methods=('GET','POST'))
-def index(count):
+@bp.route('/projmap', methods=('GET', 'POST'))
+def projmap():
+    # Acquire database
     db = get_db()
+
     curs = db.cursor()
     curs.execute(
-        'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
+        'SELECT p.id, username, title, imgFile, lat, lng, author_id, archive'
         ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id != 1'
+        ' WHERE lat IS NOT NULL AND lng IS NOT NULL'
         ' ORDER BY created DESC'
-        ' LIMIT 10 OFFSET %s',
-        (count)
     )
     posts = curs.fetchall()
+    posts = list(map(list, posts))
+
+    # convert from archive url to folder location
+    for row in posts:
+        # check that image is part of archives
+        if row[7] == 1:
+            if row[3] is not None:
+                if len(row[3]) > 10:
+                    if row[3][0:10] == "/baseImage":
+                        num = 0
+                        pic = ""
+                        for i in row[3]:
+                            if num == 3:
+                                pic = pic + i
+                            if i == '/':
+                                num+=1
+                        row[3] = pic
+                    elif row[3][0:4] == "http":
+                        num = 0
+                        pic = ""
+                        for i in row[3]:
+                            if num == 5:
+                                pic = pic + i
+                            if i == '/':
+                                num+=1
+                        row[3] = pic
+
+        if g.user is not None:
+            if g.user[0] == row[6]:
+                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/update'>Click to Edit Project</a>)</h4>"
+            else:
+                # include html script for displaying image
+                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+        else:
+            # include html script for displaying image
+            row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+    return render_template('blog/projmap.html', posts=posts)
+
+@bp.route('/')
+def redirectIndex():
+    return redirect(url_for('blog.projmap'))
+
+@bp.route('/<int:count>/<string:searchTerm>/index', methods=('GET','POST'))
+def index(count, searchTerm):
+    db = get_db()
+    curs = db.cursor()
+
+    if searchTerm == "general":
+        curs.execute(
+            'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1'
+            ' ORDER BY created DESC'
+            ' LIMIT 5 OFFSET %s',
+            (count)
+        )
+    else:
+        newTerm = '%%' + searchTerm + '%%'
+        curs.execute(
+            'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s)'
+            ' ORDER BY created DESC'
+            ' LIMIT 5 OFFSET %s',
+            (newTerm, newTerm, newTerm, count)
+        )
+    posts = curs.fetchall()
+    posts = list(map(list, posts))
+
+    # convert from archive url to folder location
+    for row in posts:
+        # check that image is part of archives
+        if row[9] == 1:
+            if row[6] is not None:
+                if len(row[6]) > 10:
+                    if row[6][0:10] == "/baseImage":
+                        num = 0
+                        pic = ""
+                        for i in row[6]:
+                            if num == 3:
+                                pic = pic + i
+                            if i == '/':
+                                num+=1
+                        row[6] = pic
+                    elif row[6][0:4] == "http":
+                        num = 0
+                        pic = ""
+                        for i in row[6]:
+                            if num == 5:
+                                pic = pic + i
+                            if i == '/':
+                                num+=1
+                        row[6] = pic
 
     curs.execute(
         'SELECT image, postID, width, height'
         ' FROM album'
     )
     imgs = curs.fetchall()
+    imgs = list(map(list, imgs))
 
-    return render_template('blog/index.html', posts=posts, imgs=imgs, count=count)
+    # similarly, do so for album
+    for row in imgs:
+        if row[0] is not None:
+            if len(row[0]) > 10:
+                if row[0][0:4] == "http":
+                    num = 0
+                    pic = ""
+                    for i in row[0]:
+                        if num == 6:
+                            pic = pic + i
+                        if i == '/':
+                            num+=1
+                    row[0] = pic
 
-@bp.route('/create', methods=('GET', 'POST'))
+    return render_template('blog/index.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm)
+
+@bp.route('/<int:id>/create', methods=('GET', 'POST'))
 @login_required
-def create():
+def create(id):
     db = get_db()
     curs = db.cursor()
     curs.execute(
-        'SELECT image, width, height'
+        'SELECT image, width, height, postID'
         ' FROM album'
-        ' WHERE postID = 1'
+        ' WHERE postID = %s',
+        (id,)
     )
     post = curs.fetchone()
 
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        filename = request.form['filename']
         error = ''
 
         #Start here
@@ -150,43 +283,16 @@ def create():
         if error:
             flash(error)
         else:
-            #File is already saved. Add tuple to database
+            # Update title, body, etc.
             db = get_db()
-            if request.form['lat'] != 'none':
-                curs.execute(
-                    'INSERT INTO post (title, body, author_id, imgFile, wd, ht, lat, lng, archive)'
-                    ' VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-                    (title, body, g.user[0], filename, request.form['width'], request.form['height'], request.form['lat'], request.form['lng'], 2)
-                    )
-            else:
-                curs.execute(
-                    'INSERT INTO post (title, body, author_id, imgFile, wd, ht, archive)'
-                    ' VALUES (%s, %s, %s, %s, %s, %s)',
-                    (title, body, g.user[0], filename, request.form['width'], request.form['height'], 2)
-                    )
-            db.commit()
-
-            #Acquire latest insert id
-            curs.execute('SELECT LAST_INSERT_ID()')
-            insertID = curs.fetchone()
-
-            #Update new postID in position 0
             curs.execute(
-                'UPDATE album SET postID = %s'
-                ' WHERE postID = 1',
-                (insertID[0],)
-            )
+                'UPDATE post SET title = %s, body = %s, author_id = %s, lat = %s, lng = %s'
+                ' WHERE id = %s',
+                (title, body, g.user[0], request.form['lat'], request.form['lng'], id)
+                )
             db.commit()
 
-            #Create new directory for photos
-            try:
-                os.makedirs('flask_rephoto/flaskr/static/myImgs/'+str(insertID[0]))
-            except OSError:
-                pass
-
-            shutil.move('flask_rephoto/flaskr/static/myImgs/'+filename, 'flask_rephoto/flaskr/static/myImgs/'+str(insertID[0]))
-
-            return redirect(url_for('blog.index', count=0))
+            return redirect(url_for('blog.index', count=0, searchTerm='general'))
 
     return render_template('blog/create.html', post=post)
 
@@ -194,12 +300,35 @@ def get_post(id, check_author=True):
     db = get_db()
     curs = db.cursor()
     curs.execute(
-        'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
+        'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive, tag'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE p.id = %s',
         (id,)
     )
     post = curs.fetchone()
+    post = list(post)
+
+    # reformat archive img url
+    if post[6] is not None:
+        if len(post[6]) > 10:
+            if post[6][0:10] == "/baseImage":
+                num = 0
+                pic = ""
+                for i in post[6]:
+                    if num == 3:
+                        pic = pic + i
+                    if i == '/':
+                        num+=1
+                post[6] = pic
+            elif post[6][0:4] == "http":
+                num = 0
+                pic = ""
+                for i in post[6]:
+                    if num == 5:
+                        pic = pic + i
+                    if i == '/':
+                        num+=1
+                post[6] = pic
 
     if post is None:
         abort(404, "Post id {0} doesn't exist.".format(id))
@@ -224,6 +353,21 @@ def update(id):
         (id,)
     )
     imgs = curs.fetchall()
+    imgs = list(map(list, imgs))
+
+    # reformat archive img url
+    for row in imgs:
+        if row[0] is not None:
+            if len(row[0]) > 10:
+                if row[0][0:4] == "http":
+                    num = 0
+                    pic = ""
+                    for i in row[0]:
+                        if num == 6:
+                            pic = pic + i
+                        if i == '/':
+                            num+=1
+                    row[0] = pic
 
     if request.method == 'POST':
         title = request.form['title']
@@ -251,21 +395,71 @@ def update(id):
         else:
             # If file is real, upload and save to DB
             if changeFile:
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
+
+                # ------- Retrieve Vision API result -------
+                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                response = retrieveCVResults(0, image_uri)
+
+                # Retrieve current post tags
                 curs.execute(
-                    'UPDATE post SET title = %s, body = %s, imgFile = %s, wd = %s, ht = %s'
+                    'SELECT tag'
+                    ' FROM post'
                     ' WHERE id = %s',
-                    (title, body, filename, request.form['width'], request.form['height'], id)
+                    (id,)
                 )
+                tagPost = curs.fetchone()
+                tags = tagPost[0]
+                albumTag = ["General"]
+
+                #Split string and add elements to set
+                tagArr = tags.split('|')
+                tagSet = set()
+                for i in tagArr:
+                    tagSet.add(i)
+
+                # Append new tags
+                labelList = [tags]
+                for label in response.label_annotations:
+                    if label.score > 0.7:
+                        albumTag.append(label.description)
+                        if label.description not in tagSet:
+                            labelList.append(label.description)
+
+                # Retrieve text detection
+                textResponse = retrieveCVResults(1, image_uri)
+
+                # Append new tags for text
+                for text in textResponse.text_annotations:
+                    albumTag.append(text.description)
+                    if text.description not in tagSet:
+                        labelList.append(text.description)
+
+                tagList = "|".join(labelList)
+                albumList = "|".join(albumTag)
+                # ----------------------------------------
+
+                curs.execute(
+                    'UPDATE post SET title = %s, body = %s, imgFile = %s, wd = %s, ht = %s, tag = %s'
+                    ' WHERE id = %s',
+                    (title, body, filename, request.form['width'], request.form['height'], tagList, id)
+                )
+                db.commit()
+                # Save for album
+                curs.execute(
+                    'INSERT INTO album (postID, image, width, height, timedate, tag, name)'
+                    ' VALUES (%s, %s, %s, %s, %s, %s, %s)',
+                    (id, filename, request.form['width'], request.form['height'], datetime.now(), albumList, request.form['name'])
+                )
+                db.commit()
             else:
                 curs.execute(
                     'UPDATE post SET title = %s, body = %s'
                     ' WHERE id = %s',
                     (title, body, id)
                 )
-
-            db.commit()
-            return redirect(url_for('blog.index', count=0))
+                db.commit()
+            return redirect(url_for('blog.index', count=0, searchTerm='general'))
 
     return render_template('blog/update.html', post=post, imgs=imgs)
 
@@ -282,16 +476,15 @@ def delete(id):
     # Delete post itself
     curs.execute('DELETE FROM post WHERE id = %s', (id,))
     db.commit()
-    return redirect(url_for('blog.index', count=0))
+    return redirect(url_for('blog.index', count=0, searchTerm='general'))
 
 @bp.route('/<int:id>/imageCapture', methods=('GET', 'POST'))
-@login_required
 def imageCapture(id):
-    # Create New Post temp ID
-    post = 1
     # If updating a post
     if id != 1:
-        post = get_post(id)
+        post = get_post(id, False)
+    else:
+        post = id
 
     if request.method == 'POST':
         filename = ''
@@ -319,7 +512,6 @@ def imageCapture(id):
 
         # If file is real, upload and save to DB
         if not error:
-            #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             db = get_db()
             curs = db.cursor()
 
@@ -328,36 +520,142 @@ def imageCapture(id):
                 #save file
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
+                # ------- Retrieve Vision API result -------
+                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                response = retrieveCVResults(0, image_uri)
+
+                # Retrieve current post tags
+                curs.execute(
+                    'SELECT tag'
+                    ' FROM post'
+                    ' WHERE id = %s',
+                    (id,)
+                )
+                tagPost = curs.fetchone()
+                tags = tagPost[0]
+                albumTag = ["General"]
+
+                #Split string and add elements to set
+                tagArr = tags.split('|')
+                tagSet = set()
+                for i in tagArr:
+                    tagSet.add(i)
+
+                # Append new tags
+                labelList = [tags]
+                for label in response.label_annotations:
+                    if label.score > 0.7:
+                        albumTag.append(label.description)
+                        if label.description not in tagSet:
+                            labelList.append(label.description)
+
+                # Retrieve text detection
+                textResponse = retrieveCVResults(1, image_uri)
+
+                # Append new tags for text
+                for text in textResponse.text_annotations:
+                    albumTag.append(text.description)
+                    if text.description not in tagSet:
+                        labelList.append(text.description)
+
+                tagList = "|".join(labelList)
+                albumList = "|".join(albumTag)
+                # ----------------------------------------
+
                 #save to tables
                 curs.execute(
-                    'UPDATE post SET imgFile = %s, wd = %s, ht = %s'
+                    'UPDATE post SET imgFile = %s, wd = %s, ht = %s, tag = %s'
                     ' WHERE id = %s',
-                    (filename, request.form['width'], request.form['height'], id)
+                    (filename, request.form['width'], request.form['height'], tagList, id)
                 )
                 db.commit()
 
-                curs.execute(
-                    'INSERT INTO album (postID, image, width, height, timedate)'
-                    ' VALUES (%s, %s, %s, %s, %s)',
-                    (id, filename, request.form['width'], request.form['height'], datetime.now())
-                )
+                if g.user is not None:
+                    # Save for album
+                    curs.execute(
+                        'INSERT INTO album (postID, image, width, height, takerID, timedate, tag, name)'
+                        ' VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                        (id, filename, request.form['width'], request.form['height'], g.user[0], datetime.now(), albumList, request.form['name'])
+                    )
+                else:
+                    # Save for album
+                    curs.execute(
+                        'INSERT INTO album (postID, image, width, height, timedate, tag, name)'
+                        ' VALUES (%s, %s, %s, %s, %s, %s, %s)',
+                        (id, filename, request.form['width'], request.form['height'], datetime.now(), albumList, request.form['name'])
+                    )
                 db.commit()
+
+                flash('Album Successfully Updated!')
+                return jsonify(id)
+
             # If new project, temporarily store picture with id 0
             else:
-                #save file
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                # Time of creation
+                currTime = datetime.now()
 
-                #Clear previous just in case
-                curs.execute('DELETE FROM album WHERE postID = 1')
-                db.commit()
-                #Temporarily store picture in album postID position 1
+                # Save to post
                 curs.execute(
-                    'INSERT INTO album (postID, image, width, height, timedate)'
+                    'INSERT INTO post (created, imgFile, wd, ht, archive)'
                     ' VALUES (%s, %s, %s, %s, %s)',
-                    (id, filename, request.form['width'], request.form['height'], datetime.now())
+                    (currTime, filename, request.form['width'], request.form['height'], 2)
                 )
                 db.commit()
-            flash('Album Successfully Updated!')
+
+                #Acquire latest insert id
+                curs.execute('SELECT LAST_INSERT_ID()')
+                insertID = curs.fetchone()
+
+                #Create new directory for photos
+                try:
+                    os.makedirs('flask_rephoto/flaskr/static/myImgs/'+str(insertID[0]))
+                except OSError:
+                    pass
+
+                #save file
+                file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(insertID[0]), filename))
+
+                #------ Retrieve Vision API result and update tags -------
+                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
+
+                # Retrieve labels
+                response = retrieveCVResults(0, image_uri)
+                tagList = ["General"]
+
+                # Append new tags for labels
+                for label in response.label_annotations:
+                    # if the match percentage is above 70%
+                    if label.score > 0.7:
+                        tagList.append(label.description)
+
+                # Retrieve text detection
+                textResponse = retrieveCVResults(1, image_uri)
+
+                # Append new tags for text
+                for text in textResponse.text_annotations:
+                    tagList.append(text.description)
+
+                tags = "|".join(tagList)
+
+                #update post
+                curs.execute(
+                    'UPDATE post SET tag = %s'
+                    ' WHERE id = %s',
+                    (tags, insertID[0])
+                )
+                db.commit()
+                #---------------------------------------------------------
+
+                # Save for album
+                curs.execute(
+                    'INSERT INTO album (postID, image, width, height, takerID, timedate, tag, name)'
+                    ' VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                    (insertID[0], filename, request.form['width'], request.form['height'], g.user[0], currTime, tags, request.form['name'])
+                )
+                db.commit()
+
+                flash('Album Successfully Updated!')
+                return jsonify(insertID[0])
         else:
             flash(error)
 
@@ -376,6 +674,9 @@ def detail(id):
     # Get post data
     post = get_post(id, False)
 
+    #Split string and add elements to set
+    tagArr = post[10].split('|')
+
     # Get imgs from album based on project id
     db = get_db()
     curs = db.cursor()
@@ -386,8 +687,23 @@ def detail(id):
         (id,)
     )
     imgs = curs.fetchall()
+    imgs = list(map(list, imgs))
 
-    return render_template('blog/detail.html', post=post, imgs=imgs)
+    # reformat archive img url
+    for row in imgs:
+        if row[0] is not None:
+            if len(row[0]) > 10:
+                if row[0][0:4] == "http":
+                    num = 0
+                    pic = ""
+                    for i in row[0]:
+                        if num == 6:
+                            pic = pic + i
+                        if i == '/':
+                            num+=1
+                    row[0] = pic
+
+    return render_template('blog/detail.html', post=post, imgs=imgs, tagArr = tagArr)
 
 @bp.route('/<int:id>/deletePic', methods=('POST',))
 @login_required
@@ -410,19 +726,15 @@ def deletePic(id):
         # Delete post itself
         curs.execute('DELETE FROM post WHERE id = %s', (id,))
         db.commit()
-        return redirect(url_for('blog.index', count=0))
+        return redirect(url_for('blog.index', count=0, searchTerm='general'))
 
     return redirect(url_for('blog.update', id=id))
-
-
-
-
 
 @bp.route('/createFile', methods=('GET', 'POST'))
 @login_required
 def createFile():
     path = "static/myImgs/photolinks.txt"
-    homepath = "/home/chliu/flask_rephoto/flaskr/static/myImgs/photolinks.txt"
+    homepath = "/home/chhaoliu/flask_rephoto/flaskr/static/myImgs/photolinks.txt"
 
     if os.path.isfile(homepath):
         return send_file(path, as_attachment=True)
@@ -462,5 +774,4 @@ def createFile():
                     pc.write(pic[0] + "\n")
 
     return send_file(path, as_attachment=True)
-    #return redirect(url_for('blog.index', count=0))
 

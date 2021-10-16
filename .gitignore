@@ -7,3 +7,6 @@
 
 #Exclude pycache
 /flaskr/__pycache__/*
+
+#Exclude google-cloud-sdk
+/google-cloud-sdk

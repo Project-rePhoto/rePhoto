@@ -1,14 +1,11 @@
 import os
 
-from flask import Flask, jsonify
+from flask import Flask
 #Google Maps API
 from flask_googlemaps import GoogleMaps
-from flask_googlemaps import Map
 #import Geocoder
 from flask_simple_geoip import SimpleGeoIP
 from .config import map_key, geo_key, username, password, database, host
-#Import MySQL database
-from flaskext.mysql import MySQL
 
 simple_geoip = '';
 
@@ -25,8 +22,11 @@ def create_app(test_config=None):
     global simple_geoip
     simple_geoip = SimpleGeoIP(app)
 
+    #Add Google Cloud credentials
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/chhaoliu/key.json'
+
     #Configure upload folder path
-    UPLOAD_FOLDER = '/home/chliu/flask_rephoto/flaskr/static/myImgs'
+    UPLOAD_FOLDER = '/home/chhaoliu/flask_rephoto/flaskr/static/myImgs'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #MySQL connection

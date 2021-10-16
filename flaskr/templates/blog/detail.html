@@ -1,95 +1,81 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{{ post[1] }}{% endblock %}</h1>
+  <h2>{% block title %}{{ post[1] }}{% endblock %}</h2>
 {% endblock %}
 
-
 {% set background = '../static/myImgs/'+ post[0] | string() +'/'+post[6] %}
-{% if post[9] == 1 %}
-  {% if post[6]|length > 10 %}
-    {% if post[6][0:10] == '/baseImage' %}
-      {% set background = 'http://projectrephoto.com' + post[6] %}
-    {% else %}
-      {% set background = post[6] %}
-    {% endif %}
-  {% else %}
-    {% set background = post[6] %}
-  {% endif %}
-{% endif %}
-
 
 {% block content %}
 <article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
-<!--
- <div class="container">
-  <div class="row">
-   <div class="col-lg-8 col-md-10 mx-auto">
--->
-        <h1 style="text-align:center;">Cover Photo</h1>
-
-        {% if post[9] == 1 %}
-        <div class="display-container">
-          {% if post[6]|length > 10 %}
-            {% if post[6][0:10] == '/baseImage' %}
-              <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="http://projectrephoto.com{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
-            {% else %}
-              <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
-            {% endif %}
-          {% else %}
-            <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
-          {% endif %}
-        </div>
-        {% else %}
-        <div class="display-container">
-          <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
-        </div>
-        {% endif %}
-        <hr>
-        <div class="display-container">
-          {% for img in imgs %}
-            {% if post[9] == 1 %}
-              <img class="center" style="display:none; max-width:100%; max-height:100%;" src="{{ img[0] }}" alt="User Image">
-            {% else %}
-              <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
-            {% endif %}
-          {% endfor %}
-          <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
-          <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
-        </div>
-        <hr>
-        <h3 style="text-align:center;">Body</h1>
-        <p>{{ post[2] }}</p>
-        <hr>
-        <script type="text/javascript">
-          var slideIndex = 1;
-          showDivs(slideIndex);
-
-          function plusDivs(n) {
-            showDivs(slideIndex += n);
-          }
-
-          function showDivs(n) {
-            var i;
-            var x = document.getElementsByClassName("center");
-            if (n > x.length) {slideIndex = 1}
-            if (n < 1) {slideIndex = x.length}
-            for (i=0; i < x.length; i++){
-              x[i].style.display = "none";
-            }
-            x[slideIndex-1].style.display = "block";
-          }
-        </script>
-
-      <form style="display: inline;" action="{{ url_for('blog.setMap', id=post[0]) }}" method="post">
-        <div style="text-align:center;">
-          <input type="submit" value="View Map">
-        </div>
-      </form>
-<!--
+    <h1 style="text-align:center;">Cover Photo</h1>
+    <div class="display-container">
+      <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
     </div>
-   </div>
- </div>
--->
+    <hr>
+    <div class="display-container">
+      {% for img in imgs %}
+        {% if post[9] == 1 %}
+          <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
+        {% else %}
+          <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+        {% endif %}
+      {% endfor %}
+      <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
+      <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
+    </div>
+    <hr>
+    <h3 style="text-align:center;">Body</h1>
+        <p>Vision API Analysis</p>
+        {% for res in tagArr %}
+            <form id="searchPosts{{ res }}" style="display: inline-block;" action="" method="post">
+                <input type="hidden" name="{{ res }}" id="{{ res }}" value="{{ res }}">
+                <button type="submit" id="S{{ res }}">{{ res }}</button>
+            </form>
+            <script>
+              document.getElementById("S{{ res }}").onclick = function () {
+                setSearch("{{ res }}");
+              }
+            </script>
+        {% endfor %}
+        <script>
+            function setSearch(term) {
+                var url = "{{ url_for('blog.index', count=0, searchTerm='general') }}";
+                if(term.length != 0){
+                    url = url.replace("general", term);
+                }
+                var formID = "searchPosts" + term;
+                document.getElementById(formID).action = url;
+                document.getElementById(formID).submit();
+              }
+        </script>
+        <br/>
+        <p>{{ post[2] }}</p>
+    <hr>
+    <script type="text/javascript">
+      var slideIndex = 1;
+      showDivs(slideIndex);
+
+      function plusDivs(n) {
+        showDivs(slideIndex += n);
+      }
+
+      function showDivs(n) {
+        var i;
+        var x = document.getElementsByClassName("center");
+        if (n > x.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = x.length}
+        for (i=0; i < x.length; i++){
+          x[i].style.display = "none";
+        }
+        x[slideIndex-1].style.display = "block";
+      }
+    </script>
+
+  <form style="display: inline;" action="{{ url_for('blog.setMap', id=post[0]) }}" method="post">
+    <div style="text-align:center;">
+      <input type="submit" value="View Map">
+    </div>
+  </form>
 </article>
 {% endblock %}

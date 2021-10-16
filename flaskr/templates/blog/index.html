@@ -1,15 +1,29 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Collections{% endblock %}</h1>
+  <h2>{% block title %}Projects{% endblock %}</h2>
 {% endblock %}
 
-{% set background = '../static/imgs/slideImg.jpg' %}
+{% set background = '../../static/imgs/slideImg.jpg' %}
 
 {% block content %}
-  <!--<div class="container">-->
-    <!--<div class="row">-->
-      <!--<div class="col-lg-8 col-md-10 mx-auto">-->
+    <div style="text-align:center;">
+        <form id="searchPosts" action="" method="post">
+            <input type="text" placeholder="Search.." name="searchTerm" id="searchTerm">
+            <button type="submit" onclick="setSearch()">Submit</button>
+        </form>
+        <script>
+          function setSearch() {
+            var term = document.getElementById("searchTerm").value;
+            var url = "{{ url_for('blog.index', count=0, searchTerm='general') }}";
+            if(term.length != 0){
+                url = url.replace("general", term);
+            }
+            document.getElementById("searchPosts").action = url;
+            document.getElementById("searchPosts").submit();
+          }
+        </script>
+    </div>
   {% for post in posts %}
     <article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
       <header>
@@ -24,13 +38,11 @@
           <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
         </div>
       </header>
-
-      <!--<body>-->
         <div class="display-container">
           {% for img in imgs %}
             {% if post[0] == img[1] %}
               {% if post[9] == 1 %}
-                 <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="{{ post[0] }}" style="display:none;" src="{{ img[0] }}" alt="User Image">
+                 <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="{{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
               {% else %}
                 <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="{{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
               {% endif %}
@@ -58,25 +70,20 @@
             if (n > x.length) {slideIndex = 1}
             if (n < 1) {slideIndex = x.length}
             for (i=0; i < x.length; i++){
-              x[i].style.display = "none";
+                x[i].style.display = "none";
             }
             x[slideIndex-1].style.display = "block";
           }
         </script>
-      <!--</body>-->
       {% if not loop.last %}
         <hr>
       {% else %}
-        <!--<a class="post-meta" style="text-align:center;" href="{{ url_for('blog.index', count=count+10) }}">Older Posts</a>-->
         <hr>
         <div style="text-align:center;">
           <input form="oldPosts" type="submit" value="Older Posts">
         </div>
-        <form id="oldPosts" action="{{ url_for('blog.index', count=count+10) }}" method="post"></form>
+        <form id="oldPosts" action="{{ url_for('blog.index', count=count+5, searchTerm=searchTerm) }}" method="post"></form>
       {% endif %}
     </article>
   {% endfor %}
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
 {% endblock %}

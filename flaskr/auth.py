@@ -9,8 +9,8 @@ from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@bp.route('/register', methods=('GET', 'POST'))
-def register():
+@bp.route('/loginOrReg', methods=('GET', 'POST'))
+def loginOrReg():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -18,56 +18,46 @@ def register():
         curs = db.cursor()
         error = None
 
-        if not username:
-            error = 'Username is required.'
-        elif not password:
-            error = 'Password is required.'
-        else:
-            curs.execute(
-                'SELECT id FROM user WHERE username = %s', (username,)
-            )
-            row = curs.fetchone()
-            if row is not None:
-                error = 'User {} is already registered.'.format(username)
-        if error is None:
-            curs.execute(
-                'INSERT INTO user (username, password) VALUES (%s, %s)',
-                (username, generate_password_hash(password))
-            )
-            db.commit()
-            return redirect(url_for('auth.login'))
-
-        flash(error)
-
-    return render_template('auth/register.html')
-
-@bp.route('/login', methods=('GET', 'POST'))
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        db = get_db()
-        error = None
-
-        curs = db.cursor()
-        curs.execute(
-            'SELECT * FROM user WHERE username = %s', (username,)
-        )
-        user = curs.fetchone()
-
-        if user is None:
-            error = 'Incorrect username.'
-        elif not check_password_hash(user[2], password):
-            error = 'Incorrect password.'
+        if request.form['bit'] == 'reg':
+            if not username:
+                error = 'Username is required.'
+            elif not password:
+                error = 'Password is required.'
+            else:
+                curs.execute(
+                    'SELECT id FROM user WHERE username = %s', (username,)
+                )
+                row = curs.fetchone()
+                if row is not None:
+                    error = 'User {} is already registered.'.format(username)
+            if error is None:
+                curs.execute(
+                    'INSERT INTO user (username, password) VALUES (%s, %s)',
+                    (username, generate_password_hash(password))
+                )
+                db.commit()
+            else:
+                flash(error)
 
         if error is None:
-            session.clear()
-            session['user_id'] = user[0]
-            return redirect(url_for('index'))
+            curs.execute(
+                'SELECT * FROM user WHERE username = %s', (username,)
+            )
+            user = curs.fetchone()
 
-        flash(error)
+            if user is None:
+                error = 'Incorrect username.'
+            elif not check_password_hash(user[2], password):
+                error = 'Incorrect password.'
 
-    return render_template('auth/login.html')
+            if error is None:
+                session.clear()
+                session['user_id'] = user[0]
+                return redirect(url_for('index'))
+
+            flash(error)
+
+    return render_template('auth/loginOrReg.html')
 
 @bp.before_app_request
 def load_logged_in_user():
