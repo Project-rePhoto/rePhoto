@@ -11,5 +11,5 @@
 #Exclude google-cloud-sdk
 /google-cloud-sdk
 
-#Exclud config file
+#Exclude config file
 /flaskr/config.py
