@@ -13,7 +13,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    #Initialize Google Maps extension
+    #Initialize Maps extension
     GoogleMaps(app, key=map_key)
 
     #Initialize SimpleGeoIP extension

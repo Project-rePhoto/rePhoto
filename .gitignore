@@ -10,3 +10,6 @@
 
 #Exclude google-cloud-sdk
 /google-cloud-sdk
+
+#Exclud config file
+/flaskr/config.py
