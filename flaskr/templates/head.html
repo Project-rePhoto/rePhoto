@@ -45,7 +45,7 @@
                         <a class="nav-link" href="{{ url_for('blog.projmaps') }}">Maps</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('blog.index', count=0, searchTerm='general') }}">Find Project</a>
+                        <a class="nav-link" href="{{ url_for('blog.projectsdemo') }}">Find Project</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
@@ -64,12 +64,5 @@
     <section class="content">
       <div>{% block content %}{% endblock %}</div>
     </section>
-
-    <!-- Footer -->
-    <footer class="bg-dark bg-black text-center text-white pb-5">
-        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-            2021, Project rePhoto
-        </div>
-    </footer>
 
 </div>

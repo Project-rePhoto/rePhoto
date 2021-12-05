@@ -722,6 +722,10 @@ def background():
 def about():
     return render_template('blog/about.html')
 
+@bp.route('/projectsdemo')
+def projectsdemo():
+    return render_template('blog/projects.html')
+
 @bp.route('/info')
 def info():
     return render_template('blog/info.html')
