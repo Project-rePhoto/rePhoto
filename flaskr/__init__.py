@@ -7,7 +7,7 @@ from flask_googlemaps import GoogleMaps
 #from flask_simple_geoip import SimpleGeoIP
 from .config import map_key, username, password, database, host
 
-simple_geoip = '';
+#simple_geoip = '';
 
 def create_app(test_config=None):
     # create and configure the app
@@ -23,10 +23,10 @@ def create_app(test_config=None):
     #simple_geoip = SimpleGeoIP(app)
 
     #Add Google Cloud credentials
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/rameme/key.json'
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/jacobpritchard9/key.json'
 
     #Configure upload folder path
-    UPLOAD_FOLDER = '/home/rameme/rePhoto/flaskr/static/myImgs'
+    UPLOAD_FOLDER = '/home/jacobpritchard9/rePhoto/flaskr/static/myImgs'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #MySQL connection
