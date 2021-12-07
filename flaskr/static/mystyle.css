@@ -1,0 +1,49 @@
+/* carousel image allignment */
+.carousel-item{
+    width: 100%; /*width you want*/
+    height: 50vh; /*height you want*/
+    overflow: hidden;
+}
+
+.carousel-item img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    width: auto;
+}
+
+/* change navbar color */
+.bg-black {
+    background-color: black !important;
+}
+
+/* set viewpoints */
+.main-wrapper {
+    height: 100vh;
+    font-family: 'Source Sans Pro', sans-serif !important;
+}
+
+.map-wrapper {
+    height: 100vh;
+}
+
+/* container box stacking */
+.container-stack{
+    padding: 10px;
+    background-color: #000000;
+    font-family: 'Source Sans Pro', sans-serif;
+    opacity: .8;
+}
+
+.container-box{
+    width: 100%;
+    padding: 30px;
+    background-color: #23272B;
+    margin: 20px 5px;
+    overflow-wrap: break-word;
+    color: white;
+    display: inline-block;
+}

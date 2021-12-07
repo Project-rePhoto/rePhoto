@@ -5,7 +5,7 @@ from flask import Flask
 from flask_googlemaps import GoogleMaps
 #import Geocoder
 #from flask_simple_geoip import SimpleGeoIP
-from .config import map_key, geo_key, username, password, database, host
+from .config import map_key, username, password, database, host
 
 #simple_geoip = '';
 
