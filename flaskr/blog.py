@@ -26,8 +26,8 @@ def allowed_file(filename):
 
 #def getGeoIP():
     #retrieve geoip data for the given requester
-#    geoip_data = simple_geoip.get_geoip_data()
-#    return geoip_data
+    #geoip_data = simple_geoip.get_geoip_data()
+    #return geoip_data
 
 def retrieveCVResults(type, image_uri):
     #retrieve Cloud Vision results for image
@@ -451,7 +451,7 @@ def update(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://jacobpritchard9.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # Retrieve current post tags
@@ -574,7 +574,7 @@ def imageCapture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://jacobpritchard9.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # Retrieve current post tags
@@ -669,7 +669,7 @@ def imageCapture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(insertID[0]), filename))
 
                 #------ Retrieve Vision API result and update tags -------
-                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
+                image_uri = 'https://jacobpritchard9.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
 
                 # Retrieve labels
                 response = retrieveCVResults(0, image_uri)
@@ -795,7 +795,7 @@ def deletePic(id):
 @login_required
 def createFile():
     path = "static/myImgs/photolinks.txt"
-    homepath = "/home/rameme/rePhoto/flaskr/static/myImgs/photolinks.txt"
+    homepath = "/home/jacobpritchard9/rePhoto/flaskr/static/myImgs/photolinks.txt"
 
     if os.path.isfile(homepath):
         return send_file(path, as_attachment=True)
