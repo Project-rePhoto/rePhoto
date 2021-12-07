@@ -11,7 +11,7 @@ from flaskr.db import get_db
 #Google Maps API
 from flask_googlemaps import Map
 #import Geocoder
-from flaskr import simple_geoip
+#from flaskr import simple_geoip
 from datetime import datetime
 #import Cloud Vision API
 from google.cloud import vision
@@ -24,10 +24,10 @@ def allowed_file(filename):
     return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def getGeoIP():
+#def getGeoIP():
     #retrieve geoip data for the given requester
-    geoip_data = simple_geoip.get_geoip_data()
-    return geoip_data
+#    geoip_data = simple_geoip.get_geoip_data()
+#    return geoip_data
 
 def retrieveCVResults(type, image_uri):
     #retrieve Cloud Vision results for image
@@ -256,7 +256,28 @@ def index(count, searchTerm):
                             num+=1
                     row[0] = pic
 
-    return render_template('blog/index.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm)
+    # Track contributions
+    beg=mid=adv=0
+    if g.user is not None:
+        curs.execute(
+            'SELECT contributions'
+            ' FROM user u'
+            ' WHERE u.id = %s',
+            (g.user[0],)
+        )
+        conts = curs.fetchone()
+
+        if conts[0] <= 10:
+            beg = conts[0]
+        elif conts[0] <= 40:
+            beg = 10
+            mid = conts[0]-10
+        else:
+            beg = 10
+            mid = 30
+            adv = conts[0]-40
+
+    return render_template('blog/index.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm, beg=beg, mid=mid, adv=adv)
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
 @login_required
@@ -398,7 +419,7 @@ def update(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # Retrieve current post tags
@@ -521,7 +542,7 @@ def imageCapture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # Retrieve current post tags
@@ -571,6 +592,22 @@ def imageCapture(id):
                 db.commit()
 
                 if g.user is not None:
+                    #update contributions
+                    curs.execute(
+                        'SELECT contributions'
+                        ' FROM user u'
+                        ' WHERE u.id = %s',
+                        (g.user[0],)
+                    )
+                    conts = curs.fetchone()
+
+                    curs.execute(
+                        'UPDATE user SET contributions = %s'
+                        ' WHERE id = %s',
+                        (conts[0]+1, g.user[0])
+                    )
+                    db.commit()
+
                     # Save for album
                     curs.execute(
                         'INSERT INTO album (postID, image, width, height, takerID, timedate, tag, name)'
@@ -608,7 +645,7 @@ def imageCapture(id):
 
                 #Create new directory for photos
                 try:
-                    os.makedirs('flask_rephoto/flaskr/static/myImgs/'+str(insertID[0]))
+                    os.makedirs('rePhoto/flaskr/static/myImgs/'+str(insertID[0]))
                 except OSError:
                     pass
 
@@ -616,7 +653,7 @@ def imageCapture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(insertID[0]), filename))
 
                 #------ Retrieve Vision API result and update tags -------
-                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
+                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
 
                 # Retrieve labels
                 response = retrieveCVResults(0, image_uri)
@@ -645,7 +682,6 @@ def imageCapture(id):
                 )
                 db.commit()
                 #---------------------------------------------------------
-
                 # Save for album
                 curs.execute(
                     'INSERT INTO album (postID, image, width, height, takerID, timedate, tag, name)'
@@ -734,7 +770,7 @@ def deletePic(id):
 @login_required
 def createFile():
     path = "static/myImgs/photolinks.txt"
-    homepath = "/home/chhaoliu/flask_rephoto/flaskr/static/myImgs/photolinks.txt"
+    homepath = "/home/liuchao/rePhoto/flaskr/static/myImgs/photolinks.txt"
 
     if os.path.isfile(homepath):
         return send_file(path, as_attachment=True)
@@ -752,7 +788,7 @@ def createFile():
     for row in posts:
         rowID = row[0]
         img = row[1]
-        with open("flask_rephoto/flaskr/static/myImgs/photolinks.txt", "a") as fo:
+        with open("rePhoto/flaskr/static/myImgs/photolinks.txt", "a") as fo:
             fo.write(str(rowID) + "\n")
             if img is not None:
                 if img[0:10] == "/baseImage":
@@ -767,7 +803,7 @@ def createFile():
         )
         albums = curs.fetchall()
         for pic in albums:
-            with open("flask_rephoto/flaskr/static/myImgs/photolinks.txt", "a") as pc:
+            with open("rePhoto/flaskr/static/myImgs/photolinks.txt", "a") as pc:
                 if pic[0][0:10] == "/baseImage":
                     pc.write("http://projectrephoto.com" + pic[0] + "\n")
                 else:

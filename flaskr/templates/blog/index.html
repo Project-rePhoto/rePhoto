@@ -1,3 +1,5 @@
+<!-- Bootstrap for progress bar -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 {% extends 'base.html' %}
 
 {% block header %}
@@ -7,6 +9,17 @@
 {% set background = '../../static/imgs/slideImg.jpg' %}
 
 {% block content %}
+    <div style="text-align: center;"><h2>My Contributions</h2></div>
+    {% if g.user %}
+        <div class="progress" style="height: 30px; max-width: 1000px; margin-left:auto; margin-right:auto;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: {{ beg }}%" aria-valuenow="{{ beg }}" aria-valuemin="0" aria-valuemax="100">Beginner</div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: {{ mid }}%" aria-valuenow="{{ mid }}" aria-valuemin="0" aria-valuemax="100">Intermediate</div>
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ adv }}%" aria-valuenow="{{ adv }}" aria-valuemin="0" aria-valuemax="100">Advanced</div>
+        </div>
+    {% else %}
+        <div style="text-align: center;"><a class="btn btn-outline-primary" href="{{ url_for('auth.loginOrReg') }}">Sign in to see contributions</a></div>
+    {% endif %}
+    <br/>
     <div style="text-align:center;">
         <form id="searchPosts" action="" method="post">
             <input type="text" placeholder="Search.." name="searchTerm" id="searchTerm">
@@ -24,6 +37,7 @@
           }
         </script>
     </div>
+
   {% for post in posts %}
     <article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
       <header>
@@ -87,3 +101,8 @@
     </article>
   {% endfor %}
 {% endblock %}
+
+<!--Additional JS pluggins>-->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

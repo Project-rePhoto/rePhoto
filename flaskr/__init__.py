@@ -4,10 +4,10 @@ from flask import Flask
 #Google Maps API
 from flask_googlemaps import GoogleMaps
 #import Geocoder
-from flask_simple_geoip import SimpleGeoIP
+# from flask_simple_geoip import SimpleGeoIP
 from .config import map_key, geo_key, username, password, database, host
 
-simple_geoip = '';
+# simple_geoip = '';
 
 def create_app(test_config=None):
     # create and configure the app
@@ -17,16 +17,16 @@ def create_app(test_config=None):
     GoogleMaps(app, key=map_key)
 
     #Initialize SimpleGeoIP extension
-    app.config["GEOIPIFY_API_KEY"] = geo_key
+    # app.config["GEOIPIFY_API_KEY"] = geo_key
 
-    global simple_geoip
-    simple_geoip = SimpleGeoIP(app)
+    #global simple_geoip
+    #simple_geoip = SimpleGeoIP(app)
 
     #Add Google Cloud credentials
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/chhaoliu/key.json'
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/liuchao/key.json'
 
     #Configure upload folder path
-    UPLOAD_FOLDER = '/home/chhaoliu/flask_rephoto/flaskr/static/myImgs'
+    UPLOAD_FOLDER = '/home/liuchao/rePhoto/flaskr/static/myImgs'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #MySQL connection
