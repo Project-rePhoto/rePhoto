@@ -1,192 +1,142 @@
 {% extends 'head.html' %}
 
+{% block header %}
+  <h2>{% block title %} rePhoto {% endblock %}</h2>
+{% endblock %}
+
 {% block content %}
 <article>
-
     <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-* {box-sizing: border-box;}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-.img-comp-container {
-  position: relative;
-  height: 500px; /*should be the same height as the images*/
-  margin-left: 10%;
-}
+            <!-- Image Comperison Slider -->
+            <!-- Code: https://github.com/Paul-Browne/image-comparison-slider -->
 
-.img-comp-img {
-  position: absolute;
-  width: auto;
-  height: auto;
-  overflow:hidden;
-}
+            <style>
+                img {
+                  width: 100%;
+                  vertical-align: middle;
+                }
 
-.img-comp-img img {
-  display:block;
-  vertical-align:middle;
-}
+                .image-spliter,
+                img,
+                .mover {
+                  overflow: hidden;
+                  -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                     -khtml-user-select: none;
+                       -moz-user-select: none;
+                        -ms-user-select: none;
+                            user-select: none;
+                }
 
-.img-comp-slider {
-  position: absolute;
-  z-index:9;
-  cursor: ew-resize;
-  /*set the appearance of the slider:*/
-  width: 40px;
-  height: 40px;
-  background-color: #FFFFFF;
-  opacity: 0.7;
-  border-radius: 50%;
-}
-</style>
-<script>
-function initComparisons() {
-  var x, i;
-  /*find all elements with an "overlay" class:*/
-  x = document.getElementsByClassName("img-comp-overlay");
-  for (i = 0; i < x.length; i++) {
-    /*once for each "overlay" element:
-    pass the "overlay" element as a parameter when executing the compareImages function:*/
-    compareImages(x[i]);
-  }
-  function compareImages(img) {
-    var slider, img, clicked = 0, w, h;
-    /*get the width and height of the img element*/
-    w = img.offsetWidth;
-    h = img.offsetHeight;
-    /*set the width of the img element to 50%:*/
-    img.style.width = (w / 2) + "px";
-    /*create slider:*/
-    slider = document.createElement("DIV");
-    slider.setAttribute("class", "img-comp-slider");
-    /*insert slider*/
-    img.parentElement.insertBefore(slider, img);
-    /*position the slider in the middle:*/
-    slider.style.top = (h / 2) - (slider.offsetHeight / 2) + "px";
-    slider.style.left = (w / 2) - (slider.offsetWidth / 2) + "px";
-    /*execute a function when the mouse button is pressed:*/
-    slider.addEventListener("mousedown", slideReady);
-    /*and another function when the mouse button is released:*/
-    window.addEventListener("mouseup", slideFinish);
-    /*or touched (for touch screens:*/
-    slider.addEventListener("touchstart", slideReady);
-    /*and released (for touch screens:*/
-    window.addEventListener("touchend", slideFinish);
-    function slideReady(e) {
-      /*prevent any other actions that may occur when moving over the image:*/
-      e.preventDefault();
-      /*the slider is now clicked and ready to move:*/
-      clicked = 1;
-      /*execute a function when the slider is moved:*/
-      window.addEventListener("mousemove", slideMove);
-      window.addEventListener("touchmove", slideMove);
-    }
-    function slideFinish() {
-      /*the slider is no longer clicked:*/
-      clicked = 0;
-    }
-    function slideMove(e) {
-      var pos;
-      /*if the slider is no longer clicked, exit this function:*/
-      if (clicked == 0) return false;
-      /*get the cursor's x position:*/
-      pos = getCursorPos(e)
-      /*prevent the slider from being positioned outside the image:*/
-      if (pos < 0) pos = 0;
-      if (pos > w) pos = w;
-      /*execute a function that will resize the overlay image according to the cursor:*/
-      slide(pos);
-    }
-    function getCursorPos(e) {
-      var a, x = 0;
-      e = (e.changedTouches) ? e.changedTouches[0] : e;
-      /*get the x positions of the image:*/
-      a = img.getBoundingClientRect();
-      /*calculate the cursor's x coordinate, relative to the image:*/
-      x = e.pageX - a.left;
-      /*consider any page scrolling:*/
-      x = x - window.pageXOffset;
-      return x;
-    }
-    function slide(x) {
-      /*resize the image:*/
-      img.style.width = x + "px";
-      /*position the slider:*/
-      slider.style.left = img.offsetWidth - (slider.offsetWidth / 2) + "px";
-    }
-  }
-}
-</script>
-</head>
+                .image-spliter {
+                  position: relative;
+                }
+
+                .img-left {
+                  position: absolute;
+                  top: 0;
+                  left:0;
+                }
+
+                .mover {
+                  position:absolute;
+                  width: 200px;
+                  height: 100%;
+                  top: 0;
+                  left:0;
+                  z-index: 10;
+                }
+                .mover:before,
+                .mover:after {
+                  position:absolute;
+                  left:50%;
+                  content: "";
+                  background: #fff;
+                  cursor: -webkit-grab;
+                  cursor: grab;
+                }
+
+                .mover:before {
+                  top: 0;
+                  transform:translateX(-50%);
+                  width: 1px;
+                  height: 100%;
+                }
+                .mover:after {
+                  top: 50%;
+                  transform:translate(-50%, -50%);
+                  width: 5px;
+                  height: 33%;
+                  border-radius: 5px;
+                }
+            </style>
+
+    </head>
 
     <body style="background-color:black;">
 
-        <!-- what is rePhoto -->
-        <div class="container-fluid mx-auto">
-            <div class="container-stack container-fluid">
+        <!-- image slider -->
+        <div class="container">
               <div class="row">
-                <div class="col"></div>
-                <div class="col-10">
-                    <div class="container-box">
-                        <div class="img-comp-container">
-                            <div class="img-comp-img">
-                                <img src="../../static/imgs/slider/SentinelBridge6.jpg" id="baseImg" class="d-block mx-auto rounded" width="766px" height="500px">
+                <div class="col-lg-12">
+                    <div class="container-box rounded">
+                        <div class="image-spliter">
+                            <div class="mover"></div>
+                                <img class="img-left" src="../../static/imgs/slider/SentinelBridge6.jpg">
+                                <img class="img-right" src="../../static/imgs/slider/SentinelBridge1.jpg">
                             </div>
-                            <div class="img-comp-img img-comp-overlay">
-                                <img src="../../static/imgs/slider/SentinelBridge1.jpg" class="d-block mx-auto rounded" width="766px" height="500px">
-                            </div>
-                        </div>
                     </div>
                 </div>
-                <div class="col"></div>
               </div>
-            </div>
         </div>
 
         <script>
-        /*Execute a function that will execute an image compare function for each element with the img-comp-overlay class:*/
-        initComparisons();
+            !function(){for(var t=document.querySelectorAll(".image-spliter .mover"),e=t.length;e--;){var n=t[e].getBoundingClientRect().width,i=t[e].nextElementSibling,l=i.getBoundingClientRect().width;i.getBoundingClientRect().height;t[e].style.left=l/2-n/2+"px",i.style.clip="rect(0px, "+l/2+"px, 999px, 0px)";var s,c=0;t[e].addEventListener("mousedown",function(t){s=t.clientX,c=1}),t[e].addEventListener("mouseup",function(t){c=0}),t[e].addEventListener("mouseout",function(t){c=0}),t[e].addEventListener("touchstart",function(t){s=t.touches[0].clientX,c=1}),t[e].addEventListener("touchend",function(t){c=0}),t[e].addEventListener("mousemove",function(t){c&&(this.style.left=parseInt(this.style.left)+(event.clientX-s)+"px",s=event.clientX,this.nextElementSibling.style.clip="rect(0px, "+(this.getBoundingClientRect().width/2+parseInt(this.style.left))+"px, "+this.getBoundingClientRect().height+"px, 0px)")}),t[e].addEventListener("touchmove",function(t){c&&(this.style.left=parseInt(this.style.left)+(t.touches[0].clientX-s)+"px",s=t.touches[0].clientX,this.nextElementSibling.style.clip="rect(0px, "+(this.getBoundingClientRect().width/2+parseInt(this.style.left))+"px, "+this.getBoundingClientRect().height+"px, 0px)")})}window.addEventListener("resize",function(t){for(var e=document.querySelectorAll(".image-spliter .mover"),n=e.length;n--;){var i=e[n].getBoundingClientRect().width,l=e[n].nextElementSibling,s=l.getBoundingClientRect().width,c=l.getBoundingClientRect().height;e[n].style.left=s/2-i/2+"px",l.style.clip="rect(0px, "+s/2+"px, "+c+"px, 0px)"}})}();
         </script>
 
         <!-- what is rePhoto -->
-        <div class="container-fluid mx-auto">
-            <div class="container-stack container-fluid">
-              <div class="row">
-                <div class="col"></div>
-                <div class="col-10">
-                  <div class="container-box">
-                    <p class="h1 text-white"> What is rePhoto? </p>
-                    <p class="text-white"> rePhoto is a citizen science web application designed to create a simpler environment for users to take repeat photography of a subject.  This is done through rePhoto providing layered imagery such that the user can align their camera with the previous image of the current subject.  Furthermore, rePhoto allows users to create their own projects or to simply and easily find local projects or projects relevant to a user's interests to contribute to.</p>
-                  </div>
-                </div>
-                <div class="col"></div>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+              <div class="container-box rounded">
+                <p class="h1 text-white"> What is rePhoto? </p>
+                <p class="text-white"> rePhoto is a citizen science web application designed to create a simpler environment for users to take repeat photography of a subject.  This is done through rePhoto providing layered imagery such that the user can align their camera with the previous image of the current subject.  Furthermore, rePhoto allows users to create their own projects or to simply and easily find local projects or projects relevant to a user's interests to contribute to.</p>
               </div>
             </div>
+          </div>
         </div>
 
         <!-- what is the purpose -->
-        <div class="container-fluid mx-auto">
-            <div class="container-stack container-fluid">
-              <div class="row">
-                <div class="col"></div>
-                <div class="col-10">
-                  <div class="container-box">
-                    <p class="h1 text-white"> What is the purpose of rePhoto? </p>
-                    <p class="text-white"> The core utility of Project rePhoto stems from its identity as a citizen science project which allows for a comprehensive visual timeline of change for each project’s subject, granting researchers more time to spend on analytical work while citizens not directly involved with the research can provide samples as they come across a project’s subject.</p>
-                  </div>
-                </div>
-                <div class="col"></div>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+              <div class="container-box rounded">
+                <p class="h1 text-white"> What is the purpose of rePhoto? </p>
+                <p class="text-white"> The core utility of Project rePhoto stems from its identity as a citizen science project which allows for a comprehensive visual timeline of change for each project’s subject, granting researchers more time to spend on analytical work while citizens not directly involved with the research can provide samples as they come across a project’s subject.</p>
               </div>
-           </div>
+            </div>
+          </div>
         </div>
 
         <!-- contribute -->
-        <div class="container-fluid container-sm">
+        <div class="container">
             <div class="col fixed-bottom row justify-content-center bg-black mx-auto">
               <a href="{{ url_for('blog.projmaps') }}">
                   <button type="button" class="btn btn-dark text-white btn-rounded btn-lg mt-1 mb-1"> Contribute to nearby projects! </button>
               </a>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="bg-dark bg-black text-center text-white pb-5">
+            <div class="text-center p-3">
+              2022, Project rePhoto
+            </div>
+        </footer>
+
     </body>
+
 </article>
 {% endblock %}
