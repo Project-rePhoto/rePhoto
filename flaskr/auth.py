@@ -18,6 +18,8 @@ def loginOrReg():
         curs = db.cursor()
         error = None
 
+        # TODO: data sanitization (username and password)
+
         if request.form['bit'] == 'reg':
             if not username:
                 error = 'Username is required.'
@@ -38,6 +40,7 @@ def loginOrReg():
                 db.commit()
             else:
                 flash(error)
+
 
         if error is None:
             curs.execute(
