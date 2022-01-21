@@ -170,13 +170,13 @@ def projmap():
 
         if g.user is not None:
             if g.user[0] == row[6]:
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/update'>Click to Edit Project</a>)</h4>"
+                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/update'>Click to Edit Project</a>)</h4>"
             else:
                 # include html script for displaying image
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
         else:
             # include html script for displaying image
-            row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+            row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
     return render_template('blog/projmap.html', posts=posts)
 
 #duplicate projmap
@@ -222,13 +222,13 @@ def projmaps():
 
         if g.user is not None:
             if g.user[0] == row[6]:
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/update'>Click to Edit Project</a>)</h4>"
+                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/update'>Click to Edit Project</a>)</h4>"
             else:
                 # include html script for displaying image
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
         else:
             # include html script for displaying image
-            row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+            row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
     return render_template('blog/projmaps.html', posts=posts)
 
 @bp.route('/')
@@ -236,8 +236,8 @@ def redirectIndex():
     return render_template('blog/home.html')
     # return redirect(url_for('blog/projmap'))
 
-@bp.route('/<int:count>/<string:searchTerm>/index', methods=('GET','POST'))
-def index(count, searchTerm):
+@bp.route('/<int:count>/<string:searchTerm>/projects', methods=('GET','POST'))
+def projects(count, searchTerm):
     db = get_db()
     curs = db.cursor()
 
@@ -263,6 +263,7 @@ def index(count, searchTerm):
     posts = curs.fetchall()
     posts = list(map(list, posts))
 
+    # OLD CODE
     # convert from archive url to folder location
     for row in posts:
         # check that image is part of archives
@@ -295,6 +296,7 @@ def index(count, searchTerm):
     imgs = curs.fetchall()
     imgs = list(map(list, imgs))
 
+    # OLD CODE
     # similarly, do so for album
     for row in imgs:
         if row[0] is not None:
@@ -309,7 +311,7 @@ def index(count, searchTerm):
                             num+=1
                     row[0] = pic
 
-    return render_template('blog/index.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm)
+    return render_template('blog/projects.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm)
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
 @login_required
@@ -345,7 +347,7 @@ def create(id):
                 )
             db.commit()
 
-            return redirect(url_for('blog.index', count=0, searchTerm='general'))
+            return redirect(url_for('blog.projects', count=0, searchTerm='general'))
 
     return render_template('blog/create.html', post=post)
 
@@ -451,7 +453,7 @@ def update(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://jacobpritchard9.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # Retrieve current post tags
@@ -512,7 +514,7 @@ def update(id):
                     (title, body, id)
                 )
                 db.commit()
-            return redirect(url_for('blog.index', count=0, searchTerm='general'))
+            return redirect(url_for('blog.projects', count=0, searchTerm='general'))
 
     return render_template('blog/update.html', post=post, imgs=imgs)
 
@@ -529,10 +531,10 @@ def delete(id):
     # Delete post itself
     curs.execute('DELETE FROM post WHERE id = %s', (id,))
     db.commit()
-    return redirect(url_for('blog.index', count=0, searchTerm='general'))
+    return redirect(url_for('blog.projects', count=0, searchTerm='general'))
 
-@bp.route('/<int:id>/imageCapture', methods=('GET', 'POST'))
-def imageCapture(id):
+@bp.route('/<int:id>/capture', methods=('GET', 'POST'))
+def capture(id):
     # If updating a post
     if id != 1:
         post = get_post(id, False)
@@ -574,7 +576,7 @@ def imageCapture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://jacobpritchard9.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # Retrieve current post tags
@@ -669,7 +671,7 @@ def imageCapture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(insertID[0]), filename))
 
                 #------ Retrieve Vision API result and update tags -------
-                image_uri = 'https://jacobpritchard9.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
 
                 # Retrieve labels
                 response = retrieveCVResults(0, image_uri)
@@ -712,7 +714,7 @@ def imageCapture(id):
         else:
             flash(error)
 
-    return render_template('blog/imageCapture.html', post=post)
+    return render_template('blog/capture.html', post=post)
 
 @bp.route('/background')
 def background():
@@ -722,9 +724,9 @@ def background():
 def about():
     return render_template('blog/about.html')
 
-@bp.route('/projectsdemo')
-def projectsdemo():
-    return render_template('blog/projects.html')
+@bp.route('/profile')
+def profile():
+    return render_template('blog/profile.html')
 
 @bp.route('/info')
 def info():
@@ -787,7 +789,7 @@ def deletePic(id):
         # Delete post itself
         curs.execute('DELETE FROM post WHERE id = %s', (id,))
         db.commit()
-        return redirect(url_for('blog.index', count=0, searchTerm='general'))
+        return redirect(url_for('blog.projects', count=0, searchTerm='general'))
 
     return redirect(url_for('blog.update', id=id))
 
@@ -795,7 +797,7 @@ def deletePic(id):
 @login_required
 def createFile():
     path = "static/myImgs/photolinks.txt"
-    homepath = "/home/jacobpritchard9/rePhoto/flaskr/static/myImgs/photolinks.txt"
+    homepath = "/home/rameme/rePhoto/flaskr/static/myImgs/photolinks.txt"
 
     if os.path.isfile(homepath):
         return send_file(path, as_attachment=True)

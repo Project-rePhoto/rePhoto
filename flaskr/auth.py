@@ -38,6 +38,17 @@ def loginOrReg():
                     (username, generate_password_hash(password))
                 )
                 db.commit()
+
+
+                curs.execute(
+                    'SELECT * FROM user WHERE username = %s', (username,)
+                )
+                user = curs.fetchone()
+                session.clear()
+                session['user_id'] = user[0]
+
+                return redirect(url_for('blog.profile'))
+
             else:
                 flash(error)
 
@@ -56,7 +67,7 @@ def loginOrReg():
             if error is None:
                 session.clear()
                 session['user_id'] = user[0]
-                return redirect(url_for('index'))
+                return redirect(url_for('blog.profile'))
 
             flash(error)
 

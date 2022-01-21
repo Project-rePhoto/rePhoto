@@ -1,17 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'head.html' %}
 
 {% block header %}
   <h2>{% block title %}Take a Picture{% endblock %}</h2>
 {% endblock %}
 
-{% if post != 1 %}
-    {% set background = '../static/myImgs/'+ post[0] | string() +'/'+post[6] %}
-{% else %}
-    {% set background = '../static/imgs/slideImg.jpg' %}
-{% endif %}
-
 {% block content %}
-<article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
+<article class="post">
  <div class="container">
   <div class="row">
    <div id="captureArea" class="col-lg-8 col-md-10 mx-auto" style="position: relative; display: flex; flex-direction: column;">
@@ -26,10 +20,10 @@
   </div>
 
   {% if post != 1 %}
-    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=post[0]) }}">
+    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.capture', id=post[0]) }}">
     <input type="hidden" id="redirect" name="redirect" value="{{ post[0] }}">
   {% else %}
-    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.imageCapture', id=1) }}">
+    <input type="hidden" id="IDPath" name="IDPath" value="{{ url_for('blog.capture', id=1) }}">
     <input type="hidden" id="redirect" name="redirect" value="1">
   {% endif %}
 
