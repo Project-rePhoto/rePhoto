@@ -40,7 +40,7 @@
         {% endfor %}
         <script>
             function setSearch(term) {
-                var url = "{{ url_for('blog.index', count=0, searchTerm='general') }}";
+                var url = "{{ url_for('blog.projects', count=0, searchTerm='general') }}";
                 if(term.length != 0){
                     url = url.replace("general", term);
                 }
