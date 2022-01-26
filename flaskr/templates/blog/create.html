@@ -19,14 +19,18 @@
         <textarea class="form-control" style="height: 200px;" name="body" id="body">{{ request.form['body'] }}</textarea>
         <hr>
 
-        <img id="myPic" src="/static/myImgs/{{ post [3] }}/{{ post[0] }}" alt="Cover Image" width="{{ post[1] }}" height="{{ post[2] }}">
-        <input type="hidden" name="lat" id="lat" value="none">
-        <input type="hidden" name="lng" id="lng" value="none">
-        <input type="hidden" name="width" id="width" value="{{ post[1] }}">
-        <input type="hidden" name="height" id="height" value="{{ post[2] }}">
-        <input type="hidden" name="filename" id="filename" value="{{ post[0] }}">
+        <div class="row" style="padding-bottom:10px;">
+            <input style="margin-left:45%;" type="submit" value="Save">
+        </div>
 
-        <input style="float: right;" type="submit" value="Save">
+        <div class="row">
+            <img style="margin-left:7.5%;" id="myPic" src="/static/myImgs/{{ post [3] }}/{{ post[0] }}" alt="Cover Image" width="{{ post[1] }}" height="{{ post[2] }}">
+            <input type="hidden" name="lat" id="lat" value="none">
+            <input type="hidden" name="lng" id="lng" value="none">
+            <input type="hidden" name="width" id="width" value="{{ post[1] }}">
+            <input type="hidden" name="height" id="height" value="{{ post[2] }}">
+            <input type="hidden" name="filename" id="filename" value="{{ post[0] }}">
+        </div>
       </form>
 
     </div>
