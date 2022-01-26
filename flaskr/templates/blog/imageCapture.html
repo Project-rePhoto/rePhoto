@@ -225,15 +225,15 @@
               if (document.getElementById('redirect').value != 1){
                 {% if g.user[0] is defined %}
                     {% if g.user[0] != post[4] %}
-                        window.location.href = "https://liuchao.pythonanywhere.com/" + postID + "/detail";
+                        window.location.href = "https://jacobpritchard9.pythonanywhere.com/" + postID + "/detail";
                     {% else %}
-                        window.location.href = "https://liuchao.pythonanywhere.com/" + postID + "/update";
+                        window.location.href = "https://jacobpritchard9.pythonanywhere.com/" + postID + "/update";
                     {% endif %}
                 {% else %}
-                    window.location.href = "https://liuchao.pythonanywhere.com/" + document.getElementById('redirect').value + "/detail";
+                    window.location.href = "https://jacobpritchard9.pythonanywhere.com/" + document.getElementById('redirect').value + "/detail";
                 {% endif %}
               }else{
-                window.location.href = "https://liuchao.pythonanywhere.com/" + postID + "/create";
+                window.location.href = "https://jacobpritchard9.pythonanywhere.com/" + postID + "/create";
               }
             }
           });

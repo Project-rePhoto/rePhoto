@@ -13,29 +13,31 @@
 
                 <!-- search -->
                 <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-12 ">
-                        <form id="searchPosts" action="" method="post">
-                            <div class="form-row">
-                                <div class="col-lg-10 col-md-10 col-sm-10 col-10">
-                                    <input type="text" id="searchTerm" name="searchTerm" class="form-control rounded" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" />
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="container-box rounded">
+                            <form id="searchPosts" action="" method="post">
+                                <div class="form-row">
+                                    <div class="col-lg-10 col-md-10 col-sm-10 col-10">
+                                        <input type="text" id="searchTerm" name="searchTerm" class="form-control rounded" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" />
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-2">
+                                        <button type="button" class="btn btn-outline-primary" onclick="setSearch()">Submit</button>
+                                    </div>
                                 </div>
-                                <div class="col-lg-4 col-md-2 col-sm-2 col-2">
-                                    <button type="button" class="btn btn-outline-primary" onclick="setSearch()">Submit</button>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
 
-                        <script>
-                          function setSearch() {
-                            var term = document.getElementById("searchTerm").value;
-                            var url = "{{ url_for('blog.projects', count=0, searchTerm='general') }}";
-                            if(term.length != 0){
-                                url = url.replace("general", term);
+                            <script>
+                            function setSearch() {
+                                var term = document.getElementById("searchTerm").value;
+                                var url = "{{ url_for('blog.projects', count=0, searchTerm='general') }}";
+                                if(term.length != 0){
+                                    url = url.replace("general", term);
+                                }
+                                document.getElementById("searchPosts").action = url;
+                                document.getElementById("searchPosts").submit();
                             }
-                            document.getElementById("searchPosts").action = url;
-                            document.getElementById("searchPosts").submit();
-                          }
-                        </script>
+                            </script>
+                        </div>
                     </div>
                 </div>
 
