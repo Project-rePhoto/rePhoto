@@ -9,22 +9,25 @@
 {% block content %}
 <article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
     <h1 style="text-align:center;">Cover Photo</h1>
+
     <div class="display-container">
       <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
     </div>
+
     <hr>
-    <div class="display-container">
-      {% for img in imgs %}
-        {% if post[9] == 1 %}
-          <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
-        {% else %}
-          <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
-        {% endif %}
-      {% endfor %}
-      <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
-      <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
-    </div>
+        <div class="display-container">
+          {% for img in imgs %}
+            {% if post[9] == 1 %}
+              <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
+            {% else %}
+              <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+            {% endif %}
+          {% endfor %}
+          <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
+          <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
+        </div>
     <hr>
+
     <h3 style="text-align:center;">Body</h1>
         <p>Vision API Analysis</p>
         {% for res in tagArr %}
@@ -52,6 +55,7 @@
         <br/>
         <p>{{ post[2] }}</p>
     <hr>
+
     <script type="text/javascript">
       var slideIndex = 1;
       showDivs(slideIndex);

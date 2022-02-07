@@ -75,68 +75,79 @@
 
     <body style="background-color:black;">
 
-        <div class="container-fluid mx-auto">
-            <div class="container-stack container-fluid">
-                <!-- image slider -->
-                <div class="container">
-                      <div class="row">
-                        <div class="col-lg-12">
-                            <div class="container-box rounded">
-                                <div class="image-spliter">
-                                    <div class="mover"></div>
-                                        <img class="img-left" src="../../static/imgs/slider/SentinelBridge6.jpg">
-                                        <img class="img-right" src="../../static/imgs/slider/SentinelBridge1.jpg">
-                                    </div>
+        <!-- image slider -->
+        <div class="container">
+              <div class="row">
+                <div class="col-lg-12">
+                    <div class="card text-white bg-gray mt-2 mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> Project rePhoto </p>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="image-spliter">
+                                <div class="mover"></div>
+                                    <img class="img-left" src="../../static/imgs/slider/SentinelBridge6.jpg">
+                                    <img class="img-right" src="../../static/imgs/slider/SentinelBridge1.jpg">
+                                </div>
                             </div>
                         </div>
-                      </div>
-                </div>
-
-                <script>
-                    !function(){for(var t=document.querySelectorAll(".image-spliter .mover"),e=t.length;e--;){var n=t[e].getBoundingClientRect().width,i=t[e].nextElementSibling,l=i.getBoundingClientRect().width;i.getBoundingClientRect().height;t[e].style.left=l/2-n/2+"px",i.style.clip="rect(0px, "+l/2+"px, 999px, 0px)";var s,c=0;t[e].addEventListener("mousedown",function(t){s=t.clientX,c=1}),t[e].addEventListener("mouseup",function(t){c=0}),t[e].addEventListener("mouseout",function(t){c=0}),t[e].addEventListener("touchstart",function(t){s=t.touches[0].clientX,c=1}),t[e].addEventListener("touchend",function(t){c=0}),t[e].addEventListener("mousemove",function(t){c&&(this.style.left=parseInt(this.style.left)+(event.clientX-s)+"px",s=event.clientX,this.nextElementSibling.style.clip="rect(0px, "+(this.getBoundingClientRect().width/2+parseInt(this.style.left))+"px, "+this.getBoundingClientRect().height+"px, 0px)")}),t[e].addEventListener("touchmove",function(t){c&&(this.style.left=parseInt(this.style.left)+(t.touches[0].clientX-s)+"px",s=t.touches[0].clientX,this.nextElementSibling.style.clip="rect(0px, "+(this.getBoundingClientRect().width/2+parseInt(this.style.left))+"px, "+this.getBoundingClientRect().height+"px, 0px)")})}window.addEventListener("resize",function(t){for(var e=document.querySelectorAll(".image-spliter .mover"),n=e.length;n--;){var i=e[n].getBoundingClientRect().width,l=e[n].nextElementSibling,s=l.getBoundingClientRect().width,c=l.getBoundingClientRect().height;e[n].style.left=s/2-i/2+"px",l.style.clip="rect(0px, "+s/2+"px, "+c+"px, 0px)"}})}();
-                </script>
-
-                <!-- what is rePhoto -->
-                <div class="container">
-                  <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                      <div class="container-box rounded">
-                        <p class="h1 text-white"> What is rePhoto? </p>
-                        <p class="text-white"> rePhoto is a citizen science web application designed to create a simpler environment for users to take repeat photography of a subject.  This is done through rePhoto providing layered imagery such that the user can align their camera with the previous image of the current subject.  Furthermore, rePhoto allows users to create their own projects or to simply and easily find local projects or projects relevant to a user's interests to contribute to.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- what is the purpose -->
-                <div class="container">
-                  <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                      <div class="container-box rounded">
-                        <p class="h1 text-white"> What is the purpose of rePhoto? </p>
-                        <p class="text-white"> The core utility of Project rePhoto stems from its identity as a citizen science project which allows for a comprehensive visual timeline of change for each project’s subject, granting researchers more time to spend on analytical work while citizens not directly involved with the research can provide samples as they come across a project’s subject.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- contribute -->
-                <div class="container">
-                    <div class="col fixed-bottom row justify-content-center bg-black mx-auto">
-                      <a href="{{ url_for('blog.projmaps') }}">
-                          <button type="button" class="btn btn-dark text-white btn-rounded btn-lg mt-1 mb-1"> Contribute to nearby projects! </button>
-                      </a>
                     </div>
                 </div>
+              </div>
+        </div>
 
-                <!-- Footer -->
-                <footer class="bg-dark bg-black text-center text-white pb-5">
-                    <div class="text-center p-3">
-                      2022, Project rePhoto
+        <script>
+            !function(){for(var t=document.querySelectorAll(".image-spliter .mover"),e=t.length;e--;){var n=t[e].getBoundingClientRect().width,i=t[e].nextElementSibling,l=i.getBoundingClientRect().width;i.getBoundingClientRect().height;t[e].style.left=l/2-n/2+"px",i.style.clip="rect(0px, "+l/2+"px, 999px, 0px)";var s,c=0;t[e].addEventListener("mousedown",function(t){s=t.clientX,c=1}),t[e].addEventListener("mouseup",function(t){c=0}),t[e].addEventListener("mouseout",function(t){c=0}),t[e].addEventListener("touchstart",function(t){s=t.touches[0].clientX,c=1}),t[e].addEventListener("touchend",function(t){c=0}),t[e].addEventListener("mousemove",function(t){c&&(this.style.left=parseInt(this.style.left)+(event.clientX-s)+"px",s=event.clientX,this.nextElementSibling.style.clip="rect(0px, "+(this.getBoundingClientRect().width/2+parseInt(this.style.left))+"px, "+this.getBoundingClientRect().height+"px, 0px)")}),t[e].addEventListener("touchmove",function(t){c&&(this.style.left=parseInt(this.style.left)+(t.touches[0].clientX-s)+"px",s=t.touches[0].clientX,this.nextElementSibling.style.clip="rect(0px, "+(this.getBoundingClientRect().width/2+parseInt(this.style.left))+"px, "+this.getBoundingClientRect().height+"px, 0px)")})}window.addEventListener("resize",function(t){for(var e=document.querySelectorAll(".image-spliter .mover"),n=e.length;n--;){var i=e[n].getBoundingClientRect().width,l=e[n].nextElementSibling,s=l.getBoundingClientRect().width,c=l.getBoundingClientRect().height;e[n].style.left=s/2-i/2+"px",l.style.clip="rect(0px, "+s/2+"px, "+c+"px, 0px)"}})}();
+        </script>
+
+        <!-- what is rePhoto -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> What is rePhoto? </p>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-white"> rePhoto is a citizen science web application designed to create a simpler environment for users to take repeat photography of a subject.  This is done through rePhoto providing layered imagery such that the user can align their camera with the previous image of the current subject.  Furthermore, rePhoto allows users to create their own projects or to simply and easily find local projects or projects relevant to a user's interests to contribute to.</p>
+                        </div>
                     </div>
-                </footer>
+                </div>
             </div>
         </div>
+
+        <!-- what is the purpose -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> What is the purpose of rePhoto? </p>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-white"> The core utility of Project rePhoto stems from its identity as a citizen science project which allows for a comprehensive visual timeline of change for each project’s subject, granting researchers more time to spend on analytical work while citizens not directly involved with the research can provide samples as they come across a project’s subject.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- contribute -->
+        <div class="container">
+            <div class="col fixed-bottom row justify-content-center bg-black mx-auto">
+              <a href="{{ url_for('blog.projmaps') }}">
+                  <button type="button" class="btn btn-dark text-white btn-rounded btn-lg mt-1 mb-1"> Contribute to nearby projects! </button>
+              </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-dark bg-black text-center text-white pb-5">
+            <div class="text-center p-3 mb-4">
+              2022, Project rePhoto
+            </div>
+        </footer>
     </body>
 
 </article>
