@@ -11,22 +11,62 @@
     <div class="container mt-2 pt-2">
         <div class="row d-flex align-items-center justify-content-center">
             <div class="col-xl-6 col-lg-6 col-md-8 col-sm-10 col-10">
-                <form id="logOrReg" method="post">
-                <label for="username">Username</label>
-                <br/>
-                <input class="form-control" name="username" id="username" required>
-                <br/>
-                <label for="password">Password</label>
-                <br/>
-                <input class="form-control" type="password" name="password" id="password" required>
-                <br/>
 
-                <div class="text-center text-lg-start pt-2">
-                    <input type="hidden" name="bit" id="bit" value="">
-                    <button class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="login()" value="Login"> Login </button>
-                    <p class="mt-2 pt-1 mb-0">Click here to <a class="text-danger pt-2" type="submit" onclick="register()" value="Register">register</a> </p>
-                </div>
+                <!-- login -->
+                <form class="d-block" id="logOrReg" method="post">
+
+                    <label for="username">Username</label>
+                    <br/>
+                    <input class="form-control" name="username" id="username" required>
+                    <br/>
+
+                    <label for="password">Password</label>
+                    <br/>
+                    <input class="form-control" type="password" name="password" id="password" required>
+                    <br/>
+
+                    <div class="text-center text-lg-start pt-2">
+                        <input type="hidden" name="bit" id="bit" value="">
+                        <button class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="login()" value="Login"> Login </button>
+                        <p class="mt-2 pt-1 mb-0">Click here to <a class="text-danger pt-2" type="submit" onclick="needAccount()" value="Register">register</a> </p>
+                    </div>
+
                 </form>
+
+                <!-- register -->
+                <form class="d-none" id="Reg" method="post">
+
+                    <label for="firstName">First Name</label>
+                    <br/>
+                    <input class="form-control" name="firstName" id="firstName" required>
+                    <br/>
+
+                    <label for="lastName">Last Name</label>
+                    <br/>
+                    <input class="form-control" name="lastName" id="lastName" required>
+                    <br/>
+
+                    <label for="email">Email Address </label>
+                    <br/>
+                    <input class="form-control" name="email" id="email" required>
+                    <br/>
+
+                    <label for="username">Username</label>
+                    <br/>
+                    <input class="form-control" name="username" id="username" required>
+                    <br/>
+
+                    <label for="password">Password</label>
+                    <br/>
+                    <input class="form-control" type="password" name="password" id="password" required>
+                    <br/>
+
+                    <div class="text-center text-lg-start pt-2">
+                        <input type="hidden" name="bit" id="bit" value="">
+                        <button class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="register()" value="Register"> Register </button>
+                    </div>
+                </form>
+
             </div>
         </div>
 
@@ -35,9 +75,13 @@
                 document.getElementById("bit").value = "log";
                 document.getElementById("logOrReg").submit();
             }
+            function needAccount() {
+                document.getElementById("logOrReg").className = "d-none";
+                document.getElementById("Reg").className = "d-block";
+            }
             function register() {
                 document.getElementById("bit").value = "reg";
-                document.getElementById("logOrReg").submit();
+                document.getElementById("Reg").submit();
             }
         </script>
     </div>
