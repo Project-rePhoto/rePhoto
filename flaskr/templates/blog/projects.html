@@ -9,72 +9,85 @@
 <body style="background-color:black;">
 
     <!-- search -->
-    <div class="card text-white bg-gray mb-4 ml-4 mr-4 pb-2 pt-2">
-        <div class="card-body">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
+                <div class="card text-white bg-gray mb-4 pb-2 pt-2">
+                    <div class="card-body">
 
-            <form id="searchPosts" action="" method="post">
-                <div class="form-row input-group">
-                    <input type="text" id="searchTerm" name="searchTerm" class="form-control rounded mr-2" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" />
-                    <button type="button" class="btn btn-outline-primary" onclick="setSearch()">Submit</button>
+                        <form id="searchPosts" action="" method="post">
+                            <div class="form-row input-group">
+                                <input type="text" id="searchTerm" name="searchTerm" class="form-control rounded mr-2" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" />
+                                <button type="button" class="btn btn-outline-primary" onclick="setSearch()">Submit</button>
+                            </div>
+                        </form>
+
+                        <script>
+                          function setSearch() {
+                            var term = document.getElementById("searchTerm").value;
+                            var url = "{{ url_for('blog.projects', count=0, searchTerm='general') }}";
+                            if(term.length != 0){
+                                url = url.replace("general", term);
+                            }
+                            document.getElementById("searchPosts").action = url;
+                            document.getElementById("searchPosts").submit();
+                          }
+                        </script>
+
+                    </div>
                 </div>
-            </form>
-
-            <script>
-              function setSearch() {
-                var term = document.getElementById("searchTerm").value;
-                var url = "{{ url_for('blog.projects', count=0, searchTerm='general') }}";
-                if(term.length != 0){
-                    url = url.replace("general", term);
-                }
-                document.getElementById("searchPosts").action = url;
-                document.getElementById("searchPosts").submit();
-              }
-            </script>
-
+            </div>
         </div>
     </div>
+
 
     <!-- projects -->
 
     {% for post in posts %}
-    <div class="card text-white bg-gray ml-4 mr-4">
 
-        <div class="card-header bg-gray">
-            <header>
-                <div class="post-preview">
-                  <h2 class="post-title">{{ post[1] }}</h2>
-                    <p class="post-meta" style="display:inline;">
-                        Posted by <a href="#">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
-                    </p>
-                  {% if g.user[0] == post[4] and post[4] != 1 %}
-                    <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post[0]) }}">/Edit</a>
-                  {% endif %}
-                  <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
+                <div class="card text-white bg-gray">
+                    <div class="card-header bg-gray">
+                        <header>
+                            <div class="post-preview">
+                              <h2 class="post-title">{{ post[1] }}</h2>
+                                <p class="post-meta" style="display:inline;">
+                                    Posted by <a href="#">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
+                                </p>
+                              {% if g.user[0] == post[4] and post[4] != 1 %}
+                                <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post[0]) }}">/Edit</a>
+                              {% endif %}
+                              <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
+                            </div>
+                        </header>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="display-container">
+                            {% for img in imgs %}
+                                {% if post[0] == img[1] %}
+                                    {% if post[9] == 1 %}
+                                        <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid {{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
+                                    {% else %}
+                                        <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid {{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="col-md-12 text-center">
+                            <button type="button" class="btn btn-primary custom black display-left" id="F{{ post[0] }}">&#10094;</button>
+                            <button type="button" class="btn btn-primary custom black display-right" id="B{{ post[0] }}">&#10095;</button>
+                        </div>
+                    </div>
+
                 </div>
-            </header>
-        </div>
-
-        <div class="card-body">
-            <div class="display-container">
-                {% for img in imgs %}
-                    {% if post[0] == img[1] %}
-                        {% if post[9] == 1 %}
-                            <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid {{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
-                        {% else %}
-                            <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid {{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
             </div>
         </div>
-
-        <div class="card-footer">
-            <div class="col-md-12 text-center">
-                <button type="button" class="btn btn-primary custom black display-left" id="F{{ post[0] }}">&#10094;</button>
-                <button type="button" class="btn btn-primary custom black display-right" id="B{{ post[0] }}">&#10095;</button>
-            </div>
-        </div>
-
     </div>
 
     <script type="text/javascript">
