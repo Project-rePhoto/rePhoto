@@ -48,7 +48,7 @@
                     </li>
                     <li class="nav-item">
                         {% if g.user %}
-                            <a class="nav-link" href="{{ url_for('blog.profile') }}">
+                            <a class="nav-link" href="{{ url_for('blog.profile') }}"> {{ g.user[1] }}
                         {% else %}
                             <a class="nav-link" href="{{ url_for('auth.login') }}">
                         {% endif %}
@@ -61,10 +61,6 @@
                     {% if g.user %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('blog.capture', id=1) }}">New Project</a>
                     </li>
                     {% endif %}
 

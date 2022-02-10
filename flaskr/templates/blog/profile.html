@@ -8,30 +8,60 @@
 {% block content %}
 <article>
     <body style="background-color:black;">
-        <div style="text-align: center; color:white;"><h2>My Contributions</h2></div>
-        <div class="progress" style="height: 30px; max-width: 1000px; margin-left:auto; margin-right:auto;">
-            <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: {{ beg }}%" aria-valuenow="{{ beg }}" aria-valuemin="0" aria-valuemax="100">Beginner</div>
-            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: {{ mid }}%" aria-valuenow="{{ mid }}" aria-valuemin="0" aria-valuemax="100">Intermediate</div>
-            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ adv }}%" aria-valuenow="{{ adv }}" aria-valuemin="0" aria-valuemax="100">Advanced</div>
-        </div>
 
-        <!-- what is rePhoto -->
+        <!-- Profile -->
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12">
-                    <div class="container-box rounded">
-                        <p class="h1 text-white"> {{ g.user[1] }} </p>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-body">
+                            {% if g.user %}
+                                <a class="btn btn-success btn-lg btn-block" href="{{ url_for('blog.capture', id=1) }}" > Start A New Project </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer class="bg-dark bg-black text-center text-white pb-5">
-            <div class="text-center p-3">
-                2022, Project rePhoto
+        <!-- Profile -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> Profile </p>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-white"> Username: {{ g.user[1] }} </p>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-        </footer>
+        </div>
+
+        <!-- Contributions -->
+        <div class="container d-none">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> Contributions </p>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="progress" style="height: 30px; max-width: 1000px; margin-left:auto; margin-right:auto;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: {{ beg }}%" aria-valuenow="{{ beg }}" aria-valuemin="0" aria-valuemax="100">Beginner</div>
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" style="width: {{ mid }}%" aria-valuenow="{{ mid }}" aria-valuemin="0" aria-valuemax="100">Intermediate</div>
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ adv }}%" aria-valuenow="{{ adv }}" aria-valuemin="0" aria-valuemax="100">Advanced</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </body>
 

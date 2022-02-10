@@ -53,15 +53,18 @@
                             <div class="card-header bg-gray">
                                 <header>
                                     <div class="post-preview">
-                                        <h2 class="post-title">{{ post[1] }}</h2>
+
+                                        <h2 class="post-title">{{ post[1] }}
+                                            {% if g.user[0] == post[4] and post[4] != 1 %}
+                                                <a class="post-meta btn btn-outline-primary ml-1" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post[0]) }}">Edit</a>
+                                            {% endif %}
+                                                <a class="post-meta btn btn-outline-primary" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
+                                        </h2>
+
                                         <p class="post-meta" style="display:inline;">
                                             Posted by <a href="#">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
                                         </p>
 
-                                        {% if g.user[0] == post[4] and post[4] != 1 %}
-                                            <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post[0]) }}">/Edit</a>
-                                        {% endif %}
-                                            <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
                                     </div>
                                 </header>
                             </div>
