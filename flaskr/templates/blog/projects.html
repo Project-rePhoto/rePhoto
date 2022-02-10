@@ -6,144 +6,149 @@
 
 {% block content %}
 
-<body style="background-color:black;">
+<article>
 
-    <!-- search -->
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
-                <div class="card text-white bg-gray mb-4 pb-2 pt-2">
-                    <div class="card-body">
+    <body style="background-color:black;">
 
-                        <form id="searchPosts" action="" method="post">
-                            <div class="form-row input-group">
-                                <input type="text" id="searchTerm" name="searchTerm" class="form-control rounded mr-2" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" />
-                                <button type="button" class="btn btn-outline-primary" onclick="setSearch()">Submit</button>
-                            </div>
-                        </form>
+        <!-- search -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
+                    <div class="card text-white bg-gray mb-4 pb-2 pt-2">
+                        <div class="card-body">
 
-                        <script>
-                          function setSearch() {
-                            var term = document.getElementById("searchTerm").value;
-                            var url = "{{ url_for('blog.projects', count=0, searchTerm='general') }}";
-                            if(term.length != 0){
-                                url = url.replace("general", term);
-                            }
-                            document.getElementById("searchPosts").action = url;
-                            document.getElementById("searchPosts").submit();
-                          }
-                        </script>
+                            <form id="searchPosts" action="" method="post">
+                                <div class="form-row input-group">
+                                    <input type="text" id="searchTerm" name="searchTerm" class="form-control rounded mr-2" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" />
+                                    <button type="button" class="btn btn-outline-primary" onclick="setSearch()">Submit</button>
+                                </div>
+                            </form>
 
+                            <script>
+                                function setSearch() {
+                                    var term = document.getElementById("searchTerm").value;
+                                    var url = "{{ url_for('blog.projects', count=0, searchTerm='general') }}";
+                                    if(term.length != 0){
+                                        url = url.replace("general", term);
+                                    }
+                                    document.getElementById("searchPosts").action = url;
+                                    document.getElementById("searchPosts").submit();
+                                }
+                            </script>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-    <!-- projects -->
+        <!-- projects -->
 
-    {% for post in posts %}
+        {% for post in posts %}
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
-                <div class="card text-white bg-gray">
-                    <div class="card-header bg-gray">
-                        <header>
-                            <div class="post-preview">
-                              <h2 class="post-title">{{ post[1] }}</h2>
-                                <p class="post-meta" style="display:inline;">
-                                    Posted by <a href="#">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
-                                </p>
-                              {% if g.user[0] == post[4] and post[4] != 1 %}
-                                <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post[0]) }}">/Edit</a>
-                              {% endif %}
-                              <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
+                        <div class="card text-white bg-gray">
+                            <div class="card-header bg-gray">
+                                <header>
+                                    <div class="post-preview">
+                                        <h2 class="post-title">{{ post[1] }}</h2>
+                                        <p class="post-meta" style="display:inline;">
+                                            Posted by <a href="#">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
+                                        </p>
+
+                                        {% if g.user[0] == post[4] and post[4] != 1 %}
+                                            <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post[0]) }}">/Edit</a>
+                                        {% endif %}
+                                            <a class="post-meta" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
+                                    </div>
+                                </header>
                             </div>
-                        </header>
-                    </div>
 
-                    <div class="card-body">
-                        <div class="display-container">
-                            {% for img in imgs %}
-                                {% if post[0] == img[1] %}
-                                    {% if post[9] == 1 %}
-                                        <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid {{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
-                                    {% else %}
-                                        <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid {{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
+                            <div class="card-body">
+                                <div class="display-container">
+                                    {% for img in imgs %}
+                                        {% if post[0] == img[1] %}
+                                            {% if post[9] == 1 %}
+                                                <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid {{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
+                                            {% else %}
+                                                <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid {{ post[0] }}" style="display:none;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="col-md-12 text-center">
+                                    <button type="button" class="btn btn-primary custom black display-left" id="F{{ post[0] }}">&#10094;</button>
+                                    <button type="button" class="btn btn-primary custom black display-right" id="B{{ post[0] }}">&#10095;</button>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
-
-                    <div class="card-footer">
-                        <div class="col-md-12 text-center">
-                            <button type="button" class="btn btn-primary custom black display-left" id="F{{ post[0] }}">&#10094;</button>
-                            <button type="button" class="btn btn-primary custom black display-right" id="B{{ post[0] }}">&#10095;</button>
-                        </div>
-                    </div>
-
                 </div>
             </div>
+
+            <script type="text/javascript">
+                var slideIndex = 1;
+                showDivs(slideIndex, "{{ post[0] }}");
+
+                document.getElementById("F{{ post[0] }}").onclick = function () {
+                    showDivs((slideIndex += -1), "{{ post[0] }}");
+                }
+
+                document.getElementById("B{{ post[0] }}").onclick = function () {
+                    showDivs((slideIndex += 1), "{{ post[0] }}");
+                }
+
+                function showDivs(n, str) {
+                    var i;
+                    var x = document.getElementsByClassName(str);
+                    if (n > x.length) {slideIndex = 1}
+                    if (n < 1) {slideIndex = x.length}
+
+                    for (i=0; i < x.length; i++){
+                        x[i].style.display = "none";
+                    }
+                    x[slideIndex-1].style.display = "block";
+                }
+            </script>
+
+            {% if not loop.last %}
+                <hr>
+            {% else %}
+                <hr>
+                <div style="text-align:center;">
+                  <input class="btn btn-primary btn-lg mb-4" form="oldPosts" type="submit" value="Older Posts">
+                </div>
+                <form id="oldPosts" action="{{ url_for('blog.projects', count=count+5, searchTerm=searchTerm) }}" method="post"></form>
+            {% endif %}
+
+        {% endfor %}
+
+        <!-- pages -->
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12 d-none">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination pagination-lg justify-content-center text-dark">
+                        <li class="page-item disabled">
+                          <a class="page-link text-dark" href="#" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item"><a class="page-link text-primary" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
+                        <li class="page-item">
+                          <a class="page-link text-dark" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </div>
+    </body>
 
-    <script type="text/javascript">
-      var slideIndex = 1;
-      showDivs(slideIndex, "{{ post[0] }}");
-
-      document.getElementById("F{{ post[0] }}").onclick = function () {
-        showDivs((slideIndex += -1), "{{ post[0] }}");
-      }
-
-      document.getElementById("B{{ post[0] }}").onclick = function () {
-        showDivs((slideIndex += 1), "{{ post[0] }}");
-      }
-
-      function showDivs(n, str) {
-        var i;
-        var x = document.getElementsByClassName(str);
-        if (n > x.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = x.length}
-        for (i=0; i < x.length; i++){
-            x[i].style.display = "none";
-        }
-        x[slideIndex-1].style.display = "block";
-      }
-    </script>
-
-    {% if not loop.last %}
-        <hr>
-    {% else %}
-        <hr>
-        <div style="text-align:center;">
-          <input class="btn btn-primary btn-lg mb-4" form="oldPosts" type="submit" value="Older Posts">
-        </div>
-        <form id="oldPosts" action="{{ url_for('blog.projects', count=count+5, searchTerm=searchTerm) }}" method="post"></form>
-    {% endif %}
-
-    {% endfor %}
-
-    <!-- pages -->
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-12 d-none">
-            <nav aria-label="Page navigation example">
-              <ul class="pagination pagination-lg justify-content-center text-dark">
-                <li class="page-item disabled">
-                  <a class="page-link text-dark" href="#" tabindex="-1">Previous</a>
-                </li>
-                <li class="page-item"><a class="page-link text-primary" href="#">1</a></li>
-                <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
-                <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
-                <li class="page-item">
-                  <a class="page-link text-dark" href="#">Next</a>
-                </li>
-              </ul>
-            </nav>
-        </div>
-    </div>
-</body>
+</article>
 
 {% endblock %}
