@@ -23,16 +23,22 @@
                                 <br/>
                                 <textarea class="form-control" rows="3" name="body" id="body">{{ request.form['body'] or post[2] }}</textarea>
 
+
+                                <br/>
+
+                                <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                                    <h3>Album</h3>
+                                    <div class="d-grid gap-2 d-md-block">
+                                        <input class="btn btn-outline-danger" style="display:inline; float:right;" class="danger" type="submit" form="deleteThis" value="Delete This Photo" onclick="return confirm('Are you sure?');">
+                                    </div>
                                 </div>
 
+                                </div>
 
                                 <div class="card-body">
-                                    <h3>Album
-                                        <input class="btn btn-outline-danger" style="display:inline; float:right;" class="danger" type="submit" form="deleteThis" value="Delete This Photo" onclick="return confirm('Are you sure?');">
-                                    </h3>
                                     <div class="display-container">
                                         {% for img in imgs %}
-                                            <img class="img-fluid center" id="curImg" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="{{ img[0] }}" width="{{ img[2] }}" height="{{ img[3] }}">
+                                            <img class="img-fluid center" id="curImg" style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="{{ img[0] }}" width="{{ img[2] }}" height="{{ img[3] }}">
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -47,7 +53,9 @@
 
                                     <input type="hidden" name="width" id="width" value="{{ post[7] }}">
                                     <input type="hidden" name="height" id="height" value="{{ post[8] }}">
-                                    <input class="btn btn-success btn-lg btn-block mt-4" style="float: right;" type="submit" value="Save">
+                                    <div class="d-grid gap-2 mt-2 mb-2">
+                                        <input class="btn btn-success" style="float: right;" type="submit" value="Save">
+                                    </div>
                                 </div>
 
                             </form>
@@ -58,7 +66,7 @@
         </div>
 
         <!-- Cover Photo -->
-        <div class="container">
+        <div class="container d-none">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card text-white bg-gray mb-4">
@@ -66,7 +74,9 @@
                             <p class="h3 text-white"> Capture New Image </p>
                         </div>
                         <div class="card-body">
-                            <a class="action btn btn-primary btn-block" href="{{ url_for('blog.capture', id=post[0]) }}">Capture New Image</a>
+                            <div class="d-grid gap-2">
+                                <a class="action btn btn-outline-primary" href="{{ url_for('blog.capture', id=post[0]) }}">Capture New Image</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -74,7 +84,7 @@
         </div>
 
         <!-- Cover Photo -->
-        <div class="container">
+        <div class="container d-none">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card text-white bg-gray mb-4">
@@ -84,9 +94,11 @@
                         <div class="card-body">
                             <div class="display-container">
                                 <p>
-                                    <button class="btn btn-primary btn-block" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                                        Show Cover Photo
-                                    </button>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                            Show Cover Photo
+                                        </button>
+                                    </div>
                                 </p>
 
                                 <div class="collapse bg-gray" id="collapseExample">
@@ -109,8 +121,14 @@
                 <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="card text-white bg-gray mb-4">
                         <div class="card-header">
+                            <p class="h3 text-white"> Delete Project </p>
+                        </div>
+
+                        <div class="card-body">
                             <form action="{{ url_for('blog.delete', id=post[0]) }}" method="post">
-                                <input class="danger btn btn-danger btn-block" type="submit" value="(DANGER) Delete Project" onclick="return confirm('Are you sure?');">
+                                <div class="d-grid gap-2">
+                                    <input class="danger btn btn-danger" type="submit" value="(DANGER) Delete Project" onclick="return confirm('Are you sure?');">
+                                </div>
                             </form>
                         </div>
                     </div>

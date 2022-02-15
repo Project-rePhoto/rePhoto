@@ -19,8 +19,8 @@
 
                             <form id="searchPosts" action="" method="post">
                                 <div class="form-row input-group">
-                                    <input type="text" id="searchTerm" name="searchTerm" class="form-control rounded mr-2" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" />
-                                    <button type="button" class="btn btn-outline-primary" onclick="setSearch()">Submit</button>
+                                    <input type="text" id="searchTerm" name="searchTerm" class="form-control" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" />
+                                    <button type="button" class="btn btn-primary" onclick="setSearch()">Search</button>
                                 </div>
                             </form>
 
@@ -46,7 +46,7 @@
 
         {% for post in posts %}
 
-            <div class="container">
+            <div class="container mb-4">
                 <div class="row justify-content-center">
                     <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
                         <div class="card text-white bg-gray">
@@ -54,15 +54,18 @@
                                 <header>
                                     <div class="post-preview">
 
-                                        <h2 class="post-title">{{ post[1] }}
-                                            {% if g.user[0] == post[4] and post[4] != 1 %}
-                                                <a class="post-meta btn btn-outline-primary ml-1" style="display:inline; float:right;" href="{{ url_for('blog.update', id=post[0]) }}">Edit</a>
-                                            {% endif %}
-                                                <a class="post-meta btn btn-outline-primary" style="display:inline; float:right;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
-                                        </h2>
+                                        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                                            <h3 class="post-title">{{ post[1] }}</h3>
+                                            <div class="d-grid gap-2 d-flex justify-content-end">
+                                                {% if g.user[0] == post[4] and post[4] != 1 %}
+                                                    <a class="post-meta btn btn-outline-primary" style="display:inline;" href="{{ url_for('blog.update', id=post[0]) }}">Edit</a>
+                                                {% endif %}
+                                                    <a class="post-meta btn btn-outline-primary" style="display:inline;" href="{{ url_for('blog.detail', id=post[0]) }}">View</a>
+                                            </div>
+                                        </div>
 
                                         <p class="post-meta" style="display:inline;">
-                                            Posted by <a href="#">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
+                                            Posted by <a href="{{ url_for('blog.projects', count=0, searchTerm=post[5]) }}">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
                                         </p>
 
                                     </div>
@@ -120,10 +123,7 @@
                 }
             </script>
 
-            {% if not loop.last %}
-                <hr>
-            {% else %}
-                <hr>
+            {% if loop.last %}
                 <div style="text-align:center;">
                   <input class="btn btn-primary btn-lg mb-4" form="oldPosts" type="submit" value="Older Posts">
                 </div>

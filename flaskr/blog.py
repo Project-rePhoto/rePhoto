@@ -117,10 +117,10 @@ def projects(count, searchTerm):
         curs.execute(
             'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
             ' FROM post p JOIN user u ON p.author_id = u.id'
-            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s)'
+            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s OR username LIKE %s)'
             ' ORDER BY created DESC'
             ' LIMIT 5 OFFSET %s',
-            (newTerm, newTerm, newTerm, count)
+            (newTerm, newTerm, newTerm, newTerm, count)
         )
     posts = curs.fetchall()
     posts = list(map(list, posts))
@@ -621,7 +621,19 @@ def profile():
             mid = 30
             adv = conts[0]-40
 
-    return render_template('blog/profile.html', beg=beg, mid=mid, adv=adv)
+    if g.user is not None:
+        curs.execute(
+            'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1 AND (u.id = %s)'
+            ' ORDER BY created DESC'
+            ' LIMIT 5 OFFSET %s',
+            (g.user[0], 0)
+        )
+
+    posts = curs.fetchall()
+
+    return render_template('blog/profile.html', posts=posts, beg=beg, mid=mid, adv=adv)
 
 @bp.route('/info')
 def info():
