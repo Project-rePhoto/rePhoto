@@ -1,0 +1,92 @@
+{% extends 'head.html' %}
+
+{% block header %}
+  <h2>{% block title %}Sign-In{% endblock %}</h2>
+{% endblock %}
+
+{% set background = '../static/imgs/slideImg.jpg' %}
+
+{% block content %}
+<article>
+
+    <style>
+        .required:after {
+            content:" * Required";
+            color: #dc3545;
+            font-style: italic;
+        }
+    </style>
+
+    <div class="container mt-2 pt-2 mb-2">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="col-xl-6 col-lg-6 col-md-8 col-sm-10 col-10">
+
+                <!-- login -->
+                <form class="d-block" id="logOrReg" method="post">
+
+                    <div id="registerBlock"class="d-none">
+                        <label for="firstName">First Name</label>
+                        <br/>
+                        <input class="form-control" name="firstName" id="firstName" required>
+                        <br/>
+
+                        <label for="lastName">Last Name</label>
+                        <br/>
+                        <input class="form-control" name="lastName" id="lastName" required>
+                        <br/>
+
+                        <label for="email">Email Address </label>
+                        <br/>
+                        <input class="form-control" name="email" id="email" required>
+                        <br/>
+                    </div>
+
+
+                    <label class="required" for="username">Username </label>
+                    <br/>
+                    <input class="form-control" name="username" id="username" required>
+                    <br/>
+
+                    <label class="required" for="password">Password</label>
+                    <br/>
+                    <input class="form-control" type="password" name="password" id="password" required>
+                    <br/>
+
+                    <div class="text-center text-lg-start pt-2">
+                        <input type="hidden" name="bit" id="bit" value="">
+
+                        <div class="d-grid gap-2 d-block" id="loginSection">
+                            <button id="loginBtn" class="btn bg-black text-white btn-lg" type="submit" onclick="login()" value="Login"> Login </button>
+                            <p class="mt-2 pt-1 mb-0">Click here to <a class="text-danger pt-2" type="submit" onclick="needAccount()" value="Register">register</a> </p>
+                        </div>
+
+                        <div class="d-grid gap-2 d-none" id="registerBtn">
+                            <button class="btn bg-black text-white btn-lg" type="submit" onclick="register()" value="Register"> Register </button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+        <script>
+            function login() {
+                document.getElementById("bit").value = "log";
+                document.getElementById("logOrReg").submit();
+            }
+            function needAccount() {
+                document.getElementById("registerBlock").className = "d-block";
+                document.getElementById("loginSection").className = "d-grid gap-2 d-none";
+                document.getElementById("loginBtn").disabled = true;
+                document.getElementById("registerBtn").className = "d-grid gap-2 d-block mb-2";
+            }
+            function register() {
+                document.getElementById("bit").value = "reg";
+                document.getElementById("logOrReg").submit();
+            }
+        </script>
+    </div>
+</article>
+{% endblock %}

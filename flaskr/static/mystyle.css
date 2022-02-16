@@ -20,6 +20,10 @@
     background-color: black !important;
 }
 
+.bg-gray {
+    background-color: #23272B !important;
+}
+
 /* set viewpoints */
 .main-wrapper {
     height: 100vh;

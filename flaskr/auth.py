@@ -9,8 +9,8 @@ from flaskr.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@bp.route('/loginOrReg', methods=('GET', 'POST'))
-def loginOrReg():
+@bp.route('/login', methods=('GET', 'POST'))
+def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -32,6 +32,7 @@ def loginOrReg():
                 row = curs.fetchone()
                 if row is not None:
                     error = 'User {} is already registered.'.format(username)
+
             if error is None:
                 curs.execute(
                     'INSERT INTO user (username, password) VALUES (%s, %s)',
@@ -53,7 +54,7 @@ def loginOrReg():
                 flash(error)
 
 
-        if error is None:
+        elif request.form['bit'] == 'log':
             curs.execute(
                 'SELECT * FROM user WHERE username = %s', (username,)
             )
@@ -71,7 +72,7 @@ def loginOrReg():
 
             flash(error)
 
-    return render_template('auth/loginOrReg.html')
+    return render_template('auth/login.html')
 
 @bp.before_app_request
 def load_logged_in_user():

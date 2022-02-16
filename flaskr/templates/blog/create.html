@@ -5,36 +5,41 @@
 {% endblock %}
 
 {% block content %}
-<article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
- <div class="container">
-  <div class="row">
-   <div class="col-lg-8 col-md-10 mx-auto">
-      <form method="post" enctype=multipart/form-data>
-        <label for="title">Title</label>
-        <br/>
-        <input class="form-control" name="title" id="title" value="{{ request.form['title'] }}" required>
-        <br/>
-        <label for="body">Body</label>
-        <br/>
-        <textarea class="form-control" style="height: 200px;" name="body" id="body">{{ request.form['body'] }}</textarea>
-        <hr>
+<article class="post">
+    <body style="background-color:black;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-body">
+                            <form method="post" enctype=multipart/form-data>
+                                <label for="title">Title</label>
+                                <br/>
+                                <input class="form-control" name="title" id="title" value="{{ request.form['title'] }}" required>
+                                <br/>
+                                <label for="body"> Project Description </label>
+                                <br/>
+                                <textarea class="form-control" rows="3" name="body" id="body">{{ request.form['body'] }}</textarea>
+                                <hr>
 
-        <img id="myPic" src="/static/myImgs/{{ post [3] }}/{{ post[0] }}" alt="Cover Image" width="{{ post[1] }}" height="{{ post[2] }}">
-        <input type="hidden" name="lat" id="lat" value="none">
-        <input type="hidden" name="lng" id="lng" value="none">
-        <input type="hidden" name="width" id="width" value="{{ post[1] }}">
-        <input type="hidden" name="height" id="height" value="{{ post[2] }}">
-        <input type="hidden" name="filename" id="filename" value="{{ post[0] }}">
+                                <img id="myPic" style="display:block; margin:0 auto; max-width:100%; max-height:100%;" class="img-fluid" src="/static/myImgs/{{ post [3] }}/{{ post[0] }}" alt="Cover Image" width="{{ post[1] }}" height="{{ post[2] }}">
+                                <input type="hidden" name="lat" id="lat" value="none">
+                                <input type="hidden" name="lng" id="lng" value="none">
+                                <input type="hidden" name="width" id="width" value="{{ post[1] }}">
+                                <input type="hidden" name="height" id="height" value="{{ post[2] }}">
+                                <input type="hidden" name="filename" id="filename" value="{{ post[0] }}">
 
-        <input style="float: right;" type="submit" value="Save">
-      </form>
-
-    </div>
-   </div>
- </div>
+                                <input class="btn btn-success btn-lg btn-block mt-4" style="float: right;" type="submit" value="Save">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
 </article>
 
-  <script type="text/javascript">
+<script type="text/javascript">
     var latitude = document.getElementById("lat");
     var longitude = document.getElementById("lng");
 
@@ -48,5 +53,5 @@
       latitude.value = position.coords.latitude;
       longitude.value = position.coords.longitude;
     }
-  </script>
+</script>
 {% endblock %}
