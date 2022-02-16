@@ -42,94 +42,9 @@ def retrieveCVResults(type, image_uri):
     else: # landmark_detection
         return client.landmark_detection(image=image)
 
-@bp.route('/<int:id>/setMap', methods=('GET', 'POST'))
-def setMap(id):
-    mapList = []
-    latitude = 0
-    longitude = 0
 
-    # Acquire database
-    db = get_db()
-
-    curs = db.cursor()
-    curs.execute(
-        'SELECT p.id, username, title, imgFile, lat, lng, author_id, archive'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE lat IS NOT NULL AND lng IS NOT NULL'
-        ' ORDER BY created DESC'
-    )
-    posts = curs.fetchall()
-    posts = list(map(list, posts))
-
-    # convert from archive url to folder location
-    for row in posts:
-        # check that image is part of archives
-        if row[7] == 1:
-            if row[3] is not None:
-                if len(row[3]) > 10:
-                    if row[3][0:10] == "/baseImage":
-                        num = 0
-                        pic = ""
-                        for i in row[3]:
-                            if num == 3:
-                                pic = pic + i
-                            if i == '/':
-                                num+=1
-                        row[3] = pic
-                    elif row[3][0:4] == "http":
-                        num = 0
-                        pic = ""
-                        for i in row[3]:
-                            if num == 5:
-                                pic = pic + i
-                            if i == '/':
-                                num+=1
-                        row[3] = pic
-
-    # Parse query returns
-    for row in posts:
-        # Assign green markers for nearby projects
-        if row[0] != id:
-            info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-            if g.user is not None:
-                if g.user[0] == row[6]:
-                    info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
-            if row[7] == 1:
-                info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-            marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                      'lat': row[4],
-                      'lng': row[5],
-                      'infobox': info}
-            mapList.append(marker)
-        # Assign blue marker indicating position of current project
-        else:
-            info = "<b>Current Project(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-            if g.user is not None:
-                if g.user[0] == row[6]:
-                    info = "<b>Current Project(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
-            if row[7] == 1:
-                info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-            marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                      'lat': row[4],
-                      'lng': row[5],
-                      'infobox': info}
-            latitude = row[4]
-            longitude = row[5]
-            mapList.append(marker)
-
-    mymap = Map(
-        identifier = "view-side",
-        style = "height:100%; width:100%; margin:0;",
-        lat = latitude,
-        lng = longitude,
-        zoom = 15,
-        markers = mapList
-    )
-
-    return render_template('blog/mymap.html', mymap=mymap)
-
-@bp.route('/projmap', methods=('GET', 'POST'))
-def projmap():
+@bp.route('/projectsmap', methods=('GET', 'POST'))
+def projectsmap():
     # Acquire database
     db = get_db()
 
@@ -177,64 +92,11 @@ def projmap():
         else:
             # include html script for displaying image
             row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
-    return render_template('blog/projmap.html', posts=posts)
-
-#duplicate projmap
-@bp.route('/projmaps', methods=('GET', 'POST'))
-def projmaps():
-    # Acquire database
-    db = get_db()
-
-    curs = db.cursor()
-    curs.execute(
-        'SELECT p.id, username, title, imgFile, lat, lng, author_id, archive'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE lat IS NOT NULL AND lng IS NOT NULL'
-        ' ORDER BY created DESC'
-    )
-    posts = curs.fetchall()
-    posts = list(map(list, posts))
-
-    # convert from archive url to folder location
-    for row in posts:
-        # check that image is part of archives
-        if row[7] == 1:
-            if row[3] is not None:
-                if len(row[3]) > 10:
-                    if row[3][0:10] == "/baseImage":
-                        num = 0
-                        pic = ""
-                        for i in row[3]:
-                            if num == 3:
-                                pic = pic + i
-                            if i == '/':
-                                num+=1
-                        row[3] = pic
-                    elif row[3][0:4] == "http":
-                        num = 0
-                        pic = ""
-                        for i in row[3]:
-                            if num == 5:
-                                pic = pic + i
-                            if i == '/':
-                                num+=1
-                        row[3] = pic
-
-        if g.user is not None:
-            if g.user[0] == row[6]:
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/update'>Click to Edit Project</a>)</h4>"
-            else:
-                # include html script for displaying image
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
-        else:
-            # include html script for displaying image
-            row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
-    return render_template('blog/projmaps.html', posts=posts)
+    return render_template('blog/projectsmap.html', posts=posts)
 
 @bp.route('/')
 def redirectIndex():
     return render_template('blog/home.html')
-    # return redirect(url_for('blog/projmap'))
 
 @bp.route('/<int:count>/<string:searchTerm>/projects', methods=('GET','POST'))
 def projects(count, searchTerm):
@@ -255,10 +117,10 @@ def projects(count, searchTerm):
         curs.execute(
             'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
             ' FROM post p JOIN user u ON p.author_id = u.id'
-            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s)'
+            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s OR username LIKE %s)'
             ' ORDER BY created DESC'
             ' LIMIT 5 OFFSET %s',
-            (newTerm, newTerm, newTerm, count)
+            (newTerm, newTerm, newTerm, newTerm, count)
         )
     posts = curs.fetchall()
     posts = list(map(list, posts))
@@ -732,14 +594,6 @@ def capture(id):
 
     return render_template('blog/capture.html', post=post)
 
-@bp.route('/background')
-def background():
-    return render_template('blog/background.html')
-
-@bp.route('/about')
-def about():
-    return render_template('blog/about.html')
-
 @bp.route('/profile')
 @login_required
 def profile():
@@ -767,7 +621,19 @@ def profile():
             mid = 30
             adv = conts[0]-40
 
-    return render_template('blog/profile.html', beg=beg, mid=mid, adv=adv)
+    if g.user is not None:
+        curs.execute(
+            'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1 AND (u.id = %s)'
+            ' ORDER BY created DESC'
+            ' LIMIT 5 OFFSET %s',
+            (g.user[0], 0)
+        )
+
+    posts = curs.fetchall()
+
+    return render_template('blog/profile.html', posts=posts, beg=beg, mid=mid, adv=adv)
 
 @bp.route('/info')
 def info():

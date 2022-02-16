@@ -7,40 +7,112 @@
 {% set background = '../static/myImgs/'+ post[0] | string() +'/'+post[6] %}
 
 {% block content %}
-<article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
-    <h1 style="text-align:center;">Cover Photo</h1>
+<article class="post">
 
-    <div class="display-container">
-      <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
-    </div>
+    <body style="background-color:black;">
 
-    <hr>
-        <div class="display-container">
-          {% for img in imgs %}
-            {% if post[9] == 1 %}
-              <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
-            {% else %}
-              <img class="center" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
-            {% endif %}
-          {% endfor %}
-          <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
-          <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
+        <!-- Project -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+
+                            <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                                <h3 class="post-title">{{ post[1] }} </h3>
+
+                                <div class="d-grid gap-2 d-flex justify-content-end">
+                                    {% if g.user[0] == post[4] and post[4] != 1 %}
+                                        <a class="post-meta btn btn-outline-primary" style="display:inline;" href="{{ url_for('blog.update', id=post[0]) }}">Edit</a>
+                                    {% endif %}
+                                    <a class="post-meta btn btn-outline-primary" href="{{ url_for('blog.projectsmap', id=post[0]) }}">View On Map</a>
+                                </div>
+                            </div>
+
+                            <p class="post-meta" style="display:inline;">
+                                Posted by <a href="{{ url_for('blog.projects', count=0, searchTerm=post[5]) }}">{{ post[5] }}</a> on {{ post[3].strftime('%Y-%m-%d') }}
+                            </p>
+
+                            <p class="post-meta">
+                                {{ post[2] }}
+                            </p>
+
+                        </div>
+
+                        <div class="card-body">
+                            <div class="display-container">
+                                {% for img in imgs %}
+                                    {% if post[9] == 1 %}
+                                        <img class="img-fluid center" style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image">
+                                    {% else %}
+                                        <img class="img-fluid center" style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="User Image" width="{{ img[2] }}" height="{{ img[3] }}">
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="col-md-12 text-center">
+                                <button type="button" class="btn btn-primary custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
+                                <button type="button" class="btn btn-primary custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    <hr>
 
-    <h3 style="text-align:center;">Body</h1>
-        <p>Vision API Analysis</p>
-        {% for res in tagArr %}
-            <form id="searchPosts{{ res }}" style="display: inline-block;" action="" method="post">
-                <input type="hidden" name="{{ res }}" id="{{ res }}" value="{{ res }}">
-                <button type="submit" id="S{{ res }}">{{ res }}</button>
-            </form>
-            <script>
-              document.getElementById("S{{ res }}").onclick = function () {
-                setSearch("{{ res }}");
-              }
-            </script>
-        {% endfor %}
+        <!-- Vision API Analysis -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> Vision API Analysis </p>
+                        </div>
+                        <div class="card-body">
+                            {% for res in tagArr %}
+                                <form id="searchPosts{{ res }}" style="display: inline-block;" action="" method="post">
+                                    <input type="hidden" name="{{ res }}" id="{{ res }}" value="{{ res }}">
+                                    <button class="btn btn-secondary mb-1" type="submit" id="S{{ res }}">{{ res }}</button>
+                                </form>
+                                <script>
+                                    document.getElementById("S{{ res }}").onclick = function () {
+                                        setSearch("{{ res }}");
+                                    }
+                                </script>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cover Photo -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> Cover Photo </p>
+                        </div>
+                        <div class="card-body">
+                            <div class="display-container">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                        Show Cover Photo
+                                    </button>
+                                </div>
+
+                                <div class="collapse bg-gray" id="collapseExample">
+                                    <img class="img-fluid" style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             function setSearch(term) {
                 var url = "{{ url_for('blog.projects', count=0, searchTerm='general') }}";
@@ -50,36 +122,30 @@
                 var formID = "searchPosts" + term;
                 document.getElementById(formID).action = url;
                 document.getElementById(formID).submit();
-              }
+            }
         </script>
-        <br/>
-        <p>{{ post[2] }}</p>
-    <hr>
 
-    <script type="text/javascript">
-      var slideIndex = 1;
-      showDivs(slideIndex);
+        <script type="text/javascript">
+            var slideIndex = 1;
+            showDivs(slideIndex);
 
-      function plusDivs(n) {
-        showDivs(slideIndex += n);
-      }
+            function plusDivs(n) {
+                showDivs(slideIndex += n);
+            }
 
-      function showDivs(n) {
-        var i;
-        var x = document.getElementsByClassName("center");
-        if (n > x.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = x.length}
-        for (i=0; i < x.length; i++){
-          x[i].style.display = "none";
-        }
-        x[slideIndex-1].style.display = "block";
-      }
-    </script>
+            function showDivs(n) {
+                var i;
+                var x = document.getElementsByClassName("center");
+                if (n > x.length) {slideIndex = 1}
+                if (n < 1) {slideIndex = x.length}
 
-  <form style="display: inline;" action="{{ url_for('blog.setMap', id=post[0]) }}" method="post">
-    <div style="text-align:center;">
-      <input type="submit" value="View Map">
-    </div>
-  </form>
+                for (i=0; i < x.length; i++){
+                    x[i].style.display = "none";
+                }
+                x[slideIndex-1].style.display = "block";
+            }
+        </script>
+
+    </body>
 </article>
 {% endblock %}

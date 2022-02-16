@@ -8,6 +8,15 @@
 
 {% block content %}
 <article>
+
+    <style>
+        .required:after {
+            content:" * Required";
+            color: #dc3545;
+            font-style: italic;
+        }
+    </style>
+
     <div class="container mt-2 pt-2 mb-2">
         <div class="row d-flex align-items-center justify-content-center">
             <div class="col-xl-6 col-lg-6 col-md-8 col-sm-10 col-10">
@@ -33,12 +42,12 @@
                     </div>
 
 
-                    <label for="username">Username</label>
+                    <label class="required" for="username">Username </label>
                     <br/>
                     <input class="form-control" name="username" id="username" required>
                     <br/>
 
-                    <label for="password">Password</label>
+                    <label class="required" for="password">Password</label>
                     <br/>
                     <input class="form-control" type="password" name="password" id="password" required>
                     <br/>
@@ -46,14 +55,15 @@
                     <div class="text-center text-lg-start pt-2">
                         <input type="hidden" name="bit" id="bit" value="">
 
-                        <div id="loginSection"class="d-block">
-                            <button id="loginBtn" class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="login()" value="Login"> Login </button>
+                        <div class="d-grid gap-2 d-block" id="loginSection">
+                            <button id="loginBtn" class="btn bg-black text-white btn-lg" type="submit" onclick="login()" value="Login"> Login </button>
                             <p class="mt-2 pt-1 mb-0">Click here to <a class="text-danger pt-2" type="submit" onclick="needAccount()" value="Register">register</a> </p>
                         </div>
 
-                        <div id="registerBtn" class="d-none">
-                            <button class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="register()" value="Register"> Register </button>
+                        <div class="d-grid gap-2 d-none" id="registerBtn">
+                            <button class="btn bg-black text-white btn-lg" type="submit" onclick="register()" value="Register"> Register </button>
                         </div>
+
                     </div>
 
                 </form>
@@ -68,9 +78,9 @@
             }
             function needAccount() {
                 document.getElementById("registerBlock").className = "d-block";
-                document.getElementById("loginSection").className = "d-none";
+                document.getElementById("loginSection").className = "d-grid gap-2 d-none";
                 document.getElementById("loginBtn").disabled = true;
-                document.getElementById("registerBtn").className = "d-block mb-2";
+                document.getElementById("registerBtn").className = "d-grid gap-2 d-block mb-2";
             }
             function register() {
                 document.getElementById("bit").value = "reg";
