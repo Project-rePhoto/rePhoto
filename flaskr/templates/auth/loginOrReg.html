@@ -8,48 +8,30 @@
 
 {% block content %}
 <article>
-    <div class="container mt-2 pt-2">
+    <div class="container mt-2 pt-2 mb-2">
         <div class="row d-flex align-items-center justify-content-center">
             <div class="col-xl-6 col-lg-6 col-md-8 col-sm-10 col-10">
 
                 <!-- login -->
                 <form class="d-block" id="logOrReg" method="post">
 
-                    <label for="username">Username</label>
-                    <br/>
-                    <input class="form-control" name="username" id="username" required>
-                    <br/>
+                    <div id="registerBlock"class="d-none">
+                        <label for="firstName">First Name</label>
+                        <br/>
+                        <input class="form-control" name="firstName" id="firstName" required>
+                        <br/>
 
-                    <label for="password">Password</label>
-                    <br/>
-                    <input class="form-control" type="password" name="password" id="password" required>
-                    <br/>
+                        <label for="lastName">Last Name</label>
+                        <br/>
+                        <input class="form-control" name="lastName" id="lastName" required>
+                        <br/>
 
-                    <div class="text-center text-lg-start pt-2">
-                        <input type="hidden" name="bit" id="bit" value="">
-                        <button class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="login()" value="Login"> Login </button>
-                        <p class="mt-2 pt-1 mb-0">Click here to <a class="text-danger pt-2" type="submit" onclick="needAccount()" value="Register">register</a> </p>
+                        <label for="email">Email Address </label>
+                        <br/>
+                        <input class="form-control" name="email" id="email" required>
+                        <br/>
                     </div>
 
-                </form>
-
-                <!-- register -->
-                <form class="d-none" id="Reg" method="post">
-
-                    <label for="firstName">First Name</label>
-                    <br/>
-                    <input class="form-control" name="firstName" id="firstName" required>
-                    <br/>
-
-                    <label for="lastName">Last Name</label>
-                    <br/>
-                    <input class="form-control" name="lastName" id="lastName" required>
-                    <br/>
-
-                    <label for="email">Email Address </label>
-                    <br/>
-                    <input class="form-control" name="email" id="email" required>
-                    <br/>
 
                     <label for="username">Username</label>
                     <br/>
@@ -63,8 +45,17 @@
 
                     <div class="text-center text-lg-start pt-2">
                         <input type="hidden" name="bit" id="bit" value="">
-                        <button class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="register()" value="Register"> Register </button>
+
+                        <div id="loginSection"class="d-block">
+                            <button id="loginBtn" class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="login()" value="Login"> Login </button>
+                            <p class="mt-2 pt-1 mb-0">Click here to <a class="text-danger pt-2" type="submit" onclick="needAccount()" value="Register">register</a> </p>
+                        </div>
+
+                        <div id="registerBtn" class="d-none">
+                            <button class="btn bg-black text-white btn-lg btn-block" type="submit" onclick="register()" value="Register"> Register </button>
+                        </div>
                     </div>
+
                 </form>
 
             </div>
@@ -76,12 +67,14 @@
                 document.getElementById("logOrReg").submit();
             }
             function needAccount() {
-                document.getElementById("logOrReg").className = "d-none";
-                document.getElementById("Reg").className = "d-block";
+                document.getElementById("registerBlock").className = "d-block";
+                document.getElementById("loginSection").className = "d-none";
+                document.getElementById("loginBtn").disabled = true;
+                document.getElementById("registerBtn").className = "d-block mb-2";
             }
             function register() {
                 document.getElementById("bit").value = "reg";
-                document.getElementById("Reg").submit();
+                document.getElementById("logOrReg").submit();
             }
         </script>
     </div>

@@ -27,6 +27,7 @@ def create_app(test_config=None):
 
     #Configure upload folder path
     UPLOAD_FOLDER = '/home/ebrahim2022/rePhoto/flaskr/static/myImgs'
+
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #MySQL connection

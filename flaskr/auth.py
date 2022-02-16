@@ -32,6 +32,7 @@ def loginOrReg():
                 row = curs.fetchone()
                 if row is not None:
                     error = 'User {} is already registered.'.format(username)
+
             if error is None:
                 curs.execute(
                     'INSERT INTO user (username, password) VALUES (%s, %s)',
@@ -53,7 +54,7 @@ def loginOrReg():
                 flash(error)
 
 
-        if error is None:
+        elif request.form['bit'] == 'log':
             curs.execute(
                 'SELECT * FROM user WHERE username = %s', (username,)
             )
