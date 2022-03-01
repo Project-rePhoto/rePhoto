@@ -61,9 +61,9 @@ def login():
             user = curs.fetchone()
 
             if user is None:
-                error = 'Incorrect username.'
+                error = 'Incorrect username or password.'
             elif not check_password_hash(user[2], password):
-                error = 'Incorrect password.'
+                error = 'Incorrect username or password.'
 
             if error is None:
                 session.clear()

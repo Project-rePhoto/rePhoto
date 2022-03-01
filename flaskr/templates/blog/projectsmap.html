@@ -102,7 +102,7 @@
             {% for post in posts %}
                 var lat = parseFloat(JSON.stringify({{post[4]|tojson}}));
                 var lon = parseFloat(JSON.stringify({{post[5]|tojson}}));
-                content = JSON.stringify({{post[3]|tojson}});
+                var content = JSON.stringify({{post[3]|tojson}});
                 m = L.marker([lat, lon]).addTo(myFeatureGroup).bindPopup(content, {maxWidth: "auto"});
                 //m.content = content;
                 // L.marker([parseFloat(JSON.stringify({{post[4]|tojson}})), parseFloat(JSON.stringify({{post[5]|tojson}}))]).addTo(map).bindPopup(JSON.stringify({{post[3]|tojson}}), {maxWidth: "auto"});
@@ -111,6 +111,12 @@
             function openMarker(event){
                 console.log('MARKER CLICKED!');
             }
+
+            map.on('popupopen', function (e) {
+              $('img.img-in-popup').on('load', function () {
+                e.popup.update()
+              })
+            })
 
             // It even opens up a popup when you click it!
             myLocation.openPopup();
