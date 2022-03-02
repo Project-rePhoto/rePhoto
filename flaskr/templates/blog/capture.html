@@ -14,8 +14,7 @@
             </div>
         </div>
 
-
-        <div id="captureArea" class="col-lg-8 col-md-10 mx-auto d-block">
+        <div id="captureArea" class="col-lg-6 col-md-8 col-12 mx-auto d-block mb-3">
             <div id="parent" style="position:relative;">
                 <video class="children img-fluid" style="display: block; width: 100%; max-height: 100%; height: auto;" id="vid" autoplay playsinline></video>
                 {% if post != 1 %}
@@ -24,7 +23,12 @@
                     <img class="children" style="display:none;" id="overlay" src="/static/imgs/{{ post[0] }}/default.png" alt="Cover Image" width="200" height="200">
                 {% endif %}
                 <div id="take" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0;">
-                    <button id="takePic" class="btn btn-primary btn-lg" style="position: absolute; bottom: 0; right: 50%; transform: translate(50%, -100%);">Take Picture</button>
+                    <button id="takePic" class="btn btn-primary btn-lg" style="position: absolute; bottom: 0; right: 60%; transform: translate(50%, -100%);"> <i class="bi bi-camera-fill"></i> </i></button>
+
+                    <div id="flip" style="text-align:center;">
+                        <button id="flipCam" class="btn btn-primary btn-lg" style="position: absolute; bottom: 0; right: 40%; transform: translate(50%, -100%);"> <i class="bi bi-arrow-repeat"> </i></button>
+                    </div>
+
                 </div>
             </div>
 
@@ -36,15 +40,19 @@
                 <input type="hidden" id="redirect" name="redirect" value="1">
             {% endif %}
 
-            <div id="retake" style="text-align:center; display:none;"><button id="retakePic" class="btn btn-outline-primary">Retake Picture</button></div>
-            <div id="flip" style="text-align:center;"><button id="flipCam" class="btn btn-outline-primary">Change Camera</button></div>
-            <div id="uploadPic" style="text-align:center; display:none;">
-                <input type="text" placeholder="Picture Title" id="picName">
+            <br>
+
+            <div id="retake" class="mb-3" style="text-align:center; display:none">
+                <button id="retakePic" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+
+            <div class="d-grid gap-2 d-none" id="uploadPic">
+                <input type="text" class="form-control" placeholder="Picture Title" id="picName">
                 <button id="upload" class="btn btn-outline-primary">Upload Picture</button>
             </div>
+
         </div>
 
-        <script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.min.js') }}"></script>
         <script>
           //Flip camera
           let flipBtn = document.querySelector('#flipCam');
@@ -79,7 +87,7 @@
 
                 document.getElementById("takePic").onclick = function() {
                   //show upload button and hide take button
-                  document.getElementById("uploadPic").style.display = "block";
+                  document.getElementById("uploadPic").className = "d-grid gap-2 d-block";
                   document.getElementById("retake").style.display = "block";
                   document.getElementById("take").style.display = "none";
                   document.getElementById("flip").style.display = "none";
@@ -131,7 +139,7 @@
 
             document.getElementById("retake").onclick = function() {
               // Reset UI
-              document.getElementById("uploadPic").style.display = "none";
+              document.getElementById("uploadPic").className = "d-grid gap-2 d-none";
               document.getElementById("retake").style.display = "none";
               document.getElementById("take").style.display = "block";
               document.getElementById("flip").style.display = "block";
@@ -194,5 +202,11 @@
             };
           }
         </script>
+
+        <!-- Footer -->
+        <footer class="bg-dark bg-black text-center text-white pb-5">
+            <div class="text-center p-3 mb-4">
+            </div>
+        </footer>
     </body>
 {% endblock %}

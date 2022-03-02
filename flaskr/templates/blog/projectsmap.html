@@ -103,6 +103,11 @@
                 var lat = parseFloat(JSON.stringify({{post[4]|tojson}}));
                 var lon = parseFloat(JSON.stringify({{post[5]|tojson}}));
                 var content = JSON.stringify({{post[3]|tojson}});
+
+                // replace the two qoutes from content
+                content = content.replace('"', "")
+                content = content.replace('"', "")
+
                 m = L.marker([lat, lon]).addTo(myFeatureGroup).bindPopup(content, {maxWidth: "auto"});
                 //m.content = content;
                 // L.marker([parseFloat(JSON.stringify({{post[4]|tojson}})), parseFloat(JSON.stringify({{post[5]|tojson}}))]).addTo(map).bindPopup(JSON.stringify({{post[3]|tojson}}), {maxWidth: "auto"});
