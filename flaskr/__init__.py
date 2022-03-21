@@ -5,7 +5,7 @@ from flask import Flask
 from flask_googlemaps import GoogleMaps
 #import Geocoder
 #from flask_simple_geoip import SimpleGeoIP
-from .config import map_key, username, password, database, host
+from .config import map_key, username, password, database, host, org_email, org_email_pass
 
 #simple_geoip = '';
 
@@ -22,11 +22,19 @@ def create_app(test_config=None):
     #global simple_geoip
     #simple_geoip = SimpleGeoIP(app)
 
+    # org email configuration
+    app.config['MAIL_SERVER']='smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = org_email
+    app.config['MAIL_PASSWORD'] = org_email_pass
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
+
     #Add Google Cloud credentials
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/rameme/key.json'
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/liuchao/key.json'
 
     #Configure upload folder path
-    UPLOAD_FOLDER = '/home/rameme/rePhoto/flaskr/static/myImgs'
+    UPLOAD_FOLDER = '/home/liuchao/rePhoto/flaskr/static/myImgs'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #MySQL connection
