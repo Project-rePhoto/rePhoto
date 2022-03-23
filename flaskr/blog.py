@@ -85,13 +85,13 @@ def projectsmap():
 
         if g.user is not None:
             if g.user[0] == row[6]:
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/update'>Click to Edit Project</a>)</h4>"
+                row[3] = "<h5><strong>Click on Image to Contribute to Project</strong></h5> <a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br/><b>"+row[2]+" by "+row[1]+"</b><br/> <a class='post-meta btn btn-primary d-grid gap-2 text-white' href='../"+str(row[0])+"/update'>Edit Project</a>"
             else:
                 # include html script for displaying image
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+                row[3] = "<h5><strong>Click on Image to Contribute to Project</strong></h5> <a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br/><b>"+row[2]+" by "+row[1]+"</b><br/> <a class='post-meta btn btn-primary d-grid gap-2 text-white' href='../"+str(row[0])+"/detail'>View Project</a>"
         else:
             # include html script for displaying image
-            row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+            row[3] = "<h5><strong>Click on Image to Contribute to Project</strong></h5> <a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br/><b>"+row[2]+" by "+row[1]+"</b><br/> <a class='post-meta btn btn-primary d-grid gap-2 text-white' href='../"+str(row[0])+"/detail'>View Project</a>"
     return render_template('blog/projectsmap.html', posts=posts)
 
 @bp.route('/')
