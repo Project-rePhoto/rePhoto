@@ -111,6 +111,8 @@ def login():
                 html = render_template('auth/activate.html', confirm_url=confirm_url)
                 subject = "Please confirm your email"
                 send_email(email, subject, html)
+
+                flash('You check your email to confirm your account!', 'success')
             else:
                 flash(error)
 

@@ -315,7 +315,7 @@ def update(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # Retrieve current post tags
@@ -438,7 +438,7 @@ def capture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # Retrieve current post tags
@@ -549,7 +549,7 @@ def capture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(insertID[0]), filename))
 
                 #------ Retrieve Vision API result and update tags -------
-                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
 
                 # Retrieve labels
                 response = retrieveCVResults(0, image_uri)
@@ -704,7 +704,7 @@ def deletePic(id):
 @login_required
 def createFile():
     path = "static/myImgs/photolinks.txt"
-    homepath = "/home/liuchao/rePhoto/flaskr/static/myImgs/photolinks.txt"
+    homepath = "/home/rameme/rePhoto/flaskr/static/myImgs/photolinks.txt"
 
     if os.path.isfile(homepath):
         return send_file(path, as_attachment=True)

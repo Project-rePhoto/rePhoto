@@ -31,10 +31,10 @@ def create_app(test_config=None):
     app.config['MAIL_USE_SSL'] = True
 
     #Add Google Cloud credentials
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/liuchao/key.json'
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/rameme/key.json'
 
     #Configure upload folder path
-    UPLOAD_FOLDER = '/home/liuchao/rePhoto/flaskr/static/myImgs'
+    UPLOAD_FOLDER = '/home/rameme/rePhoto/flaskr/static/myImgs'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #MySQL connection
