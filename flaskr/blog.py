@@ -8,13 +8,12 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
 from flaskr.auth import login_required
 from flaskr.db import get_db
-#Google Maps API
-from flask_googlemaps import Map
-#import Geocoder
-#from flaskr import simple_geoip
 from datetime import datetime
 #import Cloud Vision API
 from google.cloud import vision
+import torch
+torch.set_num_threads(1)
+
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
@@ -318,6 +317,13 @@ def update(id):
                 image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
+                # ------- Retrieve YoloV5 result ------
+                model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+                imgs = ['https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/' + filename]
+                results = model(imgs)
+                data = results.pandas().xyxy[0]
+                yoloV5tags = data['name'].unique()
+
                 # Retrieve current post tags
                 curs.execute(
                     'SELECT tag'
@@ -352,8 +358,15 @@ def update(id):
                     if text.description not in tagSet:
                         labelList.append(text.description)
 
+
                 tagList = "|".join(labelList)
                 albumList = "|".join(albumTag)
+
+                # add YoloV5 tags
+                if not yoloV5tags:
+                    tagList = "|".join(yoloV5tags)
+                    albumList = "|".join(yoloV5tags)
+
                 # ----------------------------------------
 
                 curs.execute(

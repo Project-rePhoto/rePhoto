@@ -1,20 +1,13 @@
 import os
 
 from flask import Flask
-#Google Maps API
-from flask_googlemaps import GoogleMaps
-#import Geocoder
-#from flask_simple_geoip import SimpleGeoIP
-from .config import map_key, username, password, database, host, org_email, org_email_pass
+from .config import username, password, database, host, org_email, org_email_pass
 
 #simple_geoip = '';
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
-
-    #Initialize Maps extension
-    GoogleMaps(app, key=map_key)
 
     #Initialize SimpleGeoIP extension
     #app.config["GEOIPIFY_API_KEY"] = geo_key
