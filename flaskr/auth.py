@@ -42,7 +42,7 @@ def send_email(to, subject, template):
 @bp.route('/confirm/<token>')
 def confirm_email(token):
     try:
-        email = confirm_token(token)
+        email_uid = confirm_token(token)
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
         return render_template('auth/login.html')
@@ -50,17 +50,27 @@ def confirm_email(token):
     # database inits
     db = get_db()
     curs = db.cursor()
-    user_id = session.get('user_id')
 
-    # Update email in user account
+    # split email and uid
+    arr = email_uid.split(' ')
+
+    # create new user
     curs.execute(
-        'UPDATE user SET email = %s'
-        ' WHERE id = %s',
-        (email, user_id)
+        'INSERT INTO user (username, password, email) VALUES (%s, %s, %s)',
+        (arr[1], generate_password_hash(arr[2]), arr[0])
     )
     db.commit()
 
-    flash('You have confirmed your account. Thanks!', 'success')
+    # retrieve user_id and create session variable
+    curs.execute(
+        'SELECT * FROM user WHERE username = %s', (arr[1],)
+    )
+    user = curs.fetchone()
+    session.clear()
+    session['user_id'] = user[0]
+
+    msg = "You have confirmed your email: %s, thanks!" % (arr[0],)
+    flash(msg, 'success')
     return redirect(url_for('blog.profile'))
 
 @bp.route('/login', methods=('GET', 'POST'))
@@ -90,23 +100,11 @@ def login():
                     error = 'User {} is already registered.'.format(username)
 
             if error is None:
-                # create new user
-                curs.execute(
-                    'INSERT INTO user (username, password) VALUES (%s, %s)',
-                    (username, generate_password_hash(password))
-                )
-                db.commit()
-
-                # retrieve user_id and create session variable
-                curs.execute(
-                    'SELECT * FROM user WHERE username = %s', (username,)
-                )
-                user = curs.fetchone()
-                session.clear()
-                session['user_id'] = user[0]
+                # concatenate email and user_id
+                email_uid = email + " " + username + " " + password
 
                 # send email confirmation
-                token = generate_confirmation_token(email)
+                token = generate_confirmation_token(email_uid)
                 confirm_url = url_for('auth.confirm_email', token=token, _external=True)
                 html = render_template('auth/activate.html', confirm_url=confirm_url)
                 subject = "Please confirm your email"
