@@ -96,6 +96,8 @@
                         </div>
                     </div>
                 </div>
+
+
             </div>
 
             <script type="text/javascript">
@@ -125,31 +127,30 @@
 
             {% if loop.last %}
                 <div style="text-align:center;">
-                  <input class="btn btn-primary btn-lg mb-4" form="oldPosts" type="submit" value="Older Posts">
+                    <input id="previnput" class="btn btn-primary mb-4" form="prev" type="submit" value="Prev">
+                    <input class="btn btn-black text-white mb-4 p-0" value="{{ (((count + 5)/5)|string)[:-2] }} out of {{ total[0]|join(':') }}" readonly>
+                    <input id="nextinput" class="btn btn-primary mb-4" form="next" type="submit" value="Next">
                 </div>
-                <form id="oldPosts" action="{{ url_for('blog.projects', count=count+5, searchTerm=searchTerm) }}" method="post"></form>
+                <form id="next" action="{{ url_for('blog.projects', count=count+5, searchTerm=searchTerm) }}" method="post"></form>
+                <form id="prev" action="{{ url_for('blog.projects', count=count-5, searchTerm=searchTerm) }}" method="post"></form>
+
+                <script>
+                    if ({{ (count + 5)/5 }} == {{ total[0]|join(':') }}){
+                        document.getElementById("nextinput").disabled = true;
+                    } else {
+                        document.getElementById("nextinput").disabled = false;
+                    }
+
+                    if ({{count}} == 0){
+                        document.getElementById("previnput").disabled = true;
+                    } else {
+                        document.getElementById("previnput").disabled = false;
+                    }
+                </script>
+
             {% endif %}
 
         {% endfor %}
-
-        <!-- pages -->
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-12 d-none">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination pagination-lg justify-content-center text-dark">
-                        <li class="page-item disabled">
-                          <a class="page-link text-dark" href="#" tabindex="-1">Previous</a>
-                        </li>
-                        <li class="page-item"><a class="page-link text-primary" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link text-dark" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
-                        <li class="page-item">
-                          <a class="page-link text-dark" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
     </body>
 
 </article>

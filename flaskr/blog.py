@@ -12,6 +12,8 @@ from datetime import datetime
 #import Cloud Vision API
 from google.cloud import vision
 import torch
+import math
+import numpy as np
 torch.set_num_threads(1)
 
 
@@ -124,6 +126,17 @@ def projects(count, searchTerm):
     posts = curs.fetchall()
     posts = list(map(list, posts))
 
+    curs.execute(
+        'SELECT COUNT(*)'
+        ' FROM post p JOIN user u ON p.author_id = u.id'
+        ' WHERE p.id != 1'
+    )
+    total = curs.fetchall()
+    total = list(map(list, total))
+    totalArr = np.array(total)
+
+    totalArr[0] = math.ceil(totalArr[0]/5)
+
     # OLD CODE
     # convert from archive url to folder location
     for row in posts:
@@ -172,7 +185,7 @@ def projects(count, searchTerm):
                             num+=1
                     row[0] = pic
 
-    return render_template('blog/projects.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm)
+    return render_template('blog/projects.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm, total=totalArr)
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
 @login_required
