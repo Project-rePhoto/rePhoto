@@ -126,11 +126,20 @@ def projects(count, searchTerm):
     posts = curs.fetchall()
     posts = list(map(list, posts))
 
-    curs.execute(
-        'SELECT COUNT(*)'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id != 1'
-    )
+    if searchTerm == "general":
+        curs.execute(
+            'SELECT COUNT(*)'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1'
+        )
+    else:
+        curs.execute(
+            'SELECT COUNT(*)'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s OR username LIKE %s)',
+            (newTerm, newTerm, newTerm, newTerm)
+        )
+
     total = curs.fetchall()
     total = list(map(list, total))
     totalArr = np.array(total)
@@ -327,7 +336,7 @@ def update(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
 
                 # ------- Retrieve YoloV5 result ------
@@ -376,7 +385,7 @@ def update(id):
                 albumList = "|".join(albumTag)
 
                 # add YoloV5 tags
-                if not yoloV5tags:
+                if yoloV5tags.size != 0:
                     tagList = "|".join(yoloV5tags)
                     albumList = "|".join(yoloV5tags)
 
@@ -464,8 +473,15 @@ def capture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
+
+                # ------- Retrieve YoloV5 result ------
+                model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+                imgs = ['https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/' + filename]
+                results = model(imgs)
+                data = results.pandas().xyxy[0]
+                yoloV5tags = data['name'].unique()
 
                 # Retrieve current post tags
                 curs.execute(
@@ -503,6 +519,12 @@ def capture(id):
 
                 tagList = "|".join(labelList)
                 albumList = "|".join(albumTag)
+
+                # add YoloV5 tags
+                if yoloV5tags.size != 0:
+                    tagList = "|".join(yoloV5tags)
+                    albumList = "|".join(yoloV5tags)
+
                 # ----------------------------------------
 
                 #save to tables
@@ -575,11 +597,18 @@ def capture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(insertID[0]), filename))
 
                 #------ Retrieve Vision API result and update tags -------
-                image_uri = 'https://liuchao.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
 
                 # Retrieve labels
                 response = retrieveCVResults(0, image_uri)
                 tagList = ["General"]
+
+                # ------- Retrieve YoloV5 result ------
+                model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+                imgs = ['https://rameme.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename]
+                results = model(imgs)
+                data = results.pandas().xyxy[0]
+                yoloV5tags = data['name'].unique()
 
                 # Append new tags for labels
                 for label in response.label_annotations:
@@ -595,6 +624,10 @@ def capture(id):
                     tagList.append(text.description)
 
                 tags = "|".join(tagList)
+
+                # add YoloV5 tags
+                if yoloV5tags.size != 0:
+                    tags = "|".join(yoloV5tags)
 
                 #update post
                 curs.execute(
@@ -730,7 +763,7 @@ def deletePic(id):
 @login_required
 def createFile():
     path = "static/myImgs/photolinks.txt"
-    homepath = "/home/liuchao/rePhoto/flaskr/static/myImgs/photolinks.txt"
+    homepath = "/home/rameme/rePhoto/flaskr/static/myImgs/photolinks.txt"
 
     if os.path.isfile(homepath):
         return send_file(path, as_attachment=True)
