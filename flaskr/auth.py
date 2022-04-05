@@ -45,7 +45,7 @@ def confirm_email(token):
         email_uid = confirm_token(token)
     except:
         flash('The confirmation link is invalid or has expired.', 'danger')
-        return render_template('auth/login.html')
+        return redirect(url_for('auth.login'))
 
     # database inits
     db = get_db()
@@ -73,17 +73,78 @@ def confirm_email(token):
     flash(msg, 'success')
     return redirect(url_for('blog.profile'))
 
+@bp.route('/password_reset/<token>', methods=('GET', 'POST'))
+def password_reset(token):
+    if request.method == 'POST':
+        newpass = request.form['newPass']
+        conpass = request.form['conPass']
+        email_uid = request.form['email_uid']
+
+        # authenticate token
+        try:
+            email_uid = confirm_token(email_uid)
+        except:
+            flash('The reset link is invalid or has expired.', 'danger')
+            return redirect(url_for('auth.login'))
+
+        db = get_db()
+        curs = db.cursor()
+        error = None
+
+        if not newpass:
+            error = 'New password is required.'
+        elif not conpass:
+            error = 'Please confirm new password.'
+        elif newpass != conpass:
+            error = 'Passwords do not match.'
+        else:
+            # split email and uid
+            arr = email_uid.split(' ')
+
+            curs.execute(
+                'SELECT * FROM user WHERE id = %s', (int(arr[1]),)
+            )
+            user = curs.fetchone()
+
+            if user is None:
+                error = 'Something went wrong. This account does not exist.'
+            elif check_password_hash(user[2], newpass):
+                error = 'New password cannot be the same as the previous password.'
+            else:
+                # update password for account
+                curs.execute(
+                    'UPDATE user SET password = %s WHERE id = %s',
+                    (generate_password_hash(newpass), user[0])
+                )
+                db.commit()
+
+                # log user in
+                session.clear()
+                session['user_id'] = user[0]
+                return redirect(url_for('blog.profile'))
+
+        # If error, reset verification token
+        email_uid = request.form['email_uid']
+        flash(error)
+    else:
+        email_uid = token
+
+    return render_template('auth/password_reset.html', email_uid=email_uid)
+
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
+        resetEmail = request.form['resetEmail']
+
         db = get_db()
         curs = db.cursor()
         error = None
 
         # TODO: data sanitization (username and password)
+        # action for registration
         if request.form['bit'] == 'reg':
             if not username:
                 error = 'Username is required.'
@@ -92,6 +153,15 @@ def login():
             elif not email:
                 error = 'Email is required.'
             else:
+                # check email for uniqueness
+                curs.execute(
+                    'SELECT id FROM user WHERE email = %s', (email,)
+                )
+                row = curs.fetchone()
+                if row is not None:
+                    error = 'Email {} is already in use.'.format(email)
+
+                # check username for uniqueness
                 curs.execute(
                     'SELECT id FROM user WHERE username = %s', (username,)
                 )
@@ -114,7 +184,7 @@ def login():
             else:
                 flash(error)
 
-
+        # action for login
         elif request.form['bit'] == 'log':
             curs.execute(
                 'SELECT * FROM user WHERE username = %s', (username,)
@@ -132,6 +202,30 @@ def login():
                 return redirect(url_for('blog.profile'))
 
             flash(error)
+
+        # action for password reset
+        elif request.form['bit'] == 'res':
+            # check email for uniqueness
+            curs.execute(
+                'SELECT id FROM user WHERE email = %s', (resetEmail,)
+            )
+            row = curs.fetchone()
+
+            if row is None:
+                error = 'Email {} is not recognized.'.format(resetEmail)
+                flash(error)
+            else:
+                # concatenate email and user_id
+                email_uid = resetEmail + " " + str(row[0])
+
+                # send email confirmation
+                token = generate_confirmation_token(email_uid)
+                confirm_url = url_for('auth.password_reset', token=token, _external=True)
+                html = render_template('auth/reset.html', confirm_url=confirm_url)
+                subject = "Password Reset"
+                send_email(resetEmail, subject, html)
+
+                flash('Please check your email to reset your password!', 'success')
 
     return render_template('auth/login.html')
 

@@ -23,6 +23,12 @@
 
                 <!-- login -->
                 <form class="d-block" id="logOrReg" method="post">
+                    <div id="forgetBlock"class="d-none">
+                        <label class="required" for="resetEmail">Enter Email</label>
+                        <br/>
+                        <input class="form-control" name="resetEmail" id="resetEmail" required>
+                        <br/>
+                    </div>
 
                     <div id="registerBlock"class="d-none">
                         <label for="firstName">First Name</label>
@@ -41,16 +47,17 @@
                         <br/>
                     </div>
 
+                    <div id="unamePass"class="d-block">
+                        <label class="required" for="username">Username </label>
+                        <br/>
+                        <input class="form-control" name="username" id="username" required>
+                        <br/>
 
-                    <label class="required" for="username">Username </label>
-                    <br/>
-                    <input class="form-control" name="username" id="username" required>
-                    <br/>
-
-                    <label class="required" for="password">Password</label>
-                    <br/>
-                    <input class="form-control" type="password" name="password" id="password" required>
-                    <br/>
+                        <label class="required" for="password">Password</label>
+                        <br/>
+                        <input class="form-control" type="password" name="password" id="password" required>
+                        <br/>
+                    </div>
 
                     <div class="text-center text-lg-start pt-2">
                         <input type="hidden" name="bit" id="bit" value="">
@@ -58,10 +65,15 @@
                         <div class="d-grid gap-2 d-block" id="loginSection">
                             <button id="loginBtn" class="btn bg-black text-white btn-lg" type="submit" onclick="login()" value="Login"> Login </button>
                             <p class="text-center mt-2 pt-1 mb-0">Click here to <a class="text-danger pt-2" type="submit" onclick="needAccount()" value="Register">register</a> </p>
+                            <p class="text-center mt-2 pt-1 mb-0"><a class="text-danger pt-2" type="submit" onclick="forgotPassword()" value="Forgot">Forgot Password?</a> </p>
                         </div>
 
                         <div class="d-grid gap-2 d-none" id="registerBtn">
                             <button class="btn bg-black text-white btn-lg" type="submit" onclick="register()" value="Register"> Register </button>
+                        </div>
+
+                        <div class="d-grid gap-2 d-none" id="forgetBtn">
+                            <button class="btn bg-black text-white btn-lg" type="submit" onclick="resetPass()" value="Reset"> Reset </button>
                         </div>
 
                     </div>
@@ -76,6 +88,7 @@
                 document.getElementById("bit").value = "log";
                 document.getElementById("logOrReg").submit();
             }
+
             function needAccount() {
                 document.getElementById("registerBlock").className = "d-block";
                 document.getElementById("loginSection").className = "d-grid gap-2 d-none";
@@ -84,6 +97,18 @@
             }
             function register() {
                 document.getElementById("bit").value = "reg";
+                document.getElementById("logOrReg").submit();
+            }
+
+            function forgotPassword() {
+                document.getElementById("unamePass").className = "d-none"
+                document.getElementById("forgetBlock").className = "d-block"
+                document.getElementById("loginSection").className = "d-grid gap-2 d-none";
+                document.getElementById("loginBtn").disabled = true;
+                document.getElementById("forgetBtn").className = "d-grid gap-2 d-block mb-2";
+            }
+            function resetPass() {
+                document.getElementById("bit").value = "res";
                 document.getElementById("logOrReg").submit();
             }
         </script>
