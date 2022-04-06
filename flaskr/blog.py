@@ -380,14 +380,13 @@ def update(id):
                     if text.description not in tagSet:
                         labelList.append(text.description)
 
+                # add YoloV5 tags
+                for tag in yoloV5tags:
+                    labelList.append(tag)
+                    albumTag.append(tag)
 
                 tagList = "|".join(labelList)
                 albumList = "|".join(albumTag)
-
-                # add YoloV5 tags
-                if yoloV5tags.size != 0:
-                    tagList = "|".join(yoloV5tags)
-                    albumList = "|".join(yoloV5tags)
 
                 # ----------------------------------------
 
@@ -517,13 +516,13 @@ def capture(id):
                     if text.description not in tagSet:
                         labelList.append(text.description)
 
+                # add YoloV5 tags
+                for tag in yoloV5tags:
+                    labelList.append(tag)
+                    albumTag.append(tag)
+
                 tagList = "|".join(labelList)
                 albumList = "|".join(albumTag)
-
-                # add YoloV5 tags
-                if yoloV5tags.size != 0:
-                    tagList = "|".join(yoloV5tags)
-                    albumList = "|".join(yoloV5tags)
 
                 # ----------------------------------------
 
@@ -623,11 +622,11 @@ def capture(id):
                 for text in textResponse.text_annotations:
                     tagList.append(text.description)
 
-                tags = "|".join(tagList)
-
                 # add YoloV5 tags
-                if yoloV5tags.size != 0:
-                    tags = "|".join(yoloV5tags)
+                for tag in yoloV5tags:
+                    tagList.append(tag)
+
+                tags = "|".join(tagList)
 
                 #update post
                 curs.execute(
