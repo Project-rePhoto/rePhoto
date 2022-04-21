@@ -94,9 +94,10 @@ def projectsmap():
             row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
     return render_template('blog/projectsmap.html', posts=posts)
 
-@bp.route('/')
-def redirectIndex():
-    return render_template('blog/home.html')
+# @bp.route('/team')
+# def team():
+#     return render_template('blog/info.html')
+
 
 @bp.route('/<int:count>/<string:searchTerm>/projects', methods=('GET','POST'))
 def projects(count, searchTerm):
