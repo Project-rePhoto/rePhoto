@@ -1,86 +1,162 @@
-{% extends 'base.html' %}
+{% extends 'head.html' %}
 
 {% block header %}
   <h2>{% block title %}Edit "{{ post[1] }}"{% endblock %}</h2>
 {% endblock %}
 
-{% set background = '../static/myImgs/'+ post[0] | string() +'/'+post[6] %}
-
 {% block content %}
-<article class="post" style="width: 1100px;margin-left:auto;margin-right:auto;">
-      <form method="post" enctype=multipart/form-data>
-        <label for="title">Title</label>
-        <br/>
-        <input class="form-control" name="title" id="title" value="{{ request.form['title'] or post[1] }}" required>
-        <br/>
-        <label for="body">Body</label>
-        <br/>
-        <textarea class="form-control" style="height: 200px;" name="body" id="body">{{ request.form['body'] or post[2] }}</textarea>
-        <hr>
 
-        <h3>Cover Photo</h3>
-        <div class="display-container">
-          <img style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+<article class="post">
+    <body style="background-color:black;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+
+                            <form method="post" enctype=multipart/form-data>
+                                <label for="title">Title</label>
+                                <br/>
+                                <input class="form-control" name="title" id="title" value="{{ request.form['title'] or post[1] }}" required>
+                                <br/>
+                                <label for="body"> Project Description </label>
+                                <br/>
+                                <textarea class="form-control" rows="3" name="body" id="body">{{ request.form['body'] or post[2] }}</textarea>
+
+
+                                <br/>
+
+                                <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                                    <h3>Album</h3>
+                                    <div class="d-grid gap-2 d-md-block">
+                                        <input class="btn btn-outline-danger" style="display:inline; float:right;" class="danger" type="submit" form="deleteThis" value="Delete This Photo" onclick="return confirm('Are you sure?');">
+                                    </div>
+                                </div>
+
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="display-container">
+                                        {% for img in imgs %}
+                                            <img class="img-fluid center" id="curImg" style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="{{ img[0] }}" width="{{ img[2] }}" height="{{ img[3] }}">
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="col-md-12 text-center">
+                                        <button type="button" class="btn btn-primary custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
+                                        <button type="button" class="btn btn-primary custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
+                                    </div>
+
+                                    <br>
+
+                                    <input type="hidden" name="width" id="width" value="{{ post[7] }}">
+                                    <input type="hidden" name="height" id="height" value="{{ post[8] }}">
+                                    <div class="d-grid gap-2 mt-2 mb-2">
+                                        <input class="btn btn-success" style="float: right;" type="submit" value="Save">
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <hr>
-        <h3>Album</h3>
-        <div class="display-container">
-          {% for img in imgs %}
-            <img class="center" id="curImg" style="display:none; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ img[0] }}" alt="{{ img[0] }}" width="{{ img[2] }}" height="{{ img[3] }}">
-          {% endfor %}
-          <button type="button" class="custom black display-left" onclick="plusDivs(-1)">&#10094;</button>
-          <button type="button" class="custom black display-right" onclick="plusDivs(+1)">&#10095;</button>
+        <!-- Capture New Image -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> Capture New Image </p>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a class="action btn btn-outline-primary" href="{{ url_for('blog.capture', id=post[0]) }}">Capture New Image</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <br/>
-        <div style="text-align:center;">
-        <input class="danger" type="submit" form="deleteThis" value="Delete Picture" onclick="return confirm('Are you sure?');">
+        <!-- Cover Photo -->
+        <div class="container d-none">
+            <div class="row justify-content-center">
+                <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> Cover Photo </p>
+                        </div>
+                        <div class="card-body">
+                            <div class="display-container">
+                                <p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                            Show Cover Photo
+                                        </button>
+                                    </div>
+                                </p>
+
+                                <div class="collapse bg-gray" id="collapseExample">
+                                    <img class="img-fluid" style="display:block; margin:0 auto; max-width:100%; max-height:100%;" src="/static/myImgs/{{ post[0] }}/{{ post[6] }}" alt="Cover Image" width="{{ post[7] }}" height="{{ post[8] }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <hr>
-        <h3>Change Cover Photo</h3>
-        <input type=file name=file>
-        <input type="hidden" name="width" id="width" value="{{ post[7] }}">
-        <input type="hidden" name="height" id="height" value="{{ post[8] }}">
-        <input style="float: right;" type="submit" value="Save">
-      </form>
+        <!-- Delete Current Photo -->
+        <form id="deleteThis" action="{{ url_for('blog.deletePic', id=post[0]) }}" method="post">
+            <input type="hidden" name="picName" id="picName" value="">
+        </form>
 
-      <form id="deleteThis" action="{{ url_for('blog.deletePic', id=post[0]) }}" method="post">
-        <input type="hidden" name="picName" id="picName" value="">
-      </form>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12 col-12">
+                    <div class="card text-white bg-gray mb-4">
+                        <div class="card-header">
+                            <p class="h3 text-white"> Delete Project </p>
+                        </div>
 
-      <hr>
-        <a class="action" href="{{ url_for('blog.imageCapture', id=post[0]) }}">Image Capture</a>
-      <hr>
+                        <div class="card-body">
+                            <form action="{{ url_for('blog.delete', id=post[0]) }}" method="post">
+                                <div class="d-grid gap-2">
+                                    <input class="danger btn btn-danger" type="submit" value="(DANGER) Delete Project" onclick="return confirm('Are you sure?');">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <form style="display: inline;" action="{{ url_for('blog.setMap', id=post[0]) }}" method="post">
-        <input type="submit" value="View Map">
-      </form>
+        <script type="text/javascript">
+            var slideIndex = 1;
+            showDivs(slideIndex);
 
-      <form style="display: inline; float: right;" action="{{ url_for('blog.delete', id=post[0]) }}" method="post">
-        <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
-      </form>
+            function plusDivs(n) {
+                showDivs(slideIndex += n);
+            }
 
-    <script type="text/javascript">
-      var slideIndex = 1;
-      showDivs(slideIndex);
-
-      function plusDivs(n) {
-        showDivs(slideIndex += n);
-      }
-
-      function showDivs(n) {
-        var i;
-        var x = document.getElementsByClassName("center");
-        if (n > x.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = x.length}
-        for (i=0; i < x.length; i++){
-          x[i].style.display = "none";
-        }
-        x[slideIndex-1].style.display = "block";
-        document.getElementById("picName").value = x[slideIndex-1].alt;
-      }
-    </script>
+            function showDivs(n) {
+                var i;
+                var x = document.getElementsByClassName("center");
+                if (n > x.length) {slideIndex = 1}
+                if (n < 1) {slideIndex = x.length}
+                for (i=0; i < x.length; i++){
+                  x[i].style.display = "none";
+                }
+                x[slideIndex-1].style.display = "block";
+                document.getElementById("picName").value = x[slideIndex-1].alt;
+          }
+        </script>
+    </body>
 </article>
+
 {% endblock %}

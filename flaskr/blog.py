@@ -8,13 +8,14 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
 from flaskr.auth import login_required
 from flaskr.db import get_db
-#Google Maps API
-from flask_googlemaps import Map
-#import Geocoder
-from flaskr import simple_geoip
 from datetime import datetime
 #import Cloud Vision API
 from google.cloud import vision
+import torch
+import math
+import numpy as np
+torch.set_num_threads(1)
+
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
@@ -24,10 +25,10 @@ def allowed_file(filename):
     return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def getGeoIP():
+#def getGeoIP():
     #retrieve geoip data for the given requester
-    geoip_data = simple_geoip.get_geoip_data()
-    return geoip_data
+    #geoip_data = simple_geoip.get_geoip_data()
+    #return geoip_data
 
 def retrieveCVResults(type, image_uri):
     #retrieve Cloud Vision results for image
@@ -42,94 +43,9 @@ def retrieveCVResults(type, image_uri):
     else: # landmark_detection
         return client.landmark_detection(image=image)
 
-@bp.route('/<int:id>/setMap', methods=('GET', 'POST'))
-def setMap(id):
-    mapList = []
-    latitude = 0
-    longitude = 0
 
-    # Acquire database
-    db = get_db()
-
-    curs = db.cursor()
-    curs.execute(
-        'SELECT p.id, username, title, imgFile, lat, lng, author_id, archive'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE lat IS NOT NULL AND lng IS NOT NULL'
-        ' ORDER BY created DESC'
-    )
-    posts = curs.fetchall()
-    posts = list(map(list, posts))
-
-    # convert from archive url to folder location
-    for row in posts:
-        # check that image is part of archives
-        if row[7] == 1:
-            if row[3] is not None:
-                if len(row[3]) > 10:
-                    if row[3][0:10] == "/baseImage":
-                        num = 0
-                        pic = ""
-                        for i in row[3]:
-                            if num == 3:
-                                pic = pic + i
-                            if i == '/':
-                                num+=1
-                        row[3] = pic
-                    elif row[3][0:4] == "http":
-                        num = 0
-                        pic = ""
-                        for i in row[3]:
-                            if num == 5:
-                                pic = pic + i
-                            if i == '/':
-                                num+=1
-                        row[3] = pic
-
-    # Parse query returns
-    for row in posts:
-        # Assign green markers for nearby projects
-        if row[0] != id:
-            info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-            if g.user is not None:
-                if g.user[0] == row[6]:
-                    info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
-            if row[7] == 1:
-                info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-            marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
-                      'lat': row[4],
-                      'lng': row[5],
-                      'infobox': info}
-            mapList.append(marker)
-        # Assign blue marker indicating position of current project
-        else:
-            info = "<b>Current Project(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-            if g.user is not None:
-                if g.user[0] == row[6]:
-                    info = "<b>Current Project(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a><a class='post-meta' href='../"+str(row[0])+"/update'>/Edit</a>)</b>"
-            if row[7] == 1:
-                info = "<img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /><br /><b>"+row[2]+"(ID: "+str(row[0])+") by "+row[1]+"(<a class='post-meta' href='../"+str(row[0])+"/detail'>View</a>)</b>"
-            marker = {'icon': 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                      'lat': row[4],
-                      'lng': row[5],
-                      'infobox': info}
-            latitude = row[4]
-            longitude = row[5]
-            mapList.append(marker)
-
-    mymap = Map(
-        identifier = "view-side",
-        style = "height:100%; width:100%; margin:0;",
-        lat = latitude,
-        lng = longitude,
-        zoom = 15,
-        markers = mapList
-    )
-
-    return render_template('blog/mymap.html', mymap=mymap)
-
-@bp.route('/projmap', methods=('GET', 'POST'))
-def projmap():
+@bp.route('/projectsmap', methods=('GET', 'POST'))
+def projectsmap():
     # Acquire database
     db = get_db()
 
@@ -170,21 +86,21 @@ def projmap():
 
         if g.user is not None:
             if g.user[0] == row[6]:
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/update'>Click to Edit Project</a>)</h4>"
+                row[3] = "<h5><strong>Click on Image to Contribute to Project</strong></h5> <a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br/><b>"+row[2]+" by "+row[1]+"</b><br/> <a class='post-meta btn btn-primary d-grid gap-2 text-white' href='../"+str(row[0])+"/update'>Edit Project</a>"
             else:
                 # include html script for displaying image
-                row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
+                row[3] = "<h5><strong>Click on Image to Contribute to Project</strong></h5> <a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br/><b>"+row[2]+" by "+row[1]+"</b><br/> <a class='post-meta btn btn-primary d-grid gap-2 text-white' href='../"+str(row[0])+"/detail'>View Project</a>"
         else:
             # include html script for displaying image
-            row[3] = "<h4>Click To Contribute Image to Project</h4><br/><a href='../"+str(row[0])+"/imageCapture'><img src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br /><b>"+row[2]+" (ID: "+str(row[0])+") by "+row[1]+"</b><br/><h4>(<a class='post-meta' href='../"+str(row[0])+"/detail'>Click to View Project</a>)</h4>"
-    return render_template('blog/projmap.html', posts=posts)
+            row[3] = "<h5><strong>Click on Image to Contribute to Project</strong></h5> <a href='../"+str(row[0])+"/capture'><img class='img-in-popup' style='max-height:50vh; max-width:50vh;' src='/static/myImgs/"+str(row[0])+"/"+row[3]+"' /></a><br/><b>"+row[2]+" by "+row[1]+"</b><br/> <a class='post-meta btn btn-primary d-grid gap-2 text-white' href='../"+str(row[0])+"/detail'>View Project</a>"
+    return render_template('blog/projectsmap.html', posts=posts)
 
 @bp.route('/')
 def redirectIndex():
-    return redirect(url_for('blog.projmap'))
+    return render_template('blog/home.html')
 
-@bp.route('/<int:count>/<string:searchTerm>/index', methods=('GET','POST'))
-def index(count, searchTerm):
+@bp.route('/<int:count>/<string:searchTerm>/projects', methods=('GET','POST'))
+def projects(count, searchTerm):
     db = get_db()
     curs = db.cursor()
 
@@ -202,14 +118,35 @@ def index(count, searchTerm):
         curs.execute(
             'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
             ' FROM post p JOIN user u ON p.author_id = u.id'
-            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s)'
+            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s OR username LIKE %s)'
             ' ORDER BY created DESC'
             ' LIMIT 5 OFFSET %s',
-            (newTerm, newTerm, newTerm, count)
+            (newTerm, newTerm, newTerm, newTerm, count)
         )
     posts = curs.fetchall()
     posts = list(map(list, posts))
 
+    if searchTerm == "general":
+        curs.execute(
+            'SELECT COUNT(*)'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1'
+        )
+    else:
+        curs.execute(
+            'SELECT COUNT(*)'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1 AND (title LIKE %s OR body LIKE %s OR tag LIKE %s OR username LIKE %s)',
+            (newTerm, newTerm, newTerm, newTerm)
+        )
+
+    total = curs.fetchall()
+    total = list(map(list, total))
+    totalArr = np.array(total)
+
+    totalArr[0] = math.ceil(totalArr[0]/5)
+
+    # OLD CODE
     # convert from archive url to folder location
     for row in posts:
         # check that image is part of archives
@@ -242,6 +179,7 @@ def index(count, searchTerm):
     imgs = curs.fetchall()
     imgs = list(map(list, imgs))
 
+    # OLD CODE
     # similarly, do so for album
     for row in imgs:
         if row[0] is not None:
@@ -256,7 +194,7 @@ def index(count, searchTerm):
                             num+=1
                     row[0] = pic
 
-    return render_template('blog/index.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm)
+    return render_template('blog/projects.html', posts=posts, imgs=imgs, count=count, searchTerm=searchTerm, total=totalArr)
 
 @bp.route('/<int:id>/create', methods=('GET', 'POST'))
 @login_required
@@ -292,7 +230,7 @@ def create(id):
                 )
             db.commit()
 
-            return redirect(url_for('blog.index', count=0, searchTerm='general'))
+            return redirect(url_for('blog.projects', count=0, searchTerm='general'))
 
     return render_template('blog/create.html', post=post)
 
@@ -398,8 +336,15 @@ def update(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
+
+                # ------- Retrieve YoloV5 result ------
+                model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+                imgs = ['https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/' + filename]
+                results = model(imgs)
+                data = results.pandas().xyxy[0]
+                yoloV5tags = data['name'].unique()
 
                 # Retrieve current post tags
                 curs.execute(
@@ -435,8 +380,14 @@ def update(id):
                     if text.description not in tagSet:
                         labelList.append(text.description)
 
+                # add YoloV5 tags
+                for tag in yoloV5tags:
+                    labelList.append(tag)
+                    albumTag.append(tag)
+
                 tagList = "|".join(labelList)
                 albumList = "|".join(albumTag)
+
                 # ----------------------------------------
 
                 curs.execute(
@@ -459,7 +410,7 @@ def update(id):
                     (title, body, id)
                 )
                 db.commit()
-            return redirect(url_for('blog.index', count=0, searchTerm='general'))
+            return redirect(url_for('blog.projects', count=0, searchTerm='general'))
 
     return render_template('blog/update.html', post=post, imgs=imgs)
 
@@ -476,10 +427,10 @@ def delete(id):
     # Delete post itself
     curs.execute('DELETE FROM post WHERE id = %s', (id,))
     db.commit()
-    return redirect(url_for('blog.index', count=0, searchTerm='general'))
+    return redirect(url_for('blog.projects', count=0, searchTerm='general'))
 
-@bp.route('/<int:id>/imageCapture', methods=('GET', 'POST'))
-def imageCapture(id):
+@bp.route('/<int:id>/capture', methods=('GET', 'POST'))
+def capture(id):
     # If updating a post
     if id != 1:
         post = get_post(id, False)
@@ -521,8 +472,15 @@ def imageCapture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(id), filename))
 
                 # ------- Retrieve Vision API result -------
-                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/'+filename
                 response = retrieveCVResults(0, image_uri)
+
+                # ------- Retrieve YoloV5 result ------
+                model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+                imgs = ['https://rameme.pythonanywhere.com/static/myImgs/'+str(id)+'/' + filename]
+                results = model(imgs)
+                data = results.pandas().xyxy[0]
+                yoloV5tags = data['name'].unique()
 
                 # Retrieve current post tags
                 curs.execute(
@@ -558,8 +516,14 @@ def imageCapture(id):
                     if text.description not in tagSet:
                         labelList.append(text.description)
 
+                # add YoloV5 tags
+                for tag in yoloV5tags:
+                    labelList.append(tag)
+                    albumTag.append(tag)
+
                 tagList = "|".join(labelList)
                 albumList = "|".join(albumTag)
+
                 # ----------------------------------------
 
                 #save to tables
@@ -571,6 +535,22 @@ def imageCapture(id):
                 db.commit()
 
                 if g.user is not None:
+                    #update contributions
+                    curs.execute(
+                        'SELECT contributions'
+                        ' FROM user u'
+                        ' WHERE u.id = %s',
+                        (g.user[0],)
+                    )
+                    conts = curs.fetchone()
+
+                    curs.execute(
+                        'UPDATE user SET contributions = %s'
+                        ' WHERE id = %s',
+                        (conts[0]+1, g.user[0])
+                    )
+                    db.commit()
+
                     # Save for album
                     curs.execute(
                         'INSERT INTO album (postID, image, width, height, takerID, timedate, tag, name)'
@@ -608,7 +588,7 @@ def imageCapture(id):
 
                 #Create new directory for photos
                 try:
-                    os.makedirs('flask_rephoto/flaskr/static/myImgs/'+str(insertID[0]))
+                    os.makedirs('rePhoto/flaskr/static/myImgs/'+str(insertID[0]))
                 except OSError:
                     pass
 
@@ -616,11 +596,18 @@ def imageCapture(id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/"+str(insertID[0]), filename))
 
                 #------ Retrieve Vision API result and update tags -------
-                image_uri = 'https://chhaoliu.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
+                image_uri = 'https://rameme.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename
 
                 # Retrieve labels
                 response = retrieveCVResults(0, image_uri)
                 tagList = ["General"]
+
+                # ------- Retrieve YoloV5 result ------
+                model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
+                imgs = ['https://rameme.pythonanywhere.com/static/myImgs/'+str(insertID[0])+'/'+filename]
+                results = model(imgs)
+                data = results.pandas().xyxy[0]
+                yoloV5tags = data['name'].unique()
 
                 # Append new tags for labels
                 for label in response.label_annotations:
@@ -634,6 +621,10 @@ def imageCapture(id):
                 # Append new tags for text
                 for text in textResponse.text_annotations:
                     tagList.append(text.description)
+
+                # add YoloV5 tags
+                for tag in yoloV5tags:
+                    tagList.append(tag)
 
                 tags = "|".join(tagList)
 
@@ -659,15 +650,52 @@ def imageCapture(id):
         else:
             flash(error)
 
-    return render_template('blog/imageCapture.html', post=post)
+    return render_template('blog/capture.html', post=post)
 
-@bp.route('/background')
-def background():
-    return render_template('blog/background.html')
+@bp.route('/profile')
+@login_required
+def profile():
+    db = get_db()
+    curs = db.cursor()
 
-@bp.route('/about')
-def about():
-    return render_template('blog/about.html')
+    # Track contributions
+    beg=mid=adv=0
+    if g.user is not None:
+        curs.execute(
+            'SELECT contributions'
+            ' FROM user u'
+            ' WHERE u.id = %s',
+            (g.user[0],)
+        )
+        conts = curs.fetchone()
+
+        if conts[0] <= 10:
+            beg = conts[0]
+        elif conts[0] <= 40:
+            beg = 10
+            mid = conts[0]-10
+        else:
+            beg = 10
+            mid = 30
+            adv = conts[0]-40
+
+    if g.user is not None:
+        curs.execute(
+            'SELECT p.id, title, body, created, author_id, username, imgFile, wd, ht, archive'
+            ' FROM post p JOIN user u ON p.author_id = u.id'
+            ' WHERE p.id != 1 AND (u.id = %s)'
+            ' ORDER BY created DESC'
+            ' LIMIT 6 OFFSET %s',
+            (g.user[0], 0)
+        )
+
+    posts = curs.fetchall()
+
+    return render_template('blog/profile.html', posts=posts, beg=beg, mid=mid, adv=adv)
+
+@bp.route('/info')
+def info():
+    return render_template('blog/info.html')
 
 @bp.route('/<int:id>/detail', methods=('GET', 'POST'))
 def detail(id):
@@ -726,7 +754,7 @@ def deletePic(id):
         # Delete post itself
         curs.execute('DELETE FROM post WHERE id = %s', (id,))
         db.commit()
-        return redirect(url_for('blog.index', count=0, searchTerm='general'))
+        return redirect(url_for('blog.projects', count=0, searchTerm='general'))
 
     return redirect(url_for('blog.update', id=id))
 
@@ -734,7 +762,7 @@ def deletePic(id):
 @login_required
 def createFile():
     path = "static/myImgs/photolinks.txt"
-    homepath = "/home/chhaoliu/flask_rephoto/flaskr/static/myImgs/photolinks.txt"
+    homepath = "/home/rameme/rePhoto/flaskr/static/myImgs/photolinks.txt"
 
     if os.path.isfile(homepath):
         return send_file(path, as_attachment=True)
@@ -752,7 +780,7 @@ def createFile():
     for row in posts:
         rowID = row[0]
         img = row[1]
-        with open("flask_rephoto/flaskr/static/myImgs/photolinks.txt", "a") as fo:
+        with open("rePhoto/flaskr/static/myImgs/photolinks.txt", "a") as fo:
             fo.write(str(rowID) + "\n")
             if img is not None:
                 if img[0:10] == "/baseImage":
@@ -767,7 +795,7 @@ def createFile():
         )
         albums = curs.fetchall()
         for pic in albums:
-            with open("flask_rephoto/flaskr/static/myImgs/photolinks.txt", "a") as pc:
+            with open("rePhoto/flaskr/static/myImgs/photolinks.txt", "a") as pc:
                 if pic[0][0:10] == "/baseImage":
                     pc.write("http://projectrephoto.com" + pic[0] + "\n")
                 else:

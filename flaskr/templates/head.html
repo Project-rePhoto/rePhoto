@@ -1,0 +1,93 @@
+<!doctype html>
+
+<title>{% block title %}{% endblock %}</title>
+
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+<!-- Import CSS-->
+<link rel="stylesheet" href="{{ url_for('static', filename='mystyle.css') }}" type="text/css">
+
+<!-- Font -->
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+
+<!-- jquery -->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<!-- Optional JavaScript -->
+<!-- Popper.js, then Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<div class="main-wrapper">
+
+    <!-- Nav bar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark bg-black">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand" href="/">
+                <img src="../../static/imgs/logo.svg" alt="rePhoto" width="100" height="35">
+            </a>
+
+            <!-- Toggler/collapsibe Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="navbarToggleExternalContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('blog.projectsmap') }}">Maps</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('blog.projects', count=0, searchTerm='general') }}">Find Project</a>
+                    </li>
+                    <li class="nav-item">
+                        {% if g.user %}
+                            <a class="nav-link" href="{{ url_for('blog.profile') }}"> {{ g.user[1] }}
+                        {% else %}
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">
+                        {% endif %}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                            </svg>
+                        </a>
+                    </li>
+
+                    {% if g.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!--end of Navigation bar-->
+
+    <!-- error -->
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-11 col-md-12 col-sm-12">
+          <div class="site-heading">
+            {% for message in get_flashed_messages() %}
+                <div class="flash alert alert-primary mt-2 mb-2" role="alert">{{ message }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- load website content -->
+    <section class="content">
+      <div>{% block content %}{% endblock %}</div>
+    </section>
+
+</div>

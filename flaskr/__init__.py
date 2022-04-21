@@ -1,32 +1,33 @@
 import os
 
 from flask import Flask
-#Google Maps API
-from flask_googlemaps import GoogleMaps
-#import Geocoder
-from flask_simple_geoip import SimpleGeoIP
-from .config import map_key, geo_key, username, password, database, host
+from .config import username, password, database, host, org_email, org_email_pass
 
-simple_geoip = '';
+#simple_geoip = '';
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
 
-    #Initialize Maps extension
-    GoogleMaps(app, key=map_key)
-
     #Initialize SimpleGeoIP extension
-    app.config["GEOIPIFY_API_KEY"] = geo_key
+    #app.config["GEOIPIFY_API_KEY"] = geo_key
 
-    global simple_geoip
-    simple_geoip = SimpleGeoIP(app)
+    #global simple_geoip
+    #simple_geoip = SimpleGeoIP(app)
+
+    # org email configuration
+    app.config['MAIL_SERVER']='smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = org_email
+    app.config['MAIL_PASSWORD'] = org_email_pass
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
 
     #Add Google Cloud credentials
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/chhaoliu/key.json'
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/home/rameme/key.json'
 
     #Configure upload folder path
-    UPLOAD_FOLDER = '/home/chhaoliu/flask_rephoto/flaskr/static/myImgs'
+    UPLOAD_FOLDER = '/home/rameme/rePhoto/flaskr/static/myImgs'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     #MySQL connection
