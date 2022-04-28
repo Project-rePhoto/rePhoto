@@ -30,8 +30,8 @@ application = create_app()
 ```
 13. There’s still a few libraries left to import. We need to import these packages in our virtual environment, so delete the old bash console and under web, scroll down to virtualenv, and click on start a console in this virtualenv.
 14. Within the console, install flask-mysql and Flask-Mail.
-15. pip install --user flask-mysql
-16. pip install --user Flask-Mail
+    * pip install --user flask-mysql
+    * pip install --user Flask-Mail
 17. To initialize a new database, click under databases, click MySQL and create a username/password. 
 18. Under your databases, click on the default db link to start a console! Run the commands below:
   use <database name>
