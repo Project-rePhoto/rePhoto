@@ -49,7 +49,7 @@ application = create_app()
 17. To initialize a new database, click under databases, click MySQL and create a username/password. 
 
 18. Under your databases, click on the default db link to start a console! Run the commands below:
-    * use <database name>
+    * use \<database name\>
     * source rePhoto/flaskr/schema.sql
 
 19. Create a file called config.py under the flaskr directory. The contents are as following:
