@@ -13,7 +13,7 @@
 
 3. Git clone the rephoto repository from the following link: https://github.com/Project-rePhoto/rePhoto
 
-4. Next, enter the rePhoto directory and run pip install -r --user requirements.txt. This will automatically install the requirements listed.
+4. Next, enter the rePhoto directory and run pip install --user -r requirements.txt. This will automatically install the requirements listed.
 
 5. Click to the Web page and click Add a new web app. The beginners account won’t let you change your domain name, which is fine, you can do so later if you choose to upgrade your account.
 
@@ -47,10 +47,10 @@ application = create_app()
     * pip install --user flask-mysql
     * pip install --user Flask-Mail
 
-17. To initialize a new database, click under databases, click MySQL and create a username/password. 
+17. To initialize a new database, click under databases, click MySQL and create a username/password. Create a database named “rephoto” under Create a database.
 
 18. Under your databases, click on the default db link to start a console! Run the commands below:
-    * use \<database name\>
+    * use \<database name\>$rephoto
     * source rePhoto/flaskr/schema.sql
 
 19. Create a file called config.py under the flaskr directory. The contents are as following:
@@ -59,7 +59,7 @@ application = create_app()
 #MySQL database
 username = '<username>'
 password = '<password>'
-database = '<username>$default'
+database = '<username>$rephoto''
 host = '<username>.mysql.pythonanywhere-services.com'
 
 #email confirmation
@@ -77,10 +77,39 @@ org_email_pass = 'somepass'
     * https://codelabs.developers.google.com/codelabs/cloud-vision-api-python#2
     * create a service account, enable vision api/billing, and generate key
     * Store the key.json file under your user directory /home/<username>: (e.g. /home/PrePhoto)
-    * Run pip3 install -U pip google-cloud-vision in virtualenv console
+    * Run pip3 install -U pip google-cloud-vision
     * Check to see if correctly installed with python3 -c "import google.cloud.vision"
 
 21. Afterwards, there are files under rePhoto/flaskr that still have the original rameme/directory as part of the path (rameme is another username). Find the location of these paths and replace with your own username. Also, under templates, check all the html files as well for ‘rameme’ and change everywhere to the new path.
+    
+or run this script
+```
+from itertools import count
+import os, fnmatch
+
+directory = "rePhoto"
+
+# your user name
+yourUsername = "ramimalam"
+
+# username you want to replace
+findUsername = "rameme"
+
+def findReplace(directory, find, replace, filePattern):
+    for path, dirs, files in os.walk(os.path.abspath(directory)):
+        for filename in fnmatch.filter(files, filePattern):
+            filepath = os.path.join(path, filename)
+            with open(filepath) as f:
+                s = f.read()
+            s = s.replace(find, replace)
+            with open(filepath, "w") as f:
+                f.write(s)
+
+findReplace(directory, findUsername, yourUsername, "*.html")
+findReplace(directory, findUsername, yourUsername, "*.py")
+
+print("DONE!")
+```
 
 22. Enable Force HTTPS under Security in the web app setup.
 
