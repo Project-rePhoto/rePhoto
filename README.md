@@ -90,7 +90,7 @@ import os, fnmatch
 directory = "rePhoto"
 
 # your user name
-yourUsername = "ramimalam"
+yourUsername = "new_username"
 
 # username you want to replace
 findUsername = "rameme"
