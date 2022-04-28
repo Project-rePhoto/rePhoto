@@ -4,7 +4,8 @@
 
 ## Preview
 
-[![Current Site](https://github.com/Chen-Hao-Liu/flask_rephoto/blob/master/flaskr/static/imgs/screenCapture.png)](https://rameme.pythonanywhere.com/)
+[![Current Site](https://user-images.githubusercontent.com/43386797/165660938-cdfdee9d-a225-49a7-af64-39eab1e1b41a.png)](https://rameme.pythonanywhere.com/)
+
 
 1. Create a new account on pythonanywhere.com. The free/beginner version is fine to start with.
 
